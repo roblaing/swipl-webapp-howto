@@ -79,6 +79,8 @@ user:file_search_path(folders, library('images/styles/scripts')).
 I've included one _dynamic_ handler in the initial example which reads a directory name as a variable and responds programatically
 with SWI Prolog's html generating system [html_write](http://www.swi-prolog.org/pldoc/man?section=htmlwrite).
 
+For this to work, you need a recent version of SWI Prolog (8.1.5 at time of writing). The older version installed by my Linux distribution didn't work, so I had to upgrade by compiling from source code to get this to succeed.
+
 ```prolog
 :- http_handler(root(user/User), my_handler_code(User), []).
 
@@ -91,7 +93,7 @@ my_handler_code(User, Request) :-
       p('uri ~w'-[URI])]).
 ```
 
-Pointing your browser to <http://localhost:3030/user/Joe Blog> should bring up Joe Blog's Home Page.
+Pointing your browser to <http://localhost:3030/user/Joe%20Blog> should bring up Joe Blog's Home Page.
 
 ## Unit 2
 
