@@ -17,13 +17,9 @@ If you prefer, say, Windows and MySQL hopefully it will only take you a bit of g
 
 ## Unit 1
 
-Unit 1 in the original course was devoted to explaining the basics of HTML, which I assume readers are familiar with  
-&mdash; if not I recommend Mozilla's [Getting started with the Web](https://developer.mozilla.org/en-US/docs/Learn/Getting_started_with_the_web) &mdash; 
-so I'll kick-off with basics of a SWI Prolog webserver.
+Unit 1 in the original course was devoted to explaining the basics of HTML, which I assume readers are familiar with &mdash; if not I recommend Mozilla's [Getting started with the Web](https://developer.mozilla.org/en-US/docs/Learn/Getting_started_with_the_web) &mdash; so I'll kick-off with basics of a SWI Prolog webserver.
 
-My directory structure has a SWI Prolog file called server.pl which assumes html files are in the same directory while
-css files are in a subdirectory called styles, photos and graphics are in a subdirectory called images, and
-Javascript files in a subdirectory called scripts.
+My directory structure has a SWI Prolog file called server.pl which assumes html files are in the same directory while css files are in a subdirectory called styles, photos and graphics are in a subdirectory called images, and Javascript files in a subdirectory called scripts.
 
 ```
 unit1
@@ -63,7 +59,7 @@ line of code.
 :- http_handler(root(.), http_reply_from_files('.', []), [prefix]).
 ```
 
-Borrowing [The Zen of Python](https://www.python.org/dev/peps/pep-0020/) rule 2 &mdash; Explicit is better than implicit &mash; 
+Borrowing [The Zen of Python](https://www.python.org/dev/peps/pep-0020/) rule 2 &mdash; Explicit is better than implicit &mdash; 
 I've expanded that because it took my a while to figure out how to write handlers for html files other than index.html.
 
 ```prolog
