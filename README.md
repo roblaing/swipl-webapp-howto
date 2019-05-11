@@ -59,8 +59,8 @@ line of code.
 :- http_handler(root(.), http_reply_from_files('.', []), [prefix]).
 ```
 
-Borrowing [The Zen of Python](https://www.python.org/dev/peps/pep-0020/) rule 2 &mdash; Explicit is better than implicit &mdash; 
-I've expanded that because it took my a while to figure out how to write handlers for html files other than index.html.
+Borrowing [The Zen of Python](https://www.python.org/dev/peps/pep-0020/) rule 2 &mdash; explicit is better than implicit &mdash; 
+I've expanded that because it took me a while to figure out how to write handlers for html files other than index.html.
 
 ```prolog
 :- http_handler(root(.),     http_reply_from_files('.', [indexes(['index.html'])]), [prefix]).
