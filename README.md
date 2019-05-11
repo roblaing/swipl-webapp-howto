@@ -1,15 +1,14 @@
 # Writing a blog using SWI Prolog
 
-These are notes I'm writing on how to use SWI Prolog to write web applications as I learn it to develop my strategy game playing website 
-[newsgames.biz](http://www.newsgames.biz/).
+These are notes I'm writing on how to use [SWI Prolog](http://www.swi-prolog.org/) to write web applications as I learn it to develop my strategy game playing website [newsgames.biz](http://www.newsgames.biz/).
 
-My aim here is to gradually re-implement a web development course I did a few years ago given by Reddid founder Seve Huffman via Udacity. 
+My aim here is to gradually re-implement a web development course I did a few years ago given by Reddid founder Steve Huffman via Udacity. 
 (Unfortunately when I looked, Huffman's excellent though now slightly out-dated course appeared to be gone).
 
 Following the original course's basic outline, I plan to split the tutorial into about seven units which build on each other to create a fairly
 fully featured blog which includes user authentication and storing comments in a database.
 
-Whereas HUffman's course involved signing up for a free Google Appengine account offering a Python framework and a built in SQL server, 
+Whereas Huffman's course involved signing up for a free Google Appengine account offering a Python framework and a built in SQL server, 
 I'm redoing it on a Linux localhost with SWI-Prolog talking to PostgreSQL via its ODBC package. 
 
 My main objective is to provide some simple examples for my own reference and education, and I like Linux, Postgres, and SWI Prolog obviously.
