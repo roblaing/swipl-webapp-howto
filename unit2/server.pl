@@ -17,6 +17,7 @@ user:file_search_path(folders, library('images/styles/scripts')).
 :- http_handler(root(form),  form_handler, []).
 
 form_handler(Request) :-
+  % member(method(get), Request), !,
   catch(http_parameters(Request, 
       [month(Month, [oneof(['January','February','March','April','May','June','July','August','September','October','November','December'])]),
        day(Day, [between(1, 31)]),

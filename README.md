@@ -102,7 +102,7 @@ The original Udacity course I'm trying to replicate here devoted a fair amount o
 
 The salient point is the browser sends a list of key=value pairs to the server &mdash; clearly visible in the URL if the method is GET, slightly less visible in the HTTP message if the method is POST &mdash; for the web application to use as arguments in functions.
 
-Since GET is more visible, and therefore easier to debug, I'm going to use it in the introductory example. If you want to switch to POST, all that is required is editing the method attribute the line in index.html from:
+Since GET is more visible, and therefore easier to debug, I'm going to use it in the introductory example. If you want to switch to POST, all that is required is editing the method attribute in a line in index.html from:
 ```html
 <form name="birthday" action="/form" method="GET" onsubmit="return validateForm()">
 ```
