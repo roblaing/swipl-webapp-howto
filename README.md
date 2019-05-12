@@ -12,7 +12,7 @@ Whereas Huffman's course involved signing up for a free Google Appengine account
 I'm redoing it on a Linux localhost with SWI-Prolog talking to PostgreSQL via its ODBC package. 
 
 My main objective is to provide some simple examples for my own reference and education, and I like Linux, Postgres, and SWI Prolog obviously.
-If you prefer, say, Windows and MySQL hopefully it will only take you a bit of googling to adapt these examples.
+If you prefer, say Windows and MySQL, hopefully it will only take you a bit of googling to adapt these examples.
 
 ## Unit 1
 
@@ -87,8 +87,8 @@ my_handler_code(User, Request) :-
    member(request_uri(URI), Request),
    reply_html_page(
      [title([User, "'s Home Page"])],
-	 [h1([User, "'s Home Page"]),
-	  p('Hello ~w!'-[User]),
+     [h1([User, "'s Home Page"]),
+      p('Hello ~w!'-[User]),
       p('uri ~w'-[URI])]).
 ```
 
@@ -98,7 +98,7 @@ Pointing your browser to <http://localhost:3030/user/Joe%20Blog> should bring up
 
 Here I introduce SWI Prolog's predicate for handling user input sent to the server from an HTML form, [http_parameters(+Request, ?Parameters)](http://www.swi-prolog.org/pldoc/doc_for?object=http_parameters/2). Besides making it easy to toggle between GET and POST, it also offers various ways to validate the incoming data.
 
-The original Udacity course I'm trying to replicate here devoted a fair amount of time going through check boxes, radio buttons, drop down menus and HTML's many other form elements. I personally can't remember all this stuff and just look it up when needed, so again recommend [Mozilla's tutorial](https://developer.mozilla.org/en-US/docs/Learn/HTML/Forms/Your_first_HTML_form) for anyone wanting a refresher.
+The original Udacity course I'm trying to replicate devoted a fair amount of time going through check boxes, radio buttons, drop down menus and HTML's many other form elements. I personally can't remember all this stuff and just look it up when needed, so again recommend [Mozilla's tutorial](https://developer.mozilla.org/en-US/docs/Learn/HTML/Forms/Your_first_HTML_form) for anyone wanting a refresher.
 
 The salient point is the browser sends a list of key=value pairs to the server &mdash; clearly visible in the URL if the method is GET, slightly less visible in the HTTP message if the method is POST &mdash; for the web application to use as arguments in functions.
 
