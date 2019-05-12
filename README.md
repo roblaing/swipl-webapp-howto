@@ -98,7 +98,7 @@ Pointing your browser to <http://localhost:3030/user/Joe%20Blog> should bring up
 
 Here I introduce SWI Prolog's predicate for handling user input sent to the server from an HTML form, [http_parameters(+Request, ?Parameters)](http://www.swi-prolog.org/pldoc/doc_for?object=http_parameters/2). Besides making it easy to toggle between GET and POST, it also offers various ways to validate the incoming data.
 
-The original Udacity course I'm trying to replicate devoted a fair amount of time going through check boxes, radio buttons, drop down menus and HTML's many other form elements. I personally can't remember all this stuff and just look it up when needed, so again recommend [Mozilla's tutorial](https://developer.mozilla.org/en-US/docs/Learn/HTML/Forms/Your_first_HTML_form) for anyone wanting a refresher.
+The original Udacity course I'm using as a template devoted a fair amount of time going through check boxes, radio buttons, drop down menus and HTML's many other form elements. I personally can't remember all this stuff and just look it up when needed, so again recommend [Mozilla's tutorial](https://developer.mozilla.org/en-US/docs/Learn/HTML/Forms/Your_first_HTML_form) for anyone wanting a refresher.
 
 The salient point is the browser sends a list of key=value pairs to the server &mdash; clearly visible in the URL if the method is GET, slightly less visible in the HTTP message if the method is POST &mdash; for the web application to use as arguments in functions.
 
@@ -126,12 +126,43 @@ form_handler(Request) :-
     error(_, _),
     http_reply_from_files('.', [indexes(['index.html'])], Request)),
   reply_html_page([title('Birthday')],
-     [p(['Month: ', Month, ' Day: ', Day, ' Year: ', Year])]).
+    [p(['Month: ', Month, ' Day: ', Day, ' Year: ', Year])]).
 ```
 
 If a parameter is missing or does not fit into the type checks done, http_parameters throws a _400 Bad Request_ error. Instead of showing that, I've opted for [catch(:Goal, +Catcher, :Recover)](http://www.swi-prolog.org/pldoc/doc_for?object=catch/3) to return to the original form without any error messages or keeping the original data at this stage. More complicated scenarios to follow as I proceed.
 
 ## Unit 3
 
-Is being written...
+This is work in progress...
+
+This unit introduces an SQL database which SWI-Prolog communicates with via the [ODBC Interface](http://www.swi-prolog.org/pldoc/doc_for?object=section(%27packages/odbc.html%27)).
+
+For Postgres (which I use) you need to have the [PostgreSQL ODBC driver](https://odbc.postgresql.org/) installed besides an ~/.odbc.ini file.
+Details are at <http://www.unixodbc.org/odbcinst.html> where it explains how to set this up for alternatives to Postgres. The below example could be one of many stanzas in the .odbc.ini file for various databases, each referenced by SWI Prolog by whatever identifier you put in the heading between square brackets.
+
+```
+[blog]
+Description         = The Blog Example
+Driver              = /usr/lib/psqlodbcw.so
+Trace               = Yes
+TraceFile           = sql.log
+Database            = my_database_name
+Servername          = localhost
+UserName            = my_username
+Password            = my_password
+Port                = 5432
+Protocol            = 9.4
+ReadOnly            = No
+RowVersioning       = No
+ShowSystemTables    = No
+ShowOidColumn       = No
+FakeOidIndex        = No
+ConnSettings        =
+MaxVarcharSize      = 5000
+Pooling             = Yes
+```
+The last two entries are things I've learnt through bitter experience. If MaxVarcharSize is left unset, ODBC defaults to 256 characters (the old Twitter rather than a blog site, and pooling needs to be set to yes if your site gets even slightly busy.
+
+
+
 
