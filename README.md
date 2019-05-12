@@ -102,7 +102,16 @@ The original Udacity course I'm trying to replicate here devoted a fair amount o
 
 The salient point is the browser sends a list of key=value pairs to the server &mdash; clearly visible in the URL if the method is GET, slightly less visible in the HTTP message if the method is POST &mdash; for the web application to use as arguments in functions.
 
-Since GET is more visible, and therefore easier to debug, I'm going to use it in the introductory example. If you want to switch to POST later, very little editing is required.
+Since GET is more visible, and therefore easier to debug, I'm going to use it in the introductory example. If you want to switch to POST, all that is required is editing the method attribute the line in index.html from:
+```html
+<form name="birthday" action="/form" method="GET" onsubmit="return validateForm()">
+```
+to
+```html
+<form name="birthday" action="/form" method="POST" onsubmit="return validateForm()">
+```
+
+On the server side, I've kept the handler agnostic in this simple example, though it probably is a good idea to add a clause ```member(method(get), Request)``` or ```member(method(post), Request)``` to dissuade hackers from trying methods on your code you didn't foresee. I've included where this would go in server.pl as a comment.
 
 I've redone Huffman's example of creating a simple form which asks for a person's birthdate in US-style of month, day and year. To avoid a long digression into datetime programming, I've limited the example to some very rudimentary and inflexible checks on the validity of the input. Perhaps because his course is a bit old, Huffman did the validation on the server, getting it to rewrite the form with error messages. I've instead simply used some client-side Javascript to catch typos and give the user hints to problems before the form is sent to the server. 
 
