@@ -48,7 +48,7 @@ At the heart of the various web frameworks I've encountered over the years (Zope
 of incoming URLs into commands for the server to respond to. Pattern matching is one of Prolog's strongest suits, making slicing up URLs and dispatching
 requests to the relevant handler shorter and sweeter than any of the _regex_ languages I've wrestled with.
 
-The key clause here is [http_handler(+Path, :Closure, +Options)](http://www.swi-prolog.org/pldoc/doc_for?object=http_handler/3), and I've included
+The key predicate here is [http_handler(+Path, :Closure, +Options)](http://www.swi-prolog.org/pldoc/doc_for?object=http_handler/3), and I've included
 a couple of ways to use it in the introductory example.
 
 Nearly every website wants to respond with a file called index.html if a browser is pointed at its root directory. SWI Prolog achieves this with one
@@ -96,5 +96,33 @@ Pointing your browser to <http://localhost:3030/user/Joe%20Blog> should bring up
 
 ## Unit 2
 
-Is work in progress...
+Here I introduce SWI Prolog's predicate for handling user input sent to the server from an HTML form, [http_parameters(+Request, ?Parameters)](http://www.swi-prolog.org/pldoc/doc_for?object=http_parameters/2). Besides making it easy to toggle between GET and POST, it also offers various ways to validate the incoming data.
+
+The original Udacity course I'm trying to replicate here devoted a fair amount of time going through check boxes, radio buttons, drop down menus and HTML's many other form elements. I personally can't remember all this stuff and just look it up when needed, so again recommend [Mozilla's tutorial](https://developer.mozilla.org/en-US/docs/Learn/HTML/Forms/Your_first_HTML_form) for anyone wanting a refresher.
+
+The salient point is the browser sends a list of key=value pairs to the server &mdash; clearly visible in the URL if the method is GET, slightly less visible in the HTTP message if the method is POST &mdash; for the web application to use as arguments in functions.
+
+Since GET is more visible, and therefore easier to debug, I'm going to use it in the introductory example. If you want to switch to POST later, very little editing is required.
+
+I've redone Huffman's example of creating a simple form which asks for a person's birthdate in US-style of month, day and year. To avoid a long digression into datetime programming, I've limited the example to some very rudimentary and inflexible checks on the validity of the input. Perhaps because his course is a bit old, Huffman did the validation on the server, getting it to rewrite the form with error messages. I've instead simply used some client-side Javascript to catch typos and give the user hints to problems before the form is sent to the server. 
+
+While my Javascript code will prevent inocent typos getting transmitted, it won't catch malicious tampering of the input data which can easily be done by editing the URL when GET is used. This example uses a belt and braces approach of having both the client and server validate the user's input:
+
+```prolog
+form_handler(Request) :-
+  catch(http_parameters(Request, 
+      [month(Month, [oneof(['January','February','March','April','May','June','July','August','September','October','November','December'])]),
+       day(Day, [between(1, 31)]),
+       year(Year, [between(1890, 2030)])]),
+    error(_, _),
+    http_reply_from_files('.', [indexes(['index.html'])], Request)),
+  reply_html_page([title('Birthday')],
+     [p(['Month: ', Month, ' Day: ', Day, ' Year: ', Year])]).
+```
+
+If a parameter is missing or does not fit into the type checks done, http_paramters throws a _400 Bad Request_ error. Instead of showing that, I've opted for [catch(:Goal, +Catcher, :Recover)](http://www.swi-prolog.org/pldoc/doc_for?object=catch/3) to return to the original form without any error messages or keeping the original data at this stage. More complicated scenarios as I proceed.
+
+## Unit 3
+
+Is being written...
 

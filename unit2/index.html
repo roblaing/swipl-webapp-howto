@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+   <meta charset="utf-8">
+   <title>Unit 2</title>
+   <link rel="stylesheet" href="/styles/basic.css">
+</head>
+<body>
+  <form name="birthday" action="/form" method="GET" onsubmit="return validateForm()">
+    <h2>What is your birthday?</h2>
+    <div>
+      <label for="month">Month:</label>
+      <input type="text" id="month" name="month">
+      <span class="error" id="error_month"></span>
+    </div>
+    <div>
+      <label for="day">Day:</label>
+      <input type="text" id="day" name="day">
+      <span class="error" id="error_day"></span>
+    </div>
+    <div>
+      <label for="year">Year:</label>
+      <input type="text" id="year" name="year">
+      <span class="error" id="error_year"></span>
+    </div>
+    <div class="button">
+      <button type="submit">Send your birthday</button>
+    </div>
+  </form>
+  <script src="/scripts/validate_form.js"></script>
+</body>
+</html>
