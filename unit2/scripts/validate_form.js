@@ -7,13 +7,17 @@
     } else {
       document.getElementById('error_month').textContent = ''
     }
-    if (Number(document.forms.birthday.elements.day.value) < 1 ||  Number(document.forms.birthday.elements.day.value) > 31) {
+    if (isNaN(document.forms.birthday.elements.day.value) ||
+        document.forms.birthday.elements.day.value < 1 ||
+        document.forms.birthday.elements.day.value > 31) {
       valid = false;
       document.getElementById('error_day').textContent = document.forms.birthday.elements.day.value + ' is not a valid day of the month';
     } else {
       document.getElementById('error_day').textContent = '';
     }
-    if (Number(document.forms.birthday.elements.year.value) < 1890 || Number(document.forms.birthday.elements.year.value) > 2030) {
+    if (isNaN(document.forms.birthday.elements.year.value) ||
+        document.forms.birthday.elements.year.value < 1890 || 
+        document.forms.birthday.elements.year.value > 2030) {
       valid = false;
       document.getElementById('error_year').textContent = document.forms.birthday.elements.year.value + ' is not a likely birth year';
     } else {
