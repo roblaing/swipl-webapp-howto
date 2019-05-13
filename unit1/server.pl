@@ -19,8 +19,9 @@ user:file_search_path(folders, library('images/styles/scripts')).
 my_handler_code(User, Request) :-
    member(request_uri(URI), Request),
    reply_html_page(
-     [title([User, "'s Home Page"])],
-	 [h1([User, "'s Home Page"]),
+     [title("~w's Home Page"-[User]),
+      link([rel='stylesheet', href='/styles/basic.css'])],
+	 [h1("~w's Home Page"-[User]),
 	  p('Hello ~w!'-[User]),
       p('uri ~w'-[URI])]).
 
