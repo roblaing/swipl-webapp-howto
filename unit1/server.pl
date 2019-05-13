@@ -24,7 +24,7 @@ my_handler_code(User, Request) :-
       <link rel="stylesheet" href="/styles/basic.css">
     |})],
     [body({|html(User, URI)||
-      <h1><span>User</span>&#39; Home Page</h1>
+      <h1><span>User</span>&#39;s Home Page</h1>
       <ol>
         <li><a href="/">Home</a></li>
         <li><a href="/about">About</a></li>
