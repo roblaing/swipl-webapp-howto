@@ -80,19 +80,43 @@ with SWI Prolog's html generating system [html_write](http://www.swi-prolog.org/
 For this to work, you need a recent version of SWI Prolog (8.1.5 at time of writing). The older version installed by my Linux distribution didn't work, so I had to upgrade by compiling from source code to get this to succeed.
 
 ```prolog
-:- http_handler(root(user/User), my_handler_code(User), []).
+my_handler_code(User, Request) :-
+   member(request_uri(URI), Request),
+   reply_html_page(
+     [html({|html(User)||
+        <meta charset="utf-8">
+        <title>User</title>
+        <link rel="stylesheet" href="/styles/basic.css">
+       |})],
+	 [html({|html(User, URI)||
+        <h1><span>User</span>&#39;s Home Page</h1>
+        <ol>
+         <li><a href="/">Home</a></li>
+         <li><a href="/about">About</a></li>
+         <li><a href="URI">URI</a></li>
+        </ol>
+        <p><img src="/images/swipl.png" alt="SWI Prolog Logo"/></p>
+     |})]).
+```
 
+Pointing your browser to <http://localhost:3030/user/Joe%20Blog> should bring up Joe Blog's Home Page.
+
+### Quick quote on quasiquoting
+
+When I originally wrote the above handler, I hadn't encountered [quasiquoting](http://www.swi-prolog.org/pldoc/man?section=quasiquotations) and wrote it like so:
+
+```prolog
 my_handler_code(User, Request) :-
    member(request_uri(URI), Request),
    reply_html_page(
      [title("~w's Home Page"-[User]),
       link([rel='stylesheet', href='/styles/basic.css'])],
-	 [h1("~w's Home Page"-[User]),
-	  p('Hello ~w!'-[User]),
+     [h1("~w's Home Page"-[User]),
+      p('Hello ~w!'-[User]),
       p('uri ~w'-[URI])]).
 ```
 
-Pointing your browser to <http://localhost:3030/user/Joe%20Blog> should bring up Joe Blog's Home Page.
+I much prefer keeping HTML as HTML instead of converting it into a prologish dialect of HTML.
 
 ## Unit 2
 
@@ -129,7 +153,9 @@ form_handler(Request) :-
     [p(['Month: ', Month, ' Day: ', Day, ' Year: ', Year])]).
 ```
 
-If a parameter is missing or does not fit into the type checks done, http_parameters throws a _400 Bad Request_ error. Instead of showing that, I've opted for [catch(:Goal, +Catcher, :Recover)](http://www.swi-prolog.org/pldoc/doc_for?object=catch/3) to return to the original form without any error messages or keeping the original data at this stage. More complicated scenarios to follow as I proceed.
+If a parameter is missing or does not fit into the type checks done, http_parameters throws a _400 Bad Request_ error. Instead of showing that, I've opted for [catch(:Goal, +Catcher, :Recover)](http://www.swi-prolog.org/pldoc/doc_for?object=catch/3) to return to the original form without any error messages or keeping the original data at this stage. 
+
+I did this before discovering quasiquoting described above, so intend to come back and make it more elaborate in due course.
 
 ## Unit 3
 
@@ -171,4 +197,13 @@ createdb my_database_name
 psql -d my_database_name
 ```
 
-
+```sql
+CREATE TABLE IF NOT EXISTS links (
+    id            SERIAL PRIMARY KEY,
+    submitter_id  INTEGER REFERENCES submitters(id),
+    submitted_time TIMESTAMP, 
+    votes,
+    title, 
+    url
+);
+```

@@ -19,9 +19,17 @@ user:file_search_path(folders, library('images/styles/scripts')).
 my_handler_code(User, Request) :-
    member(request_uri(URI), Request),
    reply_html_page(
-     [title("~w's Home Page"-[User]),
-      link([rel='stylesheet', href='/styles/basic.css'])],
-	 [h1("~w's Home Page"-[User]),
-	  p('Hello ~w!'-[User]),
-      p('uri ~w'-[URI])]).
-
+     [html({|html(User)||
+        <meta charset="utf-8">
+        <title>User</title>
+        <link rel="stylesheet" href="/styles/basic.css">
+       |})],
+	 [html({|html(User, URI)||
+        <h1><span>User</span>&#39;s Home Page</h1>
+        <ol>
+         <li><a href="/">Home</a></li>
+         <li><a href="/about">About</a></li>
+         <li><a href="URI">URI</a></li>
+        </ol>
+        <p><img src="/images/swipl.png" alt="SWI Prolog Logo"/></p>
+     |})]).
