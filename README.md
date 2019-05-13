@@ -1,5 +1,9 @@
 # Writing a blog using SWI Prolog
 
+*By Robert "Joe Blog" Laing*
+
+“When one teaches, two learn.” ― Robert Heinlein
+
 These are notes I'm writing on how to use [SWI Prolog](http://www.swi-prolog.org/) to write web applications as I learn it to develop my strategy game playing website [newsgames.biz](http://www.newsgames.biz/).
 
 My aim here is to gradually re-implement a [web development](https://eu.udacity.com/course/web-development--cs253) course I did a few years ago given by Reddid founder Steve Huffman which Udacity still offers for free.
