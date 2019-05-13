@@ -17,18 +17,18 @@ user:file_search_path(folders, library('images/styles/scripts')).
 :- http_handler(root(user/User), my_handler_code(User), []).
 
 my_handler_code(User, Request) :-
-   member(request_uri(URI), Request),
-   reply_html_page(
-     [head({|html(User)||
-        <title>User</title>
-        <link rel="stylesheet" href="/styles/basic.css">
-       |})],
-	 [body({|html(User, URI)||
-        <h1><span>User</span>&#39; Home Page</h1>
-        <ol>
-         <li><a href="/">Home</a></li>
-         <li><a href="/about">About</a></li>
-         <li><a href="URI">URI</a></li>
-        </ol>
-        <p><img src="/images/swipl.png" alt="SWI Prolog Logo"/></p>
-     |})]).
+  member(request_uri(URI), Request),
+  reply_html_page([head({|html(User)||
+      <meta charset="utf-8">
+      <title>User</title>
+      <link rel="stylesheet" href="/styles/basic.css">
+    |})],
+    [body({|html(User, URI)||
+      <h1><span>User</span>&#39; Home Page</h1>
+      <ol>
+        <li><a href="/">Home</a></li>
+        <li><a href="/about">About</a></li>
+        <li><a href="URI">URI</a></li>
+      </ol>
+      <p><img src="/images/swipl.png" alt="SWI Prolog Logo"/></p>
+    |})]).
