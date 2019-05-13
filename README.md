@@ -2,8 +2,7 @@
 
 These are notes I'm writing on how to use [SWI Prolog](http://www.swi-prolog.org/) to write web applications as I learn it to develop my strategy game playing website [newsgames.biz](http://www.newsgames.biz/).
 
-My aim here is to gradually re-implement a web development course I did a few years ago given by Reddid founder Steve Huffman via Udacity. 
-(Unfortunately when I looked, Huffman's excellent though now slightly out-dated course appeared to be gone).
+My aim here is to gradually re-implement a [web development](https://eu.udacity.com/course/web-development--cs253) course I did a few years ago given by Reddid founder Steve Huffman which Udacity still offers for free.
 
 Following the original course's basic outline, I plan to split the tutorial into about seven units which build on each other to create a fairly
 fully featured blog which includes user authentication and storing comments in a database.
@@ -86,9 +85,10 @@ For this to work, you need a recent version of SWI Prolog (8.1.5 at time of writ
 my_handler_code(User, Request) :-
    member(request_uri(URI), Request),
    reply_html_page(
-     [title([User, "'s Home Page"])],
-     [h1([User, "'s Home Page"]),
-      p('Hello ~w!'-[User]),
+     [title("~w's Home Page"-[User]),
+      link([rel='stylesheet', href='/styles/basic.css'])],
+	 [h1("~w's Home Page"-[User]),
+	  p('Hello ~w!'-[User]),
       p('uri ~w'-[URI])]).
 ```
 
@@ -151,7 +151,7 @@ Servername          = localhost
 UserName            = my_username
 Password            = my_password
 Port                = 5432
-Protocol            = 9.4
+Protocol            = 10.6
 ReadOnly            = No
 RowVersioning       = No
 ShowSystemTables    = No
@@ -161,8 +161,14 @@ ConnSettings        =
 MaxVarcharSize      = 5000
 Pooling             = Yes
 ```
-The last two entries are things I've learnt through bitter experience. If MaxVarcharSize is left unset, ODBC defaults to 256 characters (the old Twitter rather than a blog site, and pooling needs to be set to yes if your site gets even slightly busy.
+The last two entries are things I've learnt through bitter experience. If MaxVarcharSize is left unset, ODBC defaults to 256 characters (the old Twitter rather than a blog site) and pooling needs to be set to yes if your site gets even slightly busy.
 
+Assuming you're using Postgres and it is all set up nicely, follow the instructions at [Creating a Database](https://www.postgresql.org/docs/current/manage-ag-createdb.html) to install a new database called whatever you want to use as my_database_name (I suggest blog, same as the identifier in the .odbc.ini file). If you already have a database, you can skip this step and use it to store the tables coming up.
 
+On most Linux systems, all that would be required are these two commands at the bash shell to get you into the Postgres shell: 
+```bash
+createdb my_database_name
+psql -d my_database_name
+```
 
 
