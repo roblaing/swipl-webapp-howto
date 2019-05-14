@@ -18,12 +18,15 @@ user:file_search_path(folders, library('images/styles/scripts')).
 
 my_handler_code(User, Request) :-
   member(request_uri(URI), Request),
-  reply_html_page([head({|html(User)||
+  phrase(html({|html(User, URI)||
+    <!DOCTYPE html>
+    <html lang="en">
+    <head>
       <meta charset="utf-8">
       <title>User</title>
       <link rel="stylesheet" href="/styles/basic.css">
-    |})],
-    [body({|html(User, URI)||
+    </head>
+    <body>
       <h1><span>User</span>&#39;s Home Page</h1>
       <ol>
         <li><a href="/">Home</a></li>
@@ -31,4 +34,9 @@ my_handler_code(User, Request) :-
         <li><a href="URI">URI</a></li>
       </ol>
       <p><img src="/images/swipl.png" alt="SWI Prolog Logo"/></p>
-    |})]).
+    </body>
+    </html>
+    |}), TokenizedHtml),
+  format('Content-type: text/html~n~n'),
+  print_html(TokenizedHtml).
+

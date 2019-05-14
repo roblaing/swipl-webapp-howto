@@ -1,10 +1,10 @@
 # Writing a blog using SWI Prolog
 
-*By Robert "Joe Blog" Laing*
+*By Robert “Joe Blog” Laing*
 
 “When one teaches, two learn.” ― Robert Heinlein
 
-These are notes I'm writing on how to use [SWI Prolog](http://www.swi-prolog.org/) to write web applications as I learn it to develop my strategy game playing website [newsgames.biz](http://www.newsgames.biz/).
+These are notes I'm writing on how to use [SWI Prolog](http://www.swi-prolog.org/) to write web applications as I discover it to develop my strategy game playing website [newsgames.biz](http://www.newsgames.biz/).
 
 My aim here is to gradually re-implement a [web development](https://eu.udacity.com/course/web-development--cs253) course I did a few years ago given by Reddid founder Steve Huffman which Udacity still offers for free.
 
@@ -81,19 +81,24 @@ user:file_search_path(folders, library('images/styles/scripts')).
 I've included one _dynamic_ handler in the initial example which reads a directory name as a variable and responds programatically
 with SWI Prolog's html generating system [html_write](http://www.swi-prolog.org/pldoc/man?section=htmlwrite).
 
-For this to work, you need a recent version of SWI Prolog (8.1.5 at time of writing). The older version installed by my Linux distribution didn't work, so I had to upgrade by compiling from source code to get this to succeed.
+To work pass a variable from the handler to the predicate it calls, you need a recent version of SWI Prolog (8.1.5 at time of writing). The older version installed by my Linux distribution didn't work, so I had to upgrade by compiling from source code to get this to succeed.
+
+SWI Prolog offers many ways to generate HTML, and the way I'm doing it in this tutorial is fairly long winded because I'm ideologically opposed to the fashion in web application frameworks of constantly re-inventing HTML and SQL.
 
 ```prolog
 :- http_handler(root(user/User), my_handler_code(User), []).
 
 my_handler_code(User, Request) :-
   member(request_uri(URI), Request),
-  reply_html_page([head({|html(User)||
+  phrase(html({|html(User, URI)||
+    <!DOCTYPE html>
+    <html lang="en">
+    <head>
       <meta charset="utf-8">
       <title>User</title>
       <link rel="stylesheet" href="/styles/basic.css">
-    |})],
-    [body({|html(User, URI)||
+    </head>
+    <body>
       <h1><span>User</span>&#39;s Home Page</h1>
       <ol>
         <li><a href="/">Home</a></li>
@@ -101,14 +106,18 @@ my_handler_code(User, Request) :-
         <li><a href="URI">URI</a></li>
       </ol>
       <p><img src="/images/swipl.png" alt="SWI Prolog Logo"/></p>
-    |})]).
+    </body>
+    </html>
+    |}), TokenizedHtml),
+  format('Content-type: text/html~n~n'),
+  print_html(TokenizedHtml).
 ```
 
 Pointing your browser to <http://localhost:3030/user/Joe%20Blog> should bring up Joe Blog's Home Page.
 
 ### Quick note on quasiquoting
 
-When I originally wrote the above handler, I hadn't encountered [quasiquoting](http://www.swi-prolog.org/pldoc/man?section=quasiquotations) and wrote it like so:
+When I originally wrote the above handler, I hadn't encountered [quasiquoting](http://www.swi-prolog.org/pldoc/man?section=quasiquotations) &mdash; an effort which SWI Prolog supports which addresses exactly my gripe about every other programming language (including SWI Prolog) sprouting HTML and SQL dialects faster than Salmonella on a hot day &mdash; by writing this much simpler and shorter example, which produced an ugly little example page.
 
 ```prolog
 my_handler_code(User, Request) :-
@@ -120,8 +129,26 @@ my_handler_code(User, Request) :-
       p('Hello ~w!'-[User]),
       p('uri ~w'-[URI])]).
 ```
+If you're not an HTML purist, that may be an easier route.
 
-I much prefer keeping HTML as HTML instead of converting it into a prologish dialect of HTML.
+Besides quasiquotes, another way to keep HTML more legible and maintable in repy_html_page is to use ```\['HTML code here...']``` syntax which is handy if you don't need to insert variables. A nice thing about SWI Prolog is it handles multiline strings without needing any linebreak noise, and by using using single quotes, there is no need to escape the double quotes used to surround HTML attributed values. Instead of using index.html to render the home page, it could be done like this:
+
+```prolog
+:- http_handler(root(.), front_handler, []).
+
+front_handler(_Request) :-
+  reply_html_page([\['
+    <title>Home Page</title>
+    <link rel="stylesheet" href="/styles/basic.css">
+    ']],
+    [\['
+    <h1>Home Page</h1>
+    <ol>
+      <li><a href="/about">About</a></li>
+    </ol>
+    <p><img src="/images/swipl.png" alt="SWI Prolog Logo"/></p>
+    ']]).
+```
 
 ## Unit 2
 
@@ -212,3 +239,7 @@ CREATE TABLE IF NOT EXISTS links (
     url
 );
 ```
+
+https://www.asciiart.eu/
+
+
