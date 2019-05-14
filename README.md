@@ -117,7 +117,7 @@ Pointing your browser to <http://localhost:3030/user/Joe%20Blog> should bring up
 
 ### Quick note on quasiquoting
 
-When I originally wrote the above handler, I hadn't encountered [quasiquoting](http://www.swi-prolog.org/pldoc/man?section=quasiquotations) &mdash; an effort which SWI Prolog supports which addresses exactly my gripe about all programming languages used in web application development sprouting HTML and SQL dialects faster than Salmonella on a hot day &mdash; by writing this much simpler and shorter example, which produced an ugly little example page.
+When I originally wrote the above handler, I hadn't encountered [quasiquoting](http://www.swi-prolog.org/pldoc/man?section=quasiquotations) &mdash; an effort which SWI Prolog supports which addresses exactly my gripe about all programming languages used in web application development sprouting HTML and SQL dialects faster than Salmonella on a hot day &mdash; and in my igorance wrote this much simpler and shorter example.
 
 ```prolog
 my_handler_code(User, Request) :-
