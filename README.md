@@ -81,7 +81,7 @@ user:file_search_path(folders, library('images/styles/scripts')).
 I've included one _dynamic_ handler in the initial example which reads a directory name as a variable and responds programatically
 with SWI Prolog's html generating system [html_write](http://www.swi-prolog.org/pldoc/man?section=htmlwrite).
 
-To work pass a variable from the handler to the predicate it calls, you need a recent version of SWI Prolog (8.1.5 at time of writing). The older version installed by my Linux distribution didn't work, so I had to upgrade by compiling from source code to get this to succeed.
+You need a recent version of SWI Prolog (8.1.5 at time of writing) for the "directory as variable" technique to work. The older version installed by my Linux distribution gave an error, so I had to upgrade by compiling from source code to get this to succeed.
 
 SWI Prolog offers many ways to generate HTML, and the way I'm doing it in this tutorial is fairly long winded because I'm ideologically opposed to the fashion in web application frameworks of constantly re-inventing HTML and SQL.
 
