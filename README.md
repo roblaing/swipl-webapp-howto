@@ -238,7 +238,7 @@ CREATE TABLE IF NOT EXISTS arts (
 );
 ```
 
-A snag the original course circumvented by using Google's GQL database had me cursing SWI Prolog until I realised it was actually SQL's fault: you can't use single quotes within SQL text unless it is escaped with another single quote. The test ASCII art I used, obtained from <https://www.asciiart.eu/> was this:
+A snag the original course circumvented by using Google's GQL database had me cursing SWI Prolog until I realised it was actually SQL's fault: you can't use single quotes within SQL text unless they are escaped with another single quote. The test ASCII art I used, obtained from <https://www.asciiart.eu/>, was this:
 
 ```
 Little Linux penguin by Joan G. Stark
@@ -269,5 +269,7 @@ db_insert(Title, Art) :-
 ```
 
 I haven't figured out how to use quasiquoting for the SQL string in [odbc_query(+Connection, +SQL, -RowOrAffected, +Options)](http://www.swi-prolog.org/pldoc/doc_for?object=odbc_query/4) yet, but hope to in due course.
+
+Though I wouldn't bet my life on it, running input text through sql_escape_single_quotes should hopefully secure the site against SQL injection attacks.
 
 
