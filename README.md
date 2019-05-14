@@ -194,7 +194,9 @@ I did this before discovering quasiquoting described above, so intend to come ba
 This unit introduces an SQL database which SWI-Prolog communicates with via the [ODBC Interface](http://www.swi-prolog.org/pldoc/doc_for?object=section(%27packages/odbc.html%27)).
 
 For Postgres (which I use) you need to have the [PostgreSQL ODBC driver](https://odbc.postgresql.org/) installed besides an ~/.odbc.ini file.
-Details are at <http://www.unixodbc.org/odbcinst.html> where it explains how to set this up for alternatives to Postgres. The below example could be one of many stanzas in the .odbc.ini file for various databases, each referenced by SWI Prolog by whatever identifier you put in the heading between square brackets.
+Details are at <http://www.unixodbc.org/odbcinst.html> where it explains how to set this up for alternatives to Postgres. The below example could be one of many stanzas in the .odbc.ini file for various databases, each referenced by SWI Prolog by whatever identifier you put in the heading between square brackets. 
+
+So in this example, SWI Prolog would get the username, password, database name etc from this file if told ```odbc_connect('blog', Connection, []),```...
 
 ```
 [blog]
@@ -270,6 +272,6 @@ db_insert(Title, Art) :-
 
 I haven't figured out how to use quasiquoting for the SQL string in [odbc_query(+Connection, +SQL, -RowOrAffected, +Options)](http://www.swi-prolog.org/pldoc/doc_for?object=odbc_query/4) yet, but hope to in due course.
 
-Though I wouldn't bet my life on it, running input text through sql_escape_single_quotes should hopefully secure the site against SQL injection attacks.
+Though I wouldn't bet my life on it, running input text through sql_escape_single_quotes before inserting it should hopefully secure the site against SQL injection attacks.
 
 
