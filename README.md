@@ -83,7 +83,7 @@ with SWI Prolog's html generating system [html_write](http://www.swi-prolog.org/
 
 You need a recent version of SWI Prolog (8.1.5 at time of writing) for the "directory as variable" technique to work. The older version installed by my Linux distribution gave an error, so I had to upgrade by compiling from source code to get this to succeed.
 
-SWI Prolog offers many ways to generate HTML, and the way I'm doing it in this tutorial is fairly long winded because I'm ideologically opposed to the fashion in web application frameworks of constantly re-inventing HTML and SQL.
+SWI Prolog's [html DCG grammar](http://www.swi-prolog.org/pldoc/doc_for?object=html//1) offers many ways to generate HTML, and the way I'm doing it in this tutorial is fairly long winded &mdash; controlling the entire HTML template myself &mdash; because I'm ideologically opposed to the fashion in web application frameworks of constantly re-inventing HTML and SQL.
 
 ```prolog
 :- http_handler(root(user/User), my_handler_code(User), []).
@@ -131,7 +131,7 @@ my_handler_code(User, Request) :-
 ```
 If you're not an HTML purist, that may be an easier route.
 
-Besides quasiquotes, another way to keep HTML more legible and maintable in repy_html_page is to use ```\['HTML code here...']``` syntax which is handy if you don't need to insert variables. A nice thing about SWI Prolog is it handles multiline strings without needing any linebreak noise, and by using using single quotes, there is no need to escape the double quotes used to surround HTML attributed values. Instead of using index.html to render the home page, it could be done like this:
+Besides quasiquotes, another way to keep HTML more legible and maintable in [reply_html_page(:Head, :Body)](http://www.swi-prolog.org/pldoc/doc_for?object=reply_html_page/2) is to use ```\['HTML code here...']``` syntax which is handy if you don't need to insert variables. A nice thing about SWI Prolog is it handles multiline strings without needing any linebreak noise, and by using single quotes, there is no need to escape the double quotes used to surround HTML attributed values. Instead of using index.html to render the home page, it could be done like this:
 
 ```prolog
 :- http_handler(root(.), front_handler, []).
