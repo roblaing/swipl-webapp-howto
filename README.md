@@ -1,11 +1,5 @@
 # Writing a blog using SWI Prolog
 
-https://classroom.udacity.com/courses/cs253/lessons/48756013/concepts/485384200923
-
-select * from arts order by created desc
-
-39
-
 *By Robert “Joe Blog” Laing*
 
 “When one teaches, two learn.” ― Robert Heinlein
