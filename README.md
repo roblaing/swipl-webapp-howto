@@ -117,7 +117,7 @@ Pointing your browser to <http://localhost:3030/user/Joe%20Blog> should bring up
 
 ### Quick note on quasiquoting
 
-When I originally wrote the above handler, I hadn't encountered [quasiquoting](http://www.swi-prolog.org/pldoc/man?section=quasiquotations) &mdash; an effort which SWI Prolog supports which addresses exactly my gripe about all programming languages used in web application development sprouting HTML and SQL dialects faster than Salmonella on a hot day &mdash; and in my igorance wrote this much simpler and shorter example.
+When I originally wrote the above handler, I hadn't encountered [quasiquoting](http://www.swi-prolog.org/pldoc/man?section=quasiquotations) &mdash; an effort which SWI Prolog supports which addresses exactly my gripe about all programming languages used in web application development sprouting HTML and SQL dialects faster than Salmonella on a hot day &mdash; and in my ignorance wrote this much simpler and shorter example.
 
 ```prolog
 my_handler_code(User, Request) :-
@@ -191,8 +191,6 @@ I did this before discovering quasiquoting described above, so intend to come ba
 
 ## Unit 3
 
-This is work in progress...
-
 This unit introduces an SQL database which SWI-Prolog communicates with via the [ODBC Interface](http://www.swi-prolog.org/pldoc/doc_for?object=section(%27packages/odbc.html%27)).
 
 For Postgres (which I use) you need to have the [PostgreSQL ODBC driver](https://odbc.postgresql.org/) installed besides an ~/.odbc.ini file.
@@ -221,7 +219,7 @@ Pooling             = Yes
 ```
 The last two entries are things I've learnt through bitter experience. If MaxVarcharSize is left unset, ODBC defaults to 256 characters (the old Twitter rather than a blog site) and pooling needs to be set to yes if your site gets even slightly busy.
 
-Assuming you're using Postgres and it is all set up nicely, follow the instructions at [Creating a Database](https://www.postgresql.org/docs/current/manage-ag-createdb.html) to install a new database called whatever you want to use as my_database_name (I suggest blog, same as the identifier in the .odbc.ini file). If you already have a database, you can skip this step and use it to store the tables coming up.
+Assuming you're using Postgres and it is all set up nicely, follow the instructions at [Creating a Database](https://www.postgresql.org/docs/current/manage-ag-createdb.html) to install a new database called whatever you want to use as my_database_name (I suggest blog, same as the identifier in the .odbc.ini file). If you already have a database, you can skip this step and use it to store the arts table coming up.
 
 On most Linux systems, all that would be required are these two commands at the bash shell to get you into the Postgres shell: 
 ```bash
@@ -229,17 +227,47 @@ createdb my_database_name
 psql -d my_database_name
 ```
 
+My way to create a table in Postgresql to follow Huffman's ASCI-chan example in Unit 3 looks like this. You can simply cut and paste it into the psql command line and then exit with ```\q```.
+
 ```sql
-CREATE TABLE IF NOT EXISTS links (
-    id            SERIAL PRIMARY KEY,
-    submitter_id  INTEGER REFERENCES submitters(id),
-    submitted_time TIMESTAMP, 
-    votes,
-    title, 
-    url
+CREATE TABLE IF NOT EXISTS arts (
+    id      SERIAL PRIMARY KEY,
+    title   TEXT NOT NULL,
+    art     TEXT NOT NULL,
+    created TIMESTAMP DEFAULT current_timestamp
 );
 ```
 
-https://www.asciiart.eu/
+A snag the original course circumvented by using Google's GQL database had me cursing SWI Prolog until I realised it was actually SQL's fault: you can't use single quotes within SQL text unless it is escaped with another single quote. The test ASCII art I used, obtained from <https://www.asciiart.eu/> was this:
+
+```
+Little Linux penguin by Joan G. Stark
+
+       .---.
+      /     \
+      \.@-@./
+      /`\_/`\
+     //  _  \\
+    | \     )|_
+   /`\_`>  <_/ \
+jgs\__/'---'\__/
+```
+
+This little Linux penguin caused server.pl to keep barfing ```odbc: state 42601: error: unterminated quoted string at or near...``` until I eventually figured out I needed a helper predicate to check the input text for single quotes, and if so double them.
+
+```prolog
+sql_escape_single_quotes(StringIn, StringOut) :-
+  split_string(StringIn, "'", "", List),
+  atomics_to_string(List, "''", StringOut).
+
+db_insert(Title, Art) :-
+  sql_escape_single_quotes(Title, ETitle),
+  sql_escape_single_quotes(Art, EArt),  
+  odbc_connect('blog', Connection, []),
+  odbc_query(Connection, "INSERT INTO arts (title, art) VALUES (\'~w\', \'~w\')"-[ETitle, EArt]),
+  odbc_disconnect(Connection).
+```
+
+I haven't figured out how to use quasiquoting for the SQL string in [odbc_query(+Connection, +SQL, -RowOrAffected, +Options)](http://www.swi-prolog.org/pldoc/doc_for?object=odbc_query/4) yet, but hope to in due course.
 
 
