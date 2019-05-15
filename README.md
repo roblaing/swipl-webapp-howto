@@ -270,8 +270,6 @@ db_insert(Title, Art) :-
   odbc_disconnect(Connection).
 ```
 
-I haven't figured out how to use quasiquoting for the SQL string in [odbc_query(+Connection, +SQL, -RowOrAffected, +Options)](http://www.swi-prolog.org/pldoc/doc_for?object=odbc_query/4) yet, but hope to in due course.
-
 Though I wouldn't bet my life on it, running input text through sql_escape_single_quotes before inserting it into the database should hopefully secure the site against SQL injection attacks.
 
 The prolog predicate to fetch all the ASCII art in the database, ordered by newness, looks like this:
