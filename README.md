@@ -122,6 +122,8 @@ my_handler_code(User, Request) :-
   print_html(TokenizedHtml).
 ```
 
+The list of things like request_uri(URI) can be found at [Request format](http://www.swi-prolog.org/pldoc/man?section=request).
+
 In my ignorance before converting to quasiquoting, I wrote it in this much simpler and shorter way.
 
 ```prolog
@@ -138,7 +140,7 @@ If you're not an HTML purist, that may be an easier route.
 
 Besides quasiquotes, another way to keep HTML more legible and maintable in [reply_html_page(:Head, :Body)](http://www.swi-prolog.org/pldoc/doc_for?object=reply_html_page/2) is to use ```\['HTML code here...']``` syntax which I've used in Module 3 to render a list of ASCII art from a database. 
 
-A nice thing about SWI Prolog is it handles multiline strings without needing any linebreak noise, and by using single quotes, there is no need to escape the double quotes used to surround HTML attributed values. Instead of using index.html to render the home page, it could be done like this:
+A nice thing about SWI Prolog is it handles multiline strings without needing any linebreak noise, and by using single quotes, there is no need to escape the double quotes used to surround HTML attribute values. Instead of using index.html to render the home page, it could be done like this:
 
 ```prolog
 :- http_handler(root(.), front_handler, []).
@@ -312,5 +314,13 @@ For the form, I reverted to Prolog's ```if -> then ; else``` syntax after gettin
 
 ## Unit 4
 
-... is coming soon.
+http://www.swi-prolog.org/pldoc/man?section=httpsession
+
+http://www.swi-prolog.org/pldoc/man?section=httpauthenticate
+
+authentication 
+
+cookies
+
+
 
