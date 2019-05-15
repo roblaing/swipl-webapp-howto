@@ -78,13 +78,14 @@ http:location(files, root(files), []).
 user:file_search_path(folders, library('images/styles/scripts')).
 :- http_handler(files(.), http_reply_from_files(folders, []), [prefix]).
 ```
-
-### Generating HTML programmatically
-
 I've included one _dynamic_ handler in the initial example which reads a directory name as a variable and responds programatically
 with SWI Prolog's html generating system [html_write](http://www.swi-prolog.org/pldoc/man?section=htmlwrite).
 
 You need a recent version of SWI Prolog (8.1.5 at time of writing) for the "directory as variable" technique to work. The older version installed by my Linux distribution gave an error, so I had to upgrade by compiling from source code to get this to succeed.
+
+If everything is working, pointing your browser to <http://localhost:3030/user/Joe%20Blog> should bring up Joe Blog's Home Page.
+
+### Generating HTML programmatically
 
 SWI Prolog's [html DCG grammar](http://www.swi-prolog.org/pldoc/doc_for?object=html//1) offers many ways to generate HTML, and the way I'm doing it in this tutorial is fairly long winded &mdash; controlling the entire HTML template myself &mdash; because I'm ideologically opposed to the fashion in web application frameworks of hiding the underlying HTML and SQL from users, thereby creating monolithic, unportable, and unmaintainable content management systems.
 
@@ -115,10 +116,6 @@ my_handler_code(User, Request) :-
   format('Content-type: text/html~n~n'),
   print_html(TokenizedHtml).
 ```
-
-Pointing your browser to <http://localhost:3030/user/Joe%20Blog> should bring up Joe Blog's Home Page.
-
-#### Quick note on quasiquoting
 
 When I originally wrote the above handler, I hadn't encountered [quasiquoting](http://www.swi-prolog.org/pldoc/man?section=quasiquotations) &mdash; an effort which SWI Prolog supports which addresses exactly my gripe about all programming languages used in web application development sprouting HTML and SQL dialects faster than Salmonella on a hot day &mdash; and in my ignorance wrote this much simpler and shorter example.
 
