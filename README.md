@@ -93,6 +93,9 @@ If everything is working, pointing your browser to <http://localhost:3030/user/J
 
 SWI Prolog's [html DCG grammar](http://www.swi-prolog.org/pldoc/doc_for?object=html//1) offers many ways to generate HTML, and the way I'm doing it in this tutorial is fairly long winded &mdash; controlling the entire HTML template myself &mdash; because I'm ideologically opposed to the fashion in web application frameworks of hiding the underlying HTML and SQL from users, thereby creating monolithic, unportable, and unmaintainable content management systems.
 
+I only encountered [quasiquoting](http://www.swi-prolog.org/pldoc/man?section=quasiquotations) while researching this tutorial, and rewrote my handler
+to use it.
+
 ```prolog
 my_handler_code(User, Request) :-
   member(request_uri(URI), Request),
@@ -119,7 +122,7 @@ my_handler_code(User, Request) :-
   print_html(TokenizedHtml).
 ```
 
-When I originally wrote the above handler, I hadn't encountered [quasiquoting](http://www.swi-prolog.org/pldoc/man?section=quasiquotations) &mdash; an effort which SWI Prolog supports which addresses exactly my gripe about all programming languages used in web application development sprouting HTML and SQL dialects faster than Salmonella on a hot day &mdash; and in my ignorance wrote this much simpler and shorter example.
+In my ignorance before discovering quasiquoting, I wrote it in this much simpler and shorter way.
 
 ```prolog
 my_handler_code(User, Request) :-
