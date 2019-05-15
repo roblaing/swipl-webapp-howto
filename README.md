@@ -78,6 +78,9 @@ http:location(files, root(files), []).
 user:file_search_path(folders, library('images/styles/scripts')).
 :- http_handler(files(.), http_reply_from_files(folders, []), [prefix]).
 ```
+
+### Generating HTML programmatically
+
 I've included one _dynamic_ handler in the initial example which reads a directory name as a variable and responds programatically
 with SWI Prolog's html generating system [html_write](http://www.swi-prolog.org/pldoc/man?section=htmlwrite).
 
@@ -115,7 +118,7 @@ my_handler_code(User, Request) :-
 
 Pointing your browser to <http://localhost:3030/user/Joe%20Blog> should bring up Joe Blog's Home Page.
 
-### Quick note on quasiquoting
+#### Quick note on quasiquoting
 
 When I originally wrote the above handler, I hadn't encountered [quasiquoting](http://www.swi-prolog.org/pldoc/man?section=quasiquotations) &mdash; an effort which SWI Prolog supports which addresses exactly my gripe about all programming languages used in web application development sprouting HTML and SQL dialects faster than Salmonella on a hot day &mdash; and in my ignorance wrote this much simpler and shorter example.
 
@@ -131,7 +134,9 @@ my_handler_code(User, Request) :-
 ```
 If you're not an HTML purist, that may be an easier route.
 
-Besides quasiquotes, another way to keep HTML more legible and maintable in [reply_html_page(:Head, :Body)](http://www.swi-prolog.org/pldoc/doc_for?object=reply_html_page/2) is to use ```\['HTML code here...']``` syntax which is handy if you don't need to insert variables. A nice thing about SWI Prolog is it handles multiline strings without needing any linebreak noise, and by using single quotes, there is no need to escape the double quotes used to surround HTML attributed values. Instead of using index.html to render the home page, it could be done like this:
+Besides quasiquotes, another way to keep HTML more legible and maintable in [reply_html_page(:Head, :Body)](http://www.swi-prolog.org/pldoc/doc_for?object=reply_html_page/2) is to use ```\['HTML code here...']``` syntax which I've used in Module 3 to render a list of ASCII art from a database. 
+
+A nice thing about SWI Prolog is it handles multiline strings without needing any linebreak noise, and by using single quotes, there is no need to escape the double quotes used to surround HTML attributed values. Instead of using index.html to render the home page, it could be done like this:
 
 ```prolog
 :- http_handler(root(.), front_handler, []).
