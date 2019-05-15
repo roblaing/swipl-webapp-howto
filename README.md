@@ -289,7 +289,20 @@ db_select(ArtList) :-
   odbc_disconnect(Connection).
 ```
 
-The gory details of how I converted the list supplied by db_select into HTML are in Unit 3's server.pl file.
+A lot of web application development boils down handling lists, which is again one of Prolog's strong suits &mdash; though not easily used because it's very different to conventional programming languages. I've written a tutorial at <https://swish.swi-prolog.org/p/yeQhnQSk.swinb> to get my own head around the basics of iterating through lists in Prolog, touching on its Definite Clause Grammar (DCG) notation used by SWI Prolog's html_write library. I'm far from a master at this stuff, but do know enough to get an idea of how powerful it can be.
+
+To generate HTML from the row(Title, Art) list returned from db_select I've written a helper predicate, art_html, used as the first argument in [maplist(:Goal, ?List1, ?List2)](http://www.swi-prolog.org/pldoc/doc_for?object=maplist/3).
+
+```prolog
+art_html(row(Title, Art), HtmlString) :-
+  atomics_to_string(['<div class="post">\n<div class="post-title">\n', 
+    Title, '\n</div>\n<pre class="post-content">\n', Art, '\n</pre>\n</div>\n'], '', HtmlString).
+
+arts_html(Html) :-
+  db_select(ArtList),
+  maplist(art_html, ArtList, HtmlList),
+  atomics_to_string(HtmlList, '', Html).
+```
 
 The input form is a bit more convoluted than in Unit 2 since I'm using the home page to handle both get and post requests. This required me to set handlers to specific paths because the abstract folders path broke for some reason when I used the home page for both get and post. 
 
