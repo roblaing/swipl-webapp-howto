@@ -43,15 +43,12 @@ render_page(Title, Art, Error) :-
   arts_html(ArtsHtml),
   reply_html_page([\['
     <title>Unit 3</title>
-    <link rel="stylesheet" href="/styles/basic.css">
-    ']],
-    [\['
+    <link rel="stylesheet" href="/styles/basic.css">']], [\['
     <form method="POST">
       <label for="title">Title</label>
       <input type="text" name="title" value="'], Title, \['">
       <label for="art">Art</label>
-      <textarea name="art">
-    '], Art, \['  </textarea>
+      <textarea name="art">'], Art, \['</textarea>
       <div class="error">'], 
         Error, \['
       </div>
