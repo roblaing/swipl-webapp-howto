@@ -45,22 +45,20 @@ render_page(Title, Art, Error) :-
     <title>Unit 3</title>
     <link rel="stylesheet" href="/styles/basic.css">
     ']],
-    [\['<form method="POST">
-        <label for="title">Title</label>
-        <input type="text" name="title" value="'], 
-     Title, 
-     \['">
-        <label for="art">Art</label>
-        <textarea name="art">'], 
-     Art, 
-     \['</textarea>
-        <div class="error">'], 
-     Error, 
-     \['</div>
-        <button type="submit">Send your art</button>
-        </form>
-        <hr>'],
-     \[ArtsHtml]]).
+    [\['
+    <form method="POST">
+      <label for="title">Title</label>
+      <input type="text" name="title" value="'], Title, \['">
+      <label for="art">Art</label>
+      <textarea name="art">
+    '], Art, \['  </textarea>
+      <div class="error">'], 
+        Error, \['
+      </div>
+      <button type="submit">Send your art</button>
+    </form>
+    <hr>'],
+    \[ArtsHtml]]).
   
 art_html(row(Title, Art), HtmlString) :-
   atomics_to_string(['<div class="post">\n<div class="post-title">\n', 
