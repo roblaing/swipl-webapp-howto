@@ -2,11 +2,11 @@
 
 *By Robert “Joe Blog” Laing*
 
-“When one teaches, two learn.” ― Robert Heinlein
+> “When one teaches, two learn.” ― Robert Heinlein
 
-“If you want to master something, teach it.” ― Richard Feynman
+> “If you want to master something, teach it.” ― Richard Feynman
 
-“You think you know when you learn, are more sure when you can write, even more when you can teach, but certain when you can program.” ― Alan Perlis
+> “You think you know when you learn, are more sure when you can write, even more when you can teach, but certain when you can program.” ― Alan Perlis
 
 These are notes I'm writing on how to use [SWI Prolog](http://www.swi-prolog.org/) to write web applications as I discover it to develop my strategy game playing website [newsgames.biz](http://www.newsgames.biz/).
 
