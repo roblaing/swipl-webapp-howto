@@ -4,6 +4,10 @@
 
 “When one teaches, two learn.” ― Robert Heinlein
 
+“If you want to master something, teach it.” ― Richard Feynman
+
+“You think you know when you learn, are more sure when you can write, even more when you can teach, but certain when you can program.” ― Alan Perlis
+
 These are notes I'm writing on how to use [SWI Prolog](http://www.swi-prolog.org/) to write web applications as I discover it to develop my strategy game playing website [newsgames.biz](http://www.newsgames.biz/).
 
 My aim here is to gradually re-implement a [web development](https://eu.udacity.com/course/web-development--cs253) course I did a few years ago given by Reddid founder Steve Huffman which Udacity still offers for free.
@@ -314,13 +318,9 @@ For the form, I reverted to Prolog's ```if -> then ; else``` syntax after gettin
 
 ## Unit 4
 
-http://www.swi-prolog.org/pldoc/man?section=httpsession
+[http://www.swi-prolog.org/pldoc/man?section=httpsession](http://www.swi-prolog.org/pldoc/man?section=httpsession)
 
-http://www.swi-prolog.org/pldoc/man?section=httpauthenticate
-
-authentication 
-
-cookies
+If the session is reclaimed, all associated data is reclaimed too. 
 
 
 
