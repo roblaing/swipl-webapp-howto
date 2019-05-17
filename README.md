@@ -318,7 +318,9 @@ For the form, I reverted to Prolog's ```if -> then ; else``` syntax after gettin
 
 ## Unit 4
 
-This section deals with using cookies to authenticate users. SWI Prolog has a library for [HTTP session management](http://www.swi-prolog.org/pldoc/man?section=httpsession) which I've used to create a simple example using a cookie to track how often a person has visited the page, but note this resets itself to zero every time you close the page, or leave it unattended for a few minutes.
+This section deals with using cookies to authenticate users. Before going into this dangerous minefield, a quick digression into session basics.
+
+SWI Prolog has a library for [HTTP session management](http://www.swi-prolog.org/pldoc/man?section=httpsession) which I've used to create a simple example using a cookie to track how often a person has visited the page, but note this resets itself to zero every time you close the page, or leave it unattended for a few minutes.
 
 ```prolog
 :- use_module(library(http/thread_httpd)).
@@ -349,7 +351,7 @@ Note that the syntax used by http_session is one Prolog programmers will be fami
 
 This is all I'm going to say about SWI Prolog's http_session library, because I'm going to use client-side Javascript to create a hash from the user's login and password information to store as a cookie in the browser which is all the server can see &mdash; not transmitting logins and passwords in HTTP messages is a very elementary requirement of online security that we keep discovering many big corporations don't follow.
 
-Though anyone who legitimately or illegitimately reads the hash used by the server as an ID can't see your login and password, they could still set that hash as a cookie on their browser to masquerade as you. To avoid that, web applications should add some secret "salt" to the hash read from the browser cookie before storing it in a database.
+Though anyone who legitimately or illegitimately reads the hash used by the server as an ID can't see your login and password, they could still set that hash as a cookie on their browser to masquerade as you. To avoid that, web applications should add some secret "salt" to the hash read from the browser cookie before using it as a search key in a database.
 
 A way to do this in SWI Prolog is with the [SHA* Secure Hash Algorithms](http://www.swi-prolog.org/pldoc/man?section=sha) library.
 
@@ -358,12 +360,9 @@ A way to do this in SWI Prolog is with the [SHA* Secure Hash Algorithms](http://
 
 create_hash(String, HexDigest) :-
   Salt = "Something very secret",
-  string_concat(Salt, String, SaltedString),
-  sha_hash(SaltedString, Hash, [algorithm(sha256)]),
-  hash_atom(Hash, HexDigest).
+  hmac_sha(Salt, String, HMAC, [algorithm(sha256)]),
+  hash_atom(HMAC, HexDigest).
 ```
-
-This would translate "Robert" into "ca6808a594ed45c6bf8eff180ee2927f479284a36c4a2f7f155b6a189e90ec24".
 
 https://developer.mozilla.org/en-US/docs/Web/API/Document/cookie
 
