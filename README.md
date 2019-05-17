@@ -351,7 +351,11 @@ In the above little server.pl I also write out the somewhat mysterious Request l
 
 Note that the syntax used by http_session is one Prolog programmers will be familiar with to retract and assert terms in a clausal store. As can be seen by printing out the Request list, visits(Visits) is hidden with some encryption magic in a cookie called swipl_session.
 
-This is all I'm going to say about SWI Prolog's http_session library, because I'm going to use client-side Javascript to create a hash from the user's login and password to store as a cookie in the browser which is all the server can see. For a blog, users typically only want to sign up for an account once and then remain logged in, so the way I've done it a password is never sent to the server which can only read the hash created from both the login and password as a cookie. If the user logs in on a different computer, the same login, password and hash function will create the same cookie &mdash; so there's really no excuse for servers to store passwords at all, let alone in plain text.
+This is all I'm going to say about SWI Prolog's http_session library, because I'm going to use client-side Javascript to create a hash from the user's login and password to store as a cookie in the browser which is all the server can see. 
+
+The way I've done it, a password is never sent to the server which can only read the hash created from both the login and password as a cookie on the browser. If a user logs in on a different computer, the same login, password, and hash function create the same cookie &mdash; so there's no reason for servers to see or store passwords at all, let alone in plain text, an elementary part of online security a shocking number of big corporations fail to grasp.
+
+For a blog, users typically don't want to enter their login and password every time, so the cookie can be made persistant.
 
 As usual, I turned to Mozilla for help on Javascript's [Subtle​Crypto​.digest()](https://developer.mozilla.org/en-US/docs/Web/API/SubtleCrypto/digest), and [Document​.cookie](https://developer.mozilla.org/en-US/docs/Web/API/Document/cookie) to write my [script](https://github.com/roblaing/swipl-webapp-howto/blob/master/unit4/scripts/signup-form.js). 
 
