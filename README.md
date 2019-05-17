@@ -351,9 +351,9 @@ In the above little server.pl I also write out the somewhat mysterious Request l
 
 Note that the syntax used by http_session is one Prolog programmers will be familiar with to retract and assert terms in a clausal store. As can be seen by printing out the Request list, visits(Visits) is hidden with some encryption magic in a cookie called swipl_session.
 
-This is all I'm going to say about SWI Prolog's http_session library, because I'm going to use client-side Javascript to create a hash from the user's login and password to store as a cookie in the browser which is all the server needs to know. 
+This is all I'm going to say about SWI Prolog's http_session library, because I'm going to use client-side Javascript to write a cookie storing a hash of the user's login and password which tells the server all it needs to know. 
 
-The way I've done it, a password is never sent to the server which can only read the hash created from both the login and password as a cookie on the browser. If a user logs in on a different computer or the cookie has expired, the same login, password, and hash function will recreate the same cookie &mdash; so there's no reason for servers to ever see or store passwords at all, let alone in plain text, an elementary part of online security which a shocking number of big corporations fail to grasp.
+The way I've done it, a password is never sent to the server. If a user logs in on a different computer or the cookie has expired, the same login, password, and hash function will recreate the same cookie &mdash; so there's no reason for servers to ever see or store passwords at all, let alone in plain text, an elementary part of online security which a shocking number of big corporations fail to grasp.
 
 For a blog, users typically don't want to enter their login and password every time, so the cookie can be made persistant.
 
