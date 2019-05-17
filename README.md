@@ -372,7 +372,7 @@ create_hash(String, HexDigest) :-
   hash_atom(HMAC, HexDigest).
 ```
 
-https://developer.mozilla.org/en-US/docs/Web/API/Document/cookie
+To be continued...
 
 
 
