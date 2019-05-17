@@ -318,7 +318,9 @@ For the form, I reverted to Prolog's ```if -> then ; else``` syntax after gettin
 
 ## Unit 4
 
-This section deals with using cookies to authenticate users. Before going into this dangerous minefield, a quick digression into session basics.
+Work in progress...
+
+This section deals with using cookies to authenticate users. Before stepping into this dangerous minefield, a quick digression into session basics.
 
 SWI Prolog has a library for [HTTP session management](http://www.swi-prolog.org/pldoc/man?section=httpsession) which I've used to create a simple example using a cookie to track how often a person has visited the page, but note this resets itself to zero every time you close the page, or leave it unattended for a few minutes.
 
@@ -349,9 +351,11 @@ In the above little server.pl I also write out the somewhat mysterious Request l
 
 Note that the syntax used by http_session is one Prolog programmers will be familiar with to retract and assert terms in a clausal store. As can be seen by printing out the Request list, visits(Visits) is hidden with some encryption magic in a cookie called swipl_session.
 
-This is all I'm going to say about SWI Prolog's http_session library, because I'm going to use client-side Javascript to create a hash from the user's login and password information to store as a cookie in the browser which is all the server can see &mdash; not transmitting logins and passwords in HTTP messages is a very elementary requirement of online security that we keep discovering many big corporations don't follow.
+This is all I'm going to say about SWI Prolog's http_session library, because I'm going to use client-side Javascript to create a hash from the user's login and password to store as a cookie in the browser which is all the server can see. For a blog, users typically only want to sign up for an account once and then remain logged in, so the way I've done it a password is never sent to the server which can only read the hash created from both the login and password as a cookie. If the user logs in on a different computer, the same login, password and hash function will create the same cookie &mdash; so there's really no excuse for servers to store passwords at all, let alone in plain text.
 
-Though anyone who legitimately or illegitimately reads the hash used by the server as an ID can't see your login and password, they could still set that hash as a cookie on their browser to masquerade as you. To avoid that, web applications should add some secret "salt" to the hash read from the browser cookie before using it as a search key in a database.
+As usual, I turned to Mozilla for help on Javascript's [Subtle​Crypto​.digest()](https://developer.mozilla.org/en-US/docs/Web/API/SubtleCrypto/digest), and [Document​.cookie](https://developer.mozilla.org/en-US/docs/Web/API/Document/cookie) to write my script. 
+
+Though anyone who legitimately or illegitimately reads the hash used by the server as an ID can't see your login and password, they could still set that hash as a cookie on their browser to masquerade as you. To avoid that, web applications should add some secret "salt" and rehash the hash read from the browser cookie before using it as a search key in a database.
 
 A way to do this in SWI Prolog is with the [SHA* Secure Hash Algorithms](http://www.swi-prolog.org/pldoc/man?section=sha) library.
 
@@ -359,13 +363,12 @@ A way to do this in SWI Prolog is with the [SHA* Secure Hash Algorithms](http://
 :- use_module(library(sha)).
 
 create_hash(String, HexDigest) :-
-  Salt = "Something very secret",
+  Salt = "Some very long randomly generated string",
   hmac_sha(Salt, String, HMAC, [algorithm(sha256)]),
   hash_atom(HMAC, HexDigest).
 ```
 
 https://developer.mozilla.org/en-US/docs/Web/API/Document/cookie
 
-https://developer.mozilla.org/en-US/docs/Web/API/SubtleCrypto/digest
 
 

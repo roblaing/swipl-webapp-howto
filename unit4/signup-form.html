@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <title>Unit 4 Signup</title>
+    <link rel="stylesheet" href="/styles/basic.css">
+  </head>
+
+  <body>
+    <h2>Signup</h2>
+    <form name="signup" method="POST" action="/" onsubmit="return validateForm()">
+      <label>Username: 
+        <input type="text" name="username">
+      </label>
+      <span class="error" id="error_username"></span><br>
+      <label>Password: 
+        <input type="password" name="password">
+      </label>
+      <span class="error" id="error_password"></span><br>
+      <label>Verify Password: 
+        <input type="password" name="verify">
+      </label>
+      <span class="error" id ="error_verify"></span><br>
+      <label>Email (optional): 
+        <input type="text" name="email">
+      </label>
+      <span class="error" id="error_email"></span><br>
+      <button>Subscribe!</button>
+    </form>
+  <script src="/scripts/signup-form.js"></script>
+  </body>
+
+</html>
