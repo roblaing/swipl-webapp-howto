@@ -353,7 +353,7 @@ Note that the syntax used by http_session is one Prolog programmers will be fami
 
 This is all I'm going to say about SWI Prolog's http_session library, because I'm going to use client-side Javascript to create a hash from the user's login and password to store as a cookie in the browser which is all the server can see. For a blog, users typically only want to sign up for an account once and then remain logged in, so the way I've done it a password is never sent to the server which can only read the hash created from both the login and password as a cookie. If the user logs in on a different computer, the same login, password and hash function will create the same cookie &mdash; so there's really no excuse for servers to store passwords at all, let alone in plain text.
 
-As usual, I turned to Mozilla for help on Javascript's [Subtle​Crypto​.digest()](https://developer.mozilla.org/en-US/docs/Web/API/SubtleCrypto/digest), and [Document​.cookie](https://developer.mozilla.org/en-US/docs/Web/API/Document/cookie) to write my script. 
+As usual, I turned to Mozilla for help on Javascript's [Subtle​Crypto​.digest()](https://developer.mozilla.org/en-US/docs/Web/API/SubtleCrypto/digest), and [Document​.cookie](https://developer.mozilla.org/en-US/docs/Web/API/Document/cookie) to write my [script](https://github.com/roblaing/swipl-webapp-howto/blob/master/unit4/scripts/signup-form.js). 
 
 Though anyone who legitimately or illegitimately reads the hash used by the server as an ID can't see your login and password, they could still set that hash as a cookie on their browser to masquerade as you. To avoid that, web applications should add some secret "salt" and rehash the hash read from the browser cookie before using it as a search key in a database.
 
