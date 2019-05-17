@@ -318,9 +318,40 @@ For the form, I reverted to Prolog's ```if -> then ; else``` syntax after gettin
 
 ## Unit 4
 
-[http://www.swi-prolog.org/pldoc/man?section=httpsession](http://www.swi-prolog.org/pldoc/man?section=httpsession)
+This section deals with using cookies to authenticate users. SWI Prolog has a library for [HTTP Session management](http://www.swi-prolog.org/pldoc/man?section=httpsession) for which I've created this simple example of creating a counter to tell users how often they've visited a page, but note this resets itself to zero every time you close the page, or leave it unattended for a few minutes.
 
-If the session is reclaimed, all associated data is reclaimed too. 
+```prolog
+:- use_module(library(http/thread_httpd)).
+:- use_module(library(http/http_dispatch)).
+:- use_module(library(http/http_error)).
+:- use_module(library(http/html_write)).
+:- use_module(library(http/http_unix_daemon)).
+:- use_module(library(http/http_session)).
 
+:- initialization http_daemon.
+
+:- http_handler(root(.), front_handler, []).
+
+front_handler(Request) :-
+  term_string(Request, String),
+  (http_session_data(visits(Visits0)) -> Visits is Visits0 + 1, 
+                                         http_session_retractall(visits(_)), 
+                                         http_session_assert(visits(Visits))
+                                       ; Visits = 0, 
+                                         http_session_assert(visits(Visits))),
+  reply_html_page([title('Simple Session Example')],
+    [pre("You've been here ~w times."-[Visits]),
+     p(String)]).
+```
+
+In the above little server.pl I also write out the somewhat mysterious Request list to show how SWI Prolog makes the HTTP message data sent by the browser available to the web application.
+
+Note that the syntax used by http_session is one Prolog programmers will be familiar with to retract and assert terms in a clausal store. As can be seen by printing out the Request list, visits(N) is hidden with some encryption magic in a cookie called swipl_session. (I also found a mysterious cookie called mjx.menu in the list, which I assume is because I haven't switched off third party ad trackers on my browser. Even the little demo pages I run on localhost get spied on!).
+
+This is all I'm going to say about SWI Prolog's http_session library, because I'm going to use client-side Javascript to create a hash from the login and password information to store as a cookie for the server to read &mdash; not transmitting logins and passwords in HTTP messages is a very elementary requirement of online security that we keep discovering various corporations don't know.
+
+https://developer.mozilla.org/en-US/docs/Web/API/Document/cookie
+
+https://developer.mozilla.org/en-US/docs/Web/API/SubtleCrypto/digest
 
 
