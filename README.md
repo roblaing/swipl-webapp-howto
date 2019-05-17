@@ -318,7 +318,7 @@ For the form, I reverted to Prolog's ```if -> then ; else``` syntax after gettin
 
 ## Unit 4
 
-This section deals with using cookies to authenticate users. SWI Prolog has a library for [HTTP Session management](http://www.swi-prolog.org/pldoc/man?section=httpsession) for which I've created this simple example of creating a counter to tell users how often they've visited a page, but note this resets itself to zero every time you close the page, or leave it unattended for a few minutes.
+This section deals with using cookies to authenticate users. SWI Prolog has a library for [HTTP Session management](http://www.swi-prolog.org/pldoc/man?section=httpsession) which I've used to create a simple example using a cookie to track how often a person has visited the page, but note this resets itself to zero every time you close the page, or leave it unattended for a few minutes.
 
 ```prolog
 :- use_module(library(http/thread_httpd)).
@@ -335,10 +335,9 @@ This section deals with using cookies to authenticate users. SWI Prolog has a li
 front_handler(Request) :-
   term_string(Request, String),
   (http_session_data(visits(Visits0)) -> Visits is Visits0 + 1, 
-                                         http_session_retractall(visits(_)), 
-                                         http_session_assert(visits(Visits))
-                                       ; Visits = 0, 
-                                         http_session_assert(visits(Visits))),
+                                         http_session_retractall(visits(_)) 
+                                       ; Visits = 0),
+  http_session_assert(visits(Visits)),
   reply_html_page([title('Simple Session Example')],
     [pre("You've been here ~w times."-[Visits]),
      p(String)]).
