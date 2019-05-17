@@ -318,7 +318,7 @@ For the form, I reverted to Prolog's ```if -> then ; else``` syntax after gettin
 
 ## Unit 4
 
-This section deals with using cookies to authenticate users. SWI Prolog has a library for [HTTP Session management](http://www.swi-prolog.org/pldoc/man?section=httpsession) which I've used to create a simple example using a cookie to track how often a person has visited the page, but note this resets itself to zero every time you close the page, or leave it unattended for a few minutes.
+This section deals with using cookies to authenticate users. SWI Prolog has a library for [HTTP session management](http://www.swi-prolog.org/pldoc/man?section=httpsession) which I've used to create a simple example using a cookie to track how often a person has visited the page, but note this resets itself to zero every time you close the page, or leave it unattended for a few minutes.
 
 ```prolog
 :- use_module(library(http/thread_httpd)).
@@ -345,9 +345,9 @@ front_handler(Request) :-
 
 In the above little server.pl I also write out the somewhat mysterious Request list to show how SWI Prolog makes the HTTP message data sent by the browser available to the web application.
 
-Note that the syntax used by http_session is one Prolog programmers will be familiar with to retract and assert terms in a clausal store. As can be seen by printing out the Request list, visits(N) is hidden with some encryption magic in a cookie called swipl_session. (I also found a mysterious cookie called mjx.menu in the list, which I assume is because I haven't switched off third party ad trackers on my browser. Even the little demo pages I run on localhost get spied on!).
+Note that the syntax used by http_session is one Prolog programmers will be familiar with to retract and assert terms in a clausal store. As can be seen by printing out the Request list, visits(Visits) is hidden with some encryption magic in a cookie called swipl_session.
 
-This is all I'm going to say about SWI Prolog's http_session library, because I'm going to use client-side Javascript to create a hash from the login and password information to store as a cookie for the server to read &mdash; not transmitting logins and passwords in HTTP messages is a very elementary requirement of online security that we keep discovering various corporations don't know.
+This is all I'm going to say about SWI Prolog's http_session library, because I'm going to use client-side Javascript to create a hash from the login and password information to store as a cookie in the browser which is all the server can see &mdash; not transmitting logins and passwords in HTTP messages is a very elementary requirement of online security that we keep discovering many big corporations don't know.
 
 https://developer.mozilla.org/en-US/docs/Web/API/Document/cookie
 
