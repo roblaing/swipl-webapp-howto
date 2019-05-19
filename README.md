@@ -2,10 +2,6 @@
 
 *By Robert “Joe Blog” Laing*
 
-> “When one teaches, two learn.” ― Robert Heinlein
-
-> “If you want to master something, teach it.” ― Richard Feynman
-
 > “You think you know when you learn, are more sure when you can write, even more when you can teach, but certain when you can program.” ― [Alan Perlis](http://www.cs.yale.edu/homes/perlis-alan/quotes.html)
 
 These are notes I'm writing on how to use [SWI Prolog](http://www.swi-prolog.org/) to write web applications as I discover it to develop my strategy game playing website [newsgames.biz](http://www.newsgames.biz/).
@@ -22,6 +18,8 @@ My main objective is to provide some simple examples for my own reference and ed
 If you prefer, say Windows and MySQL, hopefully it will only take you a bit of googling to adapt these examples.
 
 ## Unit 1
+
+> “When one teaches, two learn.” ― Robert Heinlein
 
 Unit 1 in the original course was devoted to explaining the basics of HTML, which I assume readers are familiar with &mdash; if not I recommend Mozilla's [Getting started with the Web](https://developer.mozilla.org/en-US/docs/Learn/Getting_started_with_the_web) &mdash; so I'll kick-off with basics of a SWI Prolog webserver.
 
@@ -126,9 +124,9 @@ my_handler_code(User, Request) :-
   print_html(TokenizedHtml).
 ```
 
-[Request](http://www.swi-prolog.org/pldoc/man?section=request) is the HTTP message converted into a Prologish list of *functor(Arg(s))* terms which can be queried as above with ```member(request_uri(URI), Request)```. I'll go into more details in Unit 4 when we need read cookies from the HTTP message.
+[Request](http://www.swi-prolog.org/pldoc/man?section=request) is the HTTP message converted into a Prologish list of *functor(Arg)* terms whose data can be extracted with clauses such as ```member(request_uri(URI), Request)```. I'll go into more details in Unit 4 when we need read cookies from the HTTP message.
 
-In my ignorance before converting to quasiquoting, I wrote it in this much simpler and shorter way.
+In my ignorance before converting to quasiquoting, I wrote this handler in a much simpler and shorter way.
 
 ```prolog
 my_handler_code(User, Request) :-
@@ -164,6 +162,8 @@ front_handler(_Request) :-
 ```
 
 ## Unit 2
+
+> “If you want to master something, teach it.” ― Richard Feynman
 
 Here I introduce SWI Prolog's predicate for handling user input sent to the server from an HTML form, [http_parameters(+Request, ?Parameters)](http://www.swi-prolog.org/pldoc/doc_for?object=http_parameters/2). Besides making it easy to toggle between GET and POST, it also offers various ways to validate the incoming data.
 
