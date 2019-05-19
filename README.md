@@ -91,11 +91,11 @@ You need a recent version of SWI Prolog (8.1.5 at time of writing) for the "dire
 
 If everything is working, pointing your browser to <http://localhost:3030/user/Joe%20Blog> should bring up Joe Blog's Home Page.
 
+The final argument passed by the closure to the handler predicate, [Request](http://www.swi-prolog.org/pldoc/man?section=request), is the HTTP message presented as a Prologish list of *key(Value)* terms whose values can be extracted with clauses such as ```member(request_uri(URI), Request)``` below. I'll go into more details in Unit 4 when we need to read cookies from the HTTP message for user authentication.
+
 ### Generating HTML programmatically
 
 SWI Prolog's [html DCG grammar](http://www.swi-prolog.org/pldoc/doc_for?object=html//1) offers many ways to generate HTML, and the way I'm doing it in this tutorial is fairly long winded &mdash; controlling the entire HTML template myself &mdash; because I'm ideologically opposed to the fashion in web application frameworks of hiding the underlying HTML from users, thereby creating monolithic, unportable, and unmaintainable content management systems.
-
-The final argument passed by the closure, [Request](http://www.swi-prolog.org/pldoc/man?section=request), is the HTTP message presented as a Prologish list of *key(Value)* terms whose values can be extracted with clauses such as ```member(request_uri(URI), Request).``` I'll go into more details in Unit 4 when we need read cookies from the HTTP message.
 
 I only discovered [quasiquoting](http://www.swi-prolog.org/pldoc/man?section=quasiquotations) while researching this tutorial, and rewrote my handler
 to use it.
