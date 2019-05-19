@@ -93,7 +93,9 @@ If everything is working, pointing your browser to <http://localhost:3030/user/J
 
 ### Generating HTML programmatically
 
-SWI Prolog's [html DCG grammar](http://www.swi-prolog.org/pldoc/doc_for?object=html//1) offers many ways to generate HTML, and the way I'm doing it in this tutorial is fairly long winded &mdash; controlling the entire HTML template myself &mdash; because I'm ideologically opposed to the fashion in web application frameworks of hiding the underlying HTML and SQL from users, thereby creating monolithic, unportable, and unmaintainable content management systems.
+SWI Prolog's [html DCG grammar](http://www.swi-prolog.org/pldoc/doc_for?object=html//1) offers many ways to generate HTML, and the way I'm doing it in this tutorial is fairly long winded &mdash; controlling the entire HTML template myself &mdash; because I'm ideologically opposed to the fashion in web application frameworks of hiding the underlying HTML from users, thereby creating monolithic, unportable, and unmaintainable content management systems.
+
+The final argument passed by the closure, [Request](http://www.swi-prolog.org/pldoc/man?section=request), is the HTTP message presented as a Prologish list of *key(Value)* terms whose values can be extracted with clauses such as ```member(request_uri(URI), Request).``` I'll go into more details in Unit 4 when we need read cookies from the HTTP message.
 
 I only discovered [quasiquoting](http://www.swi-prolog.org/pldoc/man?section=quasiquotations) while researching this tutorial, and rewrote my handler
 to use it.
@@ -124,8 +126,6 @@ my_handler_code(User, Request) :-
   print_html(TokenizedHtml).
 ```
 
-[Request](http://www.swi-prolog.org/pldoc/man?section=request) is the HTTP message converted into a Prologish list of *functor(Arg)* terms whose data can be extracted with clauses such as ```member(request_uri(URI), Request)```. I'll go into more details in Unit 4 when we need read cookies from the HTTP message.
-
 In my ignorance before converting to quasiquoting, I wrote this handler in a much simpler and shorter way.
 
 ```prolog
@@ -140,9 +140,9 @@ my_handler_code(User, Request) :-
 ```
 If you're not an HTML purist, that may be an easier route.
 
-Besides quasiquotes, another way to keep HTML more legible and maintable in [reply_html_page(:Head, :Body)](http://www.swi-prolog.org/pldoc/doc_for?object=reply_html_page/2) is to use ```\['HTML code here...']``` syntax which I've used in Module 3 to render a list of ASCII art from a database. 
+Besides quasiquotes, another way to keep HTML more legible and maintable in [reply_html_page(:Head, :Body)](http://www.swi-prolog.org/pldoc/doc_for?object=reply_html_page/2) is to use ```\['HTML code here...']``` syntax which I've used in Module 3 to render a list of ASCII art from a database created by iteration (which I couldn't figure out how to insert as a value acceptable in quasiquoting). 
 
-A nice thing about SWI Prolog is it handles multiline strings without needing any linebreak noise, and by using single quotes, there is no need to escape the double quotes used to surround HTML attribute values. Instead of using index.html to render the home page, it could be done like this:
+Using single quotes means no need to escape the double quotes used to surround HTML attribute values, and SWI Prolog allows linebreaks in quotes. So instead of using index.html to render the home page, it could be done like this:
 
 ```prolog
 :- http_handler(root(.), front_handler, []).
@@ -359,7 +359,7 @@ For a blog, users typically don't want to enter their login and password every t
 
 As usual, I turned to Mozilla for help on Javascript's [Subtle​Crypto​.digest()](https://developer.mozilla.org/en-US/docs/Web/API/SubtleCrypto/digest), and [Document​.cookie](https://developer.mozilla.org/en-US/docs/Web/API/Document/cookie) to write my [script](https://github.com/roblaing/swipl-webapp-howto/blob/master/unit4/scripts/signup-form.js). 
 
-Though this hides your login and password from anyone who can legitimately or illegitimately see your ID on the server, if this hash was the same as the cookie they could set it in their browser to masquerade as you. To avoid that, web applications should add some secret "salt" and rehash the hash read from the browser cookie before using it as the user's ID in a database.
+Though this hides your login and password from anyone who can legitimately or illegitimately see your ID on the server, if this hash was the same as the cookie they could still set it in their browser to masquerade as you. To avoid that, web applications should add some secret "salt" and rehash the hash read from the browser cookie before using it as the user's ID in a database.
 
 A way to do this in SWI Prolog is with the [SHA* Secure Hash Algorithms](http://www.swi-prolog.org/pldoc/man?section=sha) library.
 
