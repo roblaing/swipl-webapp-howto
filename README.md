@@ -126,7 +126,7 @@ my_handler_code(User, Request) :-
   print_html(TokenizedHtml).
 ```
 
-The list of things like request_uri(URI) can be found at [Request format](http://www.swi-prolog.org/pldoc/man?section=request).
+[Request](http://www.swi-prolog.org/pldoc/man?section=request) is the HTTP message converted into a Prologish list of *functor(Arg(s))* terms which can be queried as above with ```member(request_uri(URI), Request)```. I'll go into more details in Unit 4 when we need read cookies from the HTTP message.
 
 In my ignorance before converting to quasiquoting, I wrote it in this much simpler and shorter way.
 
@@ -198,7 +198,7 @@ form_handler(Request) :-
     [p(['Month: ', Month, ' Day: ', Day, ' Year: ', Year])]).
 ```
 
-If a parameter is missing or does not fit into the type checks done, http_parameters throws a _400 Bad Request_ error. Instead of showing that, I've opted for [catch(:Goal, +Catcher, :Recover)](http://www.swi-prolog.org/pldoc/doc_for?object=catch/3) to return to the original form without any error messages or keeping the original data at this stage. 
+If a parameter is missing or any of the validation tests fail, http_parameters throws a _400 Bad Request_ error. Instead of showing that, I've opted for [catch(:Goal, +Catcher, :Recover)](http://www.swi-prolog.org/pldoc/doc_for?object=catch/3) to return to the original form without any error messages or keeping the original data at this stage. 
 
 I did this before discovering quasiquoting described above, so intend to come back and make it more elaborate in due course.
 
@@ -322,7 +322,7 @@ Work in progress...
 
 This section deals with using cookies to authenticate users. Before stepping into this dangerous minefield, a quick digression into session basics.
 
-SWI Prolog has a library for [HTTP session management](http://www.swi-prolog.org/pldoc/man?section=httpsession) which I've used to create a simple example using a cookie to track how often a person has visited the page, but note this resets itself to zero every time you close the page, or leave it unattended for a few minutes.
+SWI Prolog has a library for [HTTP session management](http://www.swi-prolog.org/pldoc/man?section=httpsession) which I've used to create a simple example of a counter of how often a person has visited the page, but note this resets itself to zero every time you close the page, or leave it unattended for a few minutes.
 
 ```prolog
 :- use_module(library(http/thread_httpd)).
@@ -359,7 +359,7 @@ For a blog, users typically don't want to enter their login and password every t
 
 As usual, I turned to Mozilla for help on Javascript's [Subtle​Crypto​.digest()](https://developer.mozilla.org/en-US/docs/Web/API/SubtleCrypto/digest), and [Document​.cookie](https://developer.mozilla.org/en-US/docs/Web/API/Document/cookie) to write my [script](https://github.com/roblaing/swipl-webapp-howto/blob/master/unit4/scripts/signup-form.js). 
 
-Though this hides your login and password from anyone who can legitimately or illegitimately see your ID on the server, if this hash was the same as the cookie they could set it on their browser to masquerade as you. To avoid that, web applications should add some secret "salt" and rehash the hash read from the browser cookie before using it as a search key in a database.
+Though this hides your login and password from anyone who can legitimately or illegitimately see your ID on the server, if this hash was the same as the cookie they could set it in their browser to masquerade as you. To avoid that, web applications should add some secret "salt" and rehash the hash read from the browser cookie before using it as the user's ID in a database.
 
 A way to do this in SWI Prolog is with the [SHA* Secure Hash Algorithms](http://www.swi-prolog.org/pldoc/man?section=sha) library.
 
