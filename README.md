@@ -58,7 +58,9 @@ a couple of ways to use it in the introductory example.
 
 Experienced Prolog programmers tend to find it obvious that the [plus, minus or question mark prefixes](http://www.swi-prolog.org/pldoc/man?section=modes) to arguments in the documentation tells you if you are dealing with an input, an output, or a *bidirectional* argument. 
 
-Something that tripped me up learning Prolog was that you need to think in terms of input and output arguments within relations &mdash; to borrow spreadsheet or database jargon, think of relations as rows and arguments as columns with known data (inputs) or which need to be calculated (outputs)  &mdash; which is alien if you are used to *conventional* programing languages which have functions that return a value rather than fill in the details for one or more columns in a row.
+Something that tripped me up learning Prolog was that you need to think in terms of input and output arguments within relations &mdash; to borrow spreadsheet or database jargon, think of relations as rows and arguments as columns with known data (inputs) or which need to be calculated (outputs)  &mdash; which is alien if you are used to conventional programing languages which have functions that return a value rather than fill in the details for one or more columns in a row.
+
+Generally, you want to make your queries so specific they only return one row &mdash; making it *det* in Prolog jargon &mdahs; as opposed to several rows, making it [nondet](http://www.swi-prolog.org/pldoc/man?section=unitbox). If your output is going to be *nondet*, you want to iterate &mdash; a specialistion of Prolog I've written a [tutorial on](https://swish.swi-prolog.org/p/yeQhnQSk.swinb).
 
 There are no output arguments in http_handler &mdash; making it effectively a procedure rather than a function &mdash; but it does have a colon before the Closure, which is worth a digression since even intermediate Prolog programmers are likely to find it confusing. 
 
