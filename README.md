@@ -56,6 +56,16 @@ requests to the relevant handler shorter and sweeter than any of the _regex_ lan
 The key predicate here is [http_handler(+Path, :Closure, +Options)](http://www.swi-prolog.org/pldoc/doc_for?object=http_handler/3), and I've included
 a couple of ways to use it in the introductory example.
 
+#### What is :Closure?
+
+Experienced Prolog programmers tend to find it obvious that the plus, minus or question mark prefixes to arguments in the documentation tells you if you are dealing with an input, an output, or a *bidirectional* argument. The description of http_handler I cut and pasted above has no output arguments (making it effectively a procedure rather than a function), and may be confusing to even intermediate Prolog programmers because it has a colon before the [Closure](https://simple.wikipedia.org/wiki/Closure_(computer_science)).
+
+Something that tripped me up learning Prolog was that you need to think in terms of input and output arguments within relations &mdash; or rows to to borrow spreadsheet or database jargon &mdash; which is foreign if you are used to *conventional* programing languages which have functions that return a value rather than fill in the details for one or more arguments in a row.
+
+Whatever predicate you put as the second (ie :Closure) argument in turn has a final argument conventionally called *Request* which is ignored within http_handler &mdash; and in turn the static files examples in the next section which use a library predicate, http_reply_from_files &mdash; but plays a leading role in subsequent examples as it contains a Prologish list of the data in the HTTP message.
+
+### Static Files
+
 Nearly every website wants to respond with a file called index.html if a browser is pointed at its root directory. SWI Prolog achieves this with one
 line of code.
 
