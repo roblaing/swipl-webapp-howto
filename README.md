@@ -56,7 +56,7 @@ requests to the relevant handler shorter and sweeter than any of the _regex_ lan
 The key predicate here is [http_handler(+Path, :Closure, +Options)](http://www.swi-prolog.org/pldoc/doc_for?object=http_handler/3), and I've included
 a couple of ways to use it in the introductory example.
 
-Experienced Prolog programmers tend to find it obvious that the [plus, minus or question mark prefixes](http://www.swi-prolog.org/pldoc/man?section=modes) to arguments in the documentation tells you if you are dealing with an input, an output, or a *bidirectional* argument. 
+Experienced Prolog programmers tend to find it obvious that the [+, -, or ? prefixes](http://www.swi-prolog.org/pldoc/man?section=modes) to arguments in the documentation tells you if you are dealing with an input, an output, or a *bidirectional* argument. 
 
 Something that tripped me up learning Prolog was that you need to think in terms of input and output arguments within relations &mdash; to borrow spreadsheet or database jargon, think of relations as rows and arguments as columns with known data (inputs) or which need to be calculated (outputs)  &mdash; which is alien if you are used to conventional programing languages which have functions that return a value rather than fill in the details for one or more columns in a row.
 
