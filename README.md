@@ -56,17 +56,19 @@ requests to the relevant handler shorter and sweeter than any of the _regex_ lan
 The key predicate here is [http_handler(+Path, :Closure, +Options)](http://www.swi-prolog.org/pldoc/doc_for?object=http_handler/3), and I've included
 a couple of ways to use it in the introductory example.
 
+Experienced Prolog programmers tend to find it obvious that the [plus, minus or question mark prefixes](http://www.swi-prolog.org/pldoc/man?section=modes) to arguments in the documentation tells you if you are dealing with an input, an output, or a *bidirectional* argument. 
+
+Something that tripped me up learning Prolog was that you need to think in terms of input and output arguments within relations &mdash; or columns with known data and others which need to be calculated within rows to borrow spreadsheet or database jargon &mdash; which is alien if you are used to *conventional* programing languages which have functions that return a value rather than fill in the details for one or more columns in a row.
+
+There are no output arguments in http_handler &mdash; making it effectively a procedure rather than a function &mdash; but it does have a colon before the Closure, which is worth a digression since even intermediate Prolog programmers are likely to find it confusing. 
+
 #### What is :Closure?
 
-Long story short, closures are predicates whose arguments magically vanish when they are used as arguments in other predicates. But through some conjuring trick, these arguments reappear where the given predicate is declared. 
+Long story short, [closures](https://simple.wikipedia.org/wiki/Closure_(computer_science)) are predicates some of whose arguments magically vanish when they are used as arguments in other predicates, but through some conjuring trick, reappear where the given predicate is declared. 
 
 Whatever predicate you put as http_handler's second (ie :Closure) argument in turn has a final argument conventionally called *Request* which is ignored within http_handler &mdash; and in turn the static files examples in the next section which use a library predicate, http_reply_from_files &mdash; but will play a leading role in subsequent examples as it contains a Prologish list of the data we need from the HTTP message.
 
 Closures will reappear in Unit 3 when I use maplist to iterate through a list returned from a database. Because predicates such as [maplist(:Goal, ?List1, ?List2)](http://www.swi-prolog.org/pldoc/doc_for?object=maplist/3) and [call(:Goal)](http://www.swi-prolog.org/pldoc/doc_for?object=call/1) assume the *vanished* argument will be at the end &mdash; and in the case of maplist will be preceeded by other missing arguments which will be used to fill in values read by iterating over one or more input lists &mdash; the order of arguments in Prolog predicates is not arbitrary. Personally, the only way I got to grasp this was through practice.
-
-Experienced Prolog programmers tend to find it obvious that the [plus, minus or question mark prefixes](http://www.swi-prolog.org/pldoc/man?section=modes) to arguments in the documentation tells you if you are dealing with an input, an output, or a *bidirectional* argument. The description of http_handler I cut and pasted above has no output arguments (making it effectively a procedure rather than a function), and may be confusing to even intermediate Prolog programmers because it has a colon before the [Closure](https://simple.wikipedia.org/wiki/Closure_(computer_science)).
-
-Something that tripped me up learning Prolog was that you need to think in terms of input and output arguments within relations &mdash; or rows to to borrow spreadsheet or database jargon &mdash; which is foreign if you are used to *conventional* programing languages which have functions that return a value rather than fill in the details for one or more arguments in a row.
 
 ### Static Files
 
