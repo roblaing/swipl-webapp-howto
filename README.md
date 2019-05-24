@@ -56,15 +56,17 @@ requests to the relevant handler shorter and sweeter than any of the _regex_ lan
 The key predicate here is [http_handler(+Path, :Closure, +Options)](http://www.swi-prolog.org/pldoc/doc_for?object=http_handler/3), and I've included
 a couple of ways to use it in the introductory example.
 
+#### Howto read Prolog documentation
+
 Experienced Prolog programmers tend to find it obvious that the [+, -, or ? prefixes](http://www.swi-prolog.org/pldoc/man?section=modes) to arguments in the documentation tells you if you are dealing with an input, an output, or a *bidirectional* argument. 
 
-Something that tripped me up learning Prolog was that you need to think in terms of input and output arguments within relations &mdash; to borrow spreadsheet or database jargon, think of relations as rows and arguments as columns with known data (inputs) or which need to be calculated (outputs)  &mdash; which is alien if you are used to conventional programing languages which have functions that return a value rather than fill in the details for one or more columns in a row.
+Something that tripped me up learning Prolog was that you need to think in terms of input and output arguments within relations &mdash; to borrow spreadsheet or database jargon, think of relations as rows and arguments as columns with known data (inputs) or as columns which need to be calculated (outputs)  &mdash; which is alien if you are used to conventional programing languages which have functions that return a value rather than fill in the details for one or more columns in a row.
 
 Generally, you want to make your queries so specific they only return one row &mdash; making it *det* in Prolog jargon &mdash; as opposed to several rows, making it [nondet](http://www.swi-prolog.org/pldoc/man?section=unitbox). If your output is going to be *nondet*, you want to iterate &mdash; a specialistion of Prolog I've written a [tutorial on](https://swish.swi-prolog.org/p/yeQhnQSk.swinb).
 
 There are no output arguments in http_handler &mdash; making it effectively a procedure rather than a function &mdash; but it does have a colon before the Closure, which is worth a digression since even intermediate Prolog programmers are likely to find it confusing. 
 
-#### What is :Closure?
+##### What is :Closure?
 
 Long story short, [closures](https://simple.wikipedia.org/wiki/Closure_(computer_science)) are predicates some of whose arguments magically vanish when they are used as arguments in other predicates, but through some conjuring trick, reappear where the given predicate is declared. 
 
