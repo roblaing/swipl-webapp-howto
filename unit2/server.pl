@@ -10,6 +10,7 @@
 
 :- http_handler('/',  form_handler, [prefix]).
 :- http_handler('/styles/basic.css', http_reply_from_files('.', [indexes(['./styles/basic.css'])]), [prefix]).
+:- http_handler('/scripts/validate_form.js', http_reply_from_files('.', [indexes(['./scripts/validate_form.js'])]), [prefix]).
 
 % Fresh form with all blank fields
 form_handler(Request) :-
@@ -39,7 +40,7 @@ render_form(Month, MonthError, Day, DayError, Year, YearError, RequestString) :-
   reply_html_page(
     [title('Birthday'),
      link([rel('stylesheet'), href('/styles/basic.css')])],
-    [form([name('birthday'), action=('/'), method('GET')],
+    [form([name('birthday'), action=('/'), method('GET'), onsubmit('return validateForm()')],
       [h2('What is your birthday?'),
        div([label([for('month')], 'Month:'),
             input([type('text'), id('month'), name('month'), value(Month)]),
@@ -51,7 +52,8 @@ render_form(Month, MonthError, Day, DayError, Year, YearError, RequestString) :-
             input([type('text'), id('year'), name('year'), value(Year)]),
             span([class('error'), id('error_year')], YearError)]),
        div([class="button"], button([type('submit')], 'Send your birthday'))]),
-     p(RequestString)]).
+     p(RequestString),
+     script('/scripts/validate_form.js')]).
 
 validate_form(Month, DayStr, YearStr, MonthError, DayError, YearError) :-
   (Month = '' -> MonthError = 'Missing month' ; 
