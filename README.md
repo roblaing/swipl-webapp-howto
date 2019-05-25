@@ -72,7 +72,7 @@ If your query is so specific it only returns one row, it is *det* in Prolog jarg
 
 Long story short, [closures](https://simple.wikipedia.org/wiki/Closure_(computer_science)) are predicates some of whose arguments magically vanish when they are used as arguments in other predicates, but through some conjuring trick, reappear where the given predicate is declared. 
 
-Whatever predicate you put as http_handler's second (ie :Closure) argument in turn has a hidden final argument &mdash; conventionally called *Request* &mdash; which gets passed to your handler as its final argument. In the static files examples in the next section which use a library predicate, http_reply_from_files, we can ignore *Request*, but it plays a leading role in subsequent examples when we write or own handlers.
+Whatever predicate you put as http_handler's second (ie :Closure) argument in turn has a hidden final argument &mdash; conventionally called *Request* &mdash; which gets passed to your handler as its final argument. In the static files examples in the next section which use a library predicate, http_reply_from_files, we can ignore *Request*, but it plays a leading role in subsequent examples when we write our own handlers.
 
 Closures will reappear in Unit 3 when I use maplist to iterate through a list returned from a database. Because predicates such as [maplist(:Goal, ?List1, ?List2)](http://www.swi-prolog.org/pldoc/doc_for?object=maplist/3) and [call(:Goal)](http://www.swi-prolog.org/pldoc/doc_for?object=call/1) assume the *vanished* argument will be at the end &mdash; and in the case of maplist will be preceeded by other missing arguments which will be used to fill in values read by iterating over one or more input lists &mdash; the order of arguments in Prolog predicates is not arbitrary. Personally, the only way I got to grasp this was through practice.
 
@@ -116,7 +116,7 @@ You need a recent version of SWI Prolog (8.1.5 at time of writing) for the "dire
 
 If everything is working, pointing your browser to <http://localhost:3030/user/Joe%20Blog> should bring up Joe Blog's Home Page.
 
-SWI Prolog has a [definite clause grammar (DCG) for html](http://www.swi-prolog.org/pldoc/doc_for?object=html//1) which allows you to write your web pages in a prologish way &mdash; converting HTML &lt;element attribute="value"...&gt;Content&lt;/<&gt; tags to *element([attribute(Value), Content, ...])* clauses &mdash; or to stick to HMTL using \['HTML here'], or [quasiquoting](http://www.swi-prolog.org/pldoc/man?section=quasiquotations). A more comprehensive tutorial on these choices is available thanks to [Anne Ogborne](http://www.pathwayslms.com/swipltuts/html/index.html).
+SWI Prolog has a [definite clause grammar (DCG) for html](http://www.swi-prolog.org/pldoc/doc_for?object=html//1) which allows you to write your web pages in a prologish way &mdash; converting HTML &lt;element attribute="value"...&gt;Content&lt;/&gt; tags to *element([attribute(Value), Content, ...])* clauses &mdash; or to stick to HMTL using \\['HTML here'], or [quasiquoting](http://www.swi-prolog.org/pldoc/man?section=quasiquotations). A more comprehensive tutorial on these choices is available thanks to [Anne Ogborne](http://www.pathwayslms.com/swipltuts/html/index.html).
 
 My own bias is toward separation of concerns by keeping HTML as HTML, but SWI Prolog's main developer Jan Wielemaker provided a strong counter-argument in a [discussion](https://swi-prolog.discourse.group/t/yet-another-web-applications-tutorial/566/13) I started from which this tutorial grew:
 
