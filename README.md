@@ -156,7 +156,7 @@ I've redone Huffman's example of creating a simple form which asks for a person'
 
 If you point your browser to http://localhost:3030, it should bring up a blank form. If you fill in values that validate, the browser takes you to a welcome page. But if it's not happy with the values, the form remains the homepage with red error messages indicating which fields are missing or wrong. 
 
-Typically, POST is the prefered method and it makes it easier for the server to know if this is a fresh form, since then the method would be the default GET. But I'm using GET as the default since it appears in the URL, making debugging and understanding web forms easier. To let the first form_handler predicate know if this is a fresh form, I've added a test that the Request list does not contain a clause for search.
+Typically, POST is the prefered method, making it easier for the server to know if this is a fresh form because then the method would be GET. But since I'm using GET for both new and failed form submissions (GET is easier to understand and debug since the data is visible in the URL and HTTP header), I've added an additional test to the first form_handler predicate aimed at rendering the initial, blank form.
 
 ```prolog
 form_handler(Request) :-
