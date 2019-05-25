@@ -17,6 +17,8 @@ I'm redoing it on a Linux localhost with SWI-Prolog talking to PostgreSQL via it
 My main objective is to provide some simple examples for my own reference and education, and I like Linux, Postgres, and SWI Prolog obviously.
 If you prefer, say Windows and MySQL, hopefully it will only take you a bit of googling to adapt these examples.
 
+As this tutorial developed, it took a couple of digressions into providing tips to Prolog novices, which experts should simply skip.
+
 ## Unit 1
 
 > “When one teaches, two learn.” ― Robert Heinlein
@@ -60,17 +62,17 @@ a couple of ways to use it in the introductory example.
 
 Experienced Prolog programmers tend to find it obvious that the [+, -, or ? prefixes](http://www.swi-prolog.org/pldoc/man?section=modes) to arguments in the documentation tells you if you are dealing with an input, an output, or a *bidirectional* argument. 
 
-Something that tripped me up learning Prolog was that you need to think in terms of input and output arguments within relations &mdash; to borrow spreadsheet or database jargon, think of relations as rows and arguments as columns with known data (inputs) or as columns which need to be calculated (outputs)  &mdash; which is alien if you are used to conventional programing languages which have functions that return a value rather than fill in the details for one or more columns in a row.
-
-Generally, you want to make your queries so specific they only return one row &mdash; making it *det* in Prolog jargon &mdash; as opposed to several rows, making it [nondet](http://www.swi-prolog.org/pldoc/man?section=unitbox). If your output is going to be *nondet*, you want to iterate &mdash; a specialistion of Prolog I've written a [tutorial on](https://swish.swi-prolog.org/p/yeQhnQSk.swinb).
-
 There are no output arguments (- prefixes) in http_handler, making it effectively a procedure rather than a function, but it does have a colon before the Closure, which is worth a digression since even intermediate Prolog programmers are likely to find it confusing. 
+
+Something that tripped me up learning Prolog was that you need to think in terms of input and output arguments within relations &mdash; to borrow spreadsheet or database jargon, think of relations as rows and arguments as columns with known data (inputs) or as columns which need to be calculated (outputs)  &mdash; which is somewhat alien if you are used to conventional programing languages which have functions that return a value rather than fill in the details for one or more columns in a row.
+
+If your query is so specific it only returns one row, it is *det* in Prolog jargon. If your result produces several rows, it is [nondet](http://www.swi-prolog.org/pldoc/man?section=unitbox), and you'll want to iterate through these multiple answers. Much of web development boils down to list processing, so iteration will come up a lot in this tutorial. Getting to grips with the many ways of iterating tends to quite a hurdle for anyone learning Prolog, which I've covered in a separate [tutorial](https://swish.swi-prolog.org/p/yeQhnQSk.swinb).
 
 ##### What is :Closure?
 
 Long story short, [closures](https://simple.wikipedia.org/wiki/Closure_(computer_science)) are predicates some of whose arguments magically vanish when they are used as arguments in other predicates, but through some conjuring trick, reappear where the given predicate is declared. 
 
-Whatever predicate you put as http_handler's second (ie :Closure) argument in turn has a final argument conventionally called *Request* which is ignored within http_handler &mdash; and in turn the static files examples in the next section which use a library predicate, http_reply_from_files &mdash; but will play a leading role in subsequent examples as it contains a Prologish list of the data we need from the HTTP message.
+Whatever predicate you put as http_handler's second (ie :Closure) argument in turn has a hidden final argument &mdash; conventionally called *Request* &mdash; which gets passed to your handler as its final argument. In the static files examples in the next section which use a library predicate, http_reply_from_files, we can ignore *Request*, but it plays a leading role in subsequent examples when we write or own handlers.
 
 Closures will reappear in Unit 3 when I use maplist to iterate through a list returned from a database. Because predicates such as [maplist(:Goal, ?List1, ?List2)](http://www.swi-prolog.org/pldoc/doc_for?object=maplist/3) and [call(:Goal)](http://www.swi-prolog.org/pldoc/doc_for?object=call/1) assume the *vanished* argument will be at the end &mdash; and in the case of maplist will be preceeded by other missing arguments which will be used to fill in values read by iterating over one or more input lists &mdash; the order of arguments in Prolog predicates is not arbitrary. Personally, the only way I got to grasp this was through practice.
 
