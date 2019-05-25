@@ -236,7 +236,7 @@ render_form(Month, MonthError, Day, DayError, Year, YearError, RequestString) :-
             span([class('error'), id('error_year')], YearError)]),
        div([class="button"], button([type('submit')], 'Send your birthday'))]),
      p(RequestString),
-     script(src('/scripts/validate_forms.js']).
+     script([src('/scripts/validate_forms.js')])]).
 ```
 
 You would also need to add Javascript file to the http_handler predicates.
