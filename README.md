@@ -64,7 +64,7 @@ Something that tripped me up learning Prolog was that you need to think in terms
 
 Generally, you want to make your queries so specific they only return one row &mdash; making it *det* in Prolog jargon &mdash; as opposed to several rows, making it [nondet](http://www.swi-prolog.org/pldoc/man?section=unitbox). If your output is going to be *nondet*, you want to iterate &mdash; a specialistion of Prolog I've written a [tutorial on](https://swish.swi-prolog.org/p/yeQhnQSk.swinb).
 
-There are no output arguments in http_handler &mdash; making it effectively a procedure rather than a function &mdash; but it does have a colon before the Closure, which is worth a digression since even intermediate Prolog programmers are likely to find it confusing. 
+There are no output arguments (- prefixes) in http_handler, making it effectively a procedure rather than a function, but it does have a colon before the Closure, which is worth a digression since even intermediate Prolog programmers are likely to find it confusing. 
 
 ##### What is :Closure?
 
@@ -100,6 +100,9 @@ http:location(files, root(files), []).
 user:file_search_path(folders, library('images/styles/scripts')).
 :- http_handler(files(.), http_reply_from_files(folders, []), [prefix]).
 ```
+
+### Generating HTML programmatically
+
 I've included one _dynamic_ handler in the initial example which reads a directory name as a variable and responds programatically
 with SWI Prolog's html generating system [html_write](http://www.swi-prolog.org/pldoc/man?section=htmlwrite).
 
@@ -111,42 +114,13 @@ You need a recent version of SWI Prolog (8.1.5 at time of writing) for the "dire
 
 If everything is working, pointing your browser to <http://localhost:3030/user/Joe%20Blog> should bring up Joe Blog's Home Page.
 
-The final argument passed by the closure to the handler predicate, [Request](http://www.swi-prolog.org/pldoc/man?section=request), is the HTTP message presented as a Prologish list of *key(Value)* terms whose values can be extracted with clauses such as ```member(request_uri(URI), Request)``` below. I'll go into more details in Unit 4 when we need to read cookies from the HTTP message for user authentication.
+SWI Prolog has a [definite clause grammar (DCG) for html](http://www.swi-prolog.org/pldoc/doc_for?object=html//1) which allows you to write your web pages in a prologish way &mdash; converting HTML &lt;element attribute="value"...&gt;Content&lt;/<&gt; tags to *element([attribute(Value), Content, ...])* clauses &mdash; or to stick to HMTL using \['HTML here'], or [quasiquoting](http://www.swi-prolog.org/pldoc/man?section=quasiquotations). A more comprehensive tutorial on these choices is available thanks to [Anne Ogborne](http://www.pathwayslms.com/swipltuts/html/index.html).
 
-### Generating HTML programmatically
+My own bias is toward separation of concerns by keeping HTML as HTML, but SWI Prolog's main developer Jan Wielemaker provided a strong counter-argument in a [discussion](https://swi-prolog.discourse.group/t/yet-another-web-applications-tutorial/566/13) I started from which this tutorial grew:
 
-SWI Prolog's [html DCG grammar](http://www.swi-prolog.org/pldoc/doc_for?object=html//1) offers many ways to generate HTML, and the way I'm doing it in this tutorial is fairly long winded &mdash; controlling the entire HTML template myself &mdash; because I'm ideologically opposed to the fashion in web application frameworks of hiding the underlying HTML from users, thereby creating monolithic, unportable, and unmaintainable content management systems.
+> Handling statements from other languages as plain strings and manipulating them using simple string operations is one of the most well understood routes to security issues. It is very much common practice as it seems so easy. Still, don’t The main design guideline for the web services and most other interaction with other languages through strings is to avoid this and assemble expressions in the target language from data structures using code that fully supports the target language syntax and thus properly escapes special characters.
 
-I only discovered [quasiquoting](http://www.swi-prolog.org/pldoc/man?section=quasiquotations) while researching this tutorial, and rewrote my handler
-to use it.
-
-```prolog
-my_handler_code(User, Request) :-
-  member(request_uri(URI), Request),
-  phrase(html({|html(User, URI)||
-    <!DOCTYPE html>
-    <html lang="en">
-    <head>
-      <meta charset="utf-8">
-      <title>User</title>
-      <link rel="stylesheet" href="/styles/basic.css">
-    </head>
-    <body>
-      <h1><span>User</span>&#39;s Home Page</h1>
-      <ol>
-        <li><a href="/">Home</a></li>
-        <li><a href="/about">About</a></li>
-        <li><a href="URI">URI</a></li>
-      </ol>
-      <p><img src="/images/swipl.png" alt="SWI Prolog Logo"/></p>
-    </body>
-    </html>
-    |}), TokenizedHtml),
-  format('Content-type: text/html~n~n'),
-  print_html(TokenizedHtml).
-```
-
-In my ignorance before converting to quasiquoting, I wrote this handler in a much simpler and shorter way.
+Since this tutorial is more about Prolog than HTML, I'll set my bias aside and use the prolog-style rather than quasiquoting.
 
 ```prolog
 my_handler_code(User, Request) :-
@@ -158,28 +132,7 @@ my_handler_code(User, Request) :-
       p('Hello ~w!'-[User]),
       p('uri ~w'-[URI])]).
 ```
-If you're not an HTML purist, that may be an easier route.
 
-Besides quasiquotes, another way to keep HTML more legible and maintable in [reply_html_page(:Head, :Body)](http://www.swi-prolog.org/pldoc/doc_for?object=reply_html_page/2) is to use ```\['HTML code here...']``` syntax which I've used in Module 3 to render a list of ASCII art from a database created by iteration (which I couldn't figure out how to insert as a value acceptable in quasiquoting). 
-
-Using single quotes means no need to escape the double quotes used to surround HTML attribute values, and SWI Prolog allows linebreaks in quotes. So instead of using index.html to render the home page, it could be done like this:
-
-```prolog
-:- http_handler(root(.), front_handler, []).
-
-front_handler(_Request) :-
-  reply_html_page([\['
-    <title>Home Page</title>
-    <link rel="stylesheet" href="/styles/basic.css">
-    ']],
-    [\['
-    <h1>Home Page</h1>
-    <ol>
-      <li><a href="/about">About</a></li>
-    </ol>
-    <p><img src="/images/swipl.png" alt="SWI Prolog Logo"/></p>
-    ']]).
-```
 
 ## Unit 2
 
