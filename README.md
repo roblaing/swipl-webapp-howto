@@ -64,7 +64,7 @@ Experienced Prolog programmers tend to find it obvious that the [+, -, or ? pref
 
 There are no output arguments (- prefixes) in http_handler, making it effectively a procedure rather than a function, but it does have a colon before the Closure, which is worth a digression since even intermediate Prolog programmers are likely to find it confusing. 
 
-Something that tripped me up learning Prolog was that you need to think in terms of input and output arguments within relations &mdash; to borrow spreadsheet or database jargon, think of relations as rows and arguments as columns with known data (inputs) or as columns which need to be calculated (outputs)  &mdash; which is somewhat alien if you are used to conventional programing languages which have functions that return a value rather than fill in the details for one or more columns in a row.
+Something that tripped me up learning Prolog was that you need to think in terms of input and output arguments within relations &mdash; to borrow spreadsheet or database jargon, think of relations as rows and arguments as columns with known data (inputs) or as columns which need to be calculated (outputs)  &mdash; which is somewhat alien to most of us brought up on programming languages with functions which substitute themselves into a return value.
 
 If your query is so specific it only returns one row, it is *det* in Prolog jargon. If your result produces several rows, it is [nondet](http://www.swi-prolog.org/pldoc/man?section=unitbox), and you'll want to iterate through these multiple answers. Much of web development boils down to list processing, so iteration will come up a lot in this tutorial. Getting to grips with the many ways of iterating tends to quite a hurdle for anyone learning Prolog, which I've covered in a separate [tutorial](https://swish.swi-prolog.org/p/yeQhnQSk.swinb).
 
@@ -115,7 +115,7 @@ You need a recent version of SWI Prolog (8.1.5 at time of writing) for the "dire
 
 A key point here is that while *Request* doesn't appear within http_handler, it does appear as the final argument where it is coded. *Request* can be preceeded by any number of arguments. If it has no other arguments, by Prolog convention for functor/0 it is written in http_handler without brackets. 
 
-Irrespective of the programming language you use for web development, accessing what's in the HTTP message remains fundamental, so I've used [term_string(?Term, ?String)](http://www.swi-prolog.org/pldoc/doc_for?object=term_string/2) to make *Request* viewable in the example webpage. We'll be doing this again in the coming units to see how form data, cookies etc are communicated to the web application by the browser.
+Irrespective of the programming language you use for web development, accessing what's in the HTTP header remains fundamental, so I've used [term_string(?Term, ?String)](http://www.swi-prolog.org/pldoc/doc_for?object=term_string/2) to make *Request* viewable in the example webpage. We'll be doing this again in the coming units to see how form data, cookies etc are communicated to the web application by the browser.
 
 ```prolog
 my_handler_code(User, Request) :-
@@ -136,55 +136,123 @@ If everything is working, pointing your browser to <http://localhost:3030/user/J
 
 SWI Prolog offers many ways of generating HTML programmatically. I recommend Anne Ogborne's [tutorial](http://www.pathwayslms.com/swipltuts/html/index.html) for a more comprehensive overview.
 
-Its [definite clause grammar (DCG) for html](http://www.swi-prolog.org/pldoc/doc_for?object=html//1) allows you to write your web pages in a prologish way &mdash; converting HTML &lt;element attribute="value"...&gt;Content&lt;/element&gt; tags to *element([attribute(Value), Content, ...])* clauses &mdash; or to stick to HMTL using \\['HTML here'], or [quasiquoting](http://www.swi-prolog.org/pldoc/man?section=quasiquotations). 
+Its [definite clause grammar (DCG) for html](http://www.swi-prolog.org/pldoc/doc_for?object=html//1) allows you to write your web pages in a prologish way &mdash; converting HTML &lt;element attribute1="value1"...&gt;Content&lt;/element&gt; tags to *element([attribute1(Value1),...], Content)* clauses &mdash; or to stick to HMTL using \\['HTML here'], or [quasiquoting](http://www.swi-prolog.org/pldoc/man?section=quasiquotations). 
+
 My own bias is toward separation of concerns by keeping HTML as HTML, but SWI Prolog's main developer Jan Wielemaker provided a strong counter-argument in a [discussion](https://swi-prolog.discourse.group/t/yet-another-web-applications-tutorial/566/13) I started from which this tutorial grew:
 
 > Handling statements from other languages as plain strings and manipulating them using simple string operations is one of the most well understood routes to security issues. It is very much common practice as it seems so easy. Still, don’t. The main design guideline for the web services and most other interaction with other languages through strings is to avoid this and assemble expressions in the target language from data structures using code that fully supports the target language syntax and thus properly escapes special characters.
 
-Since this tutorial is more about Prolog than HTML, I'll set my bias aside and use the prolog-style in [reply_html_page(:Head, :Body)](http://www.swi-prolog.org/pldoc/doc_for?object=reply_html_page/2) rather than quasiquoting.
+Since this tutorial is more about Prolog than HTML, I'll set my bias aside and use the prolog-style encouraged by [reply_html_page(:Head, :Body)](http://www.swi-prolog.org/pldoc/doc_for?object=reply_html_page/2) rather than quasiquoting.
 
 ## Unit 2
 
-> “If you want to master something, teach it.” ― Richard Feynman
-
-Here I introduce SWI Prolog's predicate for handling user input sent to the server from an HTML form, [http_parameters(+Request, ?Parameters)](http://www.swi-prolog.org/pldoc/doc_for?object=http_parameters/2). Besides making it easy to toggle between GET and POST, it also offers various ways to validate the incoming data.
+This unit covers the basics of web forms, which SWI Prolog makes fairly easy with one predicate [http_parameters(+Request, ?Parameters)](http://www.swi-prolog.org/pldoc/doc_for?object=http_parameters/2) which can be used without modification for GET or POST, and allows you to validate or give default values to the incoming key=value list.
 
 The original Udacity course I'm using as a template devoted a fair amount of time going through check boxes, radio buttons, drop down menus and HTML's many other form elements. I personally can't remember all this stuff and just look it up when needed, so again recommend [Mozilla's tutorial](https://developer.mozilla.org/en-US/docs/Learn/HTML/Forms/Your_first_HTML_form) for anyone wanting a refresher.
 
-The salient point is the browser sends a list of key=value pairs to the server &mdash; clearly visible in the URL if the method is GET, slightly less visible in the HTTP message if the method is POST &mdash; for the web application to use as arguments in functions.
+It's generally good webform design practice to give users hints what they did wrong and allow them to edit their previous attempt instead of forcing them to start afresh, and to bring up a page saying the system is happy once the form has been filled in correctly. 
 
-Since GET is more visible, and therefore easier to debug, I'm going to use it in the introductory example. If you want to switch to POST, all that is required is editing the method attribute in a line in index.html from:
-```html
-<form name="birthday" action="/form" method="GET" onsubmit="return validateForm()">
-```
-to
-```html
-<form name="birthday" action="/form" method="POST" onsubmit="return validateForm()">
-```
+I've redone Huffman's example of creating a simple form which asks for a person's birthdate in US-style of month, day and year. To avoid a long digression into datetime programming, I've limited the example to some very rudimentary and inflexible checks on the validity of the input.
 
-On the server side, I've kept the handler agnostic in this simple example, though it probably is a good idea to add a clause ```member(method(get), Request)``` or ```member(method(post), Request)``` to dissuade hackers from trying methods on your code you didn't foresee. I've included where this would go in server.pl as a comment.
+If you point your browser to http://localhost:3030, it should bring up a blank form. If you fill in values that validate, the browser takes you to a welcome page. But if it's not happy with the values, the form remains the homepage with red error messages indicating which fields are missing or wrong. 
 
-I've redone Huffman's example of creating a simple form which asks for a person's birthdate in US-style of month, day and year. To avoid a long digression into datetime programming, I've limited the example to some very rudimentary and inflexible checks on the validity of the input. Perhaps because his course is a bit old, Huffman did the validation on the server, getting it to rewrite the form with error messages. I've instead simply used some client-side Javascript to catch typos and give the user hints to problems before the form is sent to the server. 
-
-While my Javascript code will prevent innocent typos getting transmitted, it won't catch malicious tampering of the input data which can easily be done by editing the URL when GET is used. This example uses a belt and braces approach of having both the client and server validate the user's input:
+Typically, POST is the prefered method and it makes it easier for the server to know if this is a fresh form, since then the method would be the default GET. But I'm using GET as the default since it appears in the URL, making debugging and understanding web forms easier. To let the first form_handler predicate know if this is a fresh form, I've added a test that the Request list does not contain a clause for search.
 
 ```prolog
 form_handler(Request) :-
-  catch(http_parameters(Request, 
-      [month(Month, [oneof(['January','February','March','April','May','June','July','August','September','October','November','December'])]),
-       day(Day, [between(1, 31)]),
-       year(Year, [between(1890, 2030)])]),
-    error(_, _),
-    http_reply_from_files('.', [indexes(['index.html'])], Request)),
-  reply_html_page([title('Birthday')],
-    [p(['Month: ', Month, ' Day: ', Day, ' Year: ', Year])]).
+  term_string(Request, String),
+  memberchk(method(get), Request),
+  \+memberchk(search(_), Request), !,
+  render_form('', '', '', '', '', '', String).  
 ```
 
-If a parameter is missing or any of the validation tests fail, http_parameters throws a _400 Bad Request_ error. Instead of showing that, I've opted for [catch(:Goal, +Catcher, :Recover)](http://www.swi-prolog.org/pldoc/doc_for?object=catch/3) to return to the original form without any error messages or keeping the original data at this stage. 
+If you fill in some nonsense values and click the form's submit button, the URL should show something like ```http://localhost:3030/?month=Movember&day=50&year=1776``` and a new entry appears in the Request list looking something like ```search([month='Movember',day='50',year='1776'])```.
 
-I did this before discovering quasiquoting described above, so intend to come back and make it more elaborate in due course.
+The second form_handler predicate would be used if values have been returned to be checked (either by POST or GET), and it uses http_parameters to read the values of the returned data.
+
+```prolog
+form_handler(Request) :-
+  term_string(Request, String),
+  http_parameters(Request,
+    [month(Month, [default('')]),
+     day(Day, [default('')]),
+     year(Year, [default('')])]),
+  validate_form(Month, Day, Year, MonthError, DayError, YearError),
+  ((MonthError = '', DayError = '', YearError = '') ->
+    reply_html_page(
+      [title('Birthday'),
+       link([rel('stylesheet'), href('/styles/basic.css')])],
+      [h2('Thanks, ~w ~w ~w is a great birthday!'-[Month, Day, Year]),
+       p(String)])
+  ;
+  render_form(Month, MonthError, Day, DayError, Year, YearError, String)).
+```
+
+I've moved into a predicate called validate_form things which could be done more succinctly by options provided by http_parameters. If these tests fail, http_parameters throws a _400 Bad Request_ error, which could be caught with [catch(:Goal, +Catcher, :Recover)](http://www.swi-prolog.org/pldoc/doc_for?object=catch/3) using something like this:
+
+```prolog
+catch(http_parameters(Request,
+    [month(Month, [oneof(['January','February','March','April','May','June','July','August','September','October','November','December'])]),
+     day(Day, [between(1, 31)]),
+     year(Year, [between(1890, 2030)])]),
+  error(_, _),
+  my_error_handler),
+success_handler).  
+```
+
+If a value does not pass http_paramaters' test, it get thrown away as far as I can tell. This is why I took the more elaborate route of keeping bad input values to use for error messages and return to the browser for editing.
+
+Switching between GET and POST simply involves editing one line in server.pl:
+
+```prolog
+    [form([name('birthday'), action=('/'), method('GET')],
+```
+to
+```prolog
+    [form([name('birthday'), action=('/'), method('POST')],
+```
+
+Note that if you edit anything in the server.pl file, you need to kill the process and restart it before it takes effect.
+
+Though I haven't used it in the example since this is about writing server code, a better way to catch user typos and provide feedback is with Javascript in the browser, and I've included how I would go about that with [/scripts/validate_form.js](https://github.com/roblaing/swipl-webapp-howto/blob/master/unit2/scripts/validate_form.js).
+
+Including it in the example would just involve adding ```onsubmit('return validateForm()')``` to the form attributes and linking to the Javascript file at the end of the body tag list.
+
+```prolog
+render_form(Month, MonthError, Day, DayError, Year, YearError, RequestString) :-
+  reply_html_page(
+    [title('Birthday'),
+     link([rel('stylesheet'), href('/styles/basic.css')])],
+    [form([name('birthday'), action=('/'), method('GET'), onsubmit('return validateForm()')],
+      [h2('What is your birthday?'),
+       div([label([for('month')], 'Month:'),
+            input([type('text'), id('month'), name('month'), value(Month)]),
+            span([class('error'), id('error_month')], MonthError)]),
+       div([label([for('day')], 'Day:'),
+            input([type('text'), id('day'), name('day'), value(Day)]),
+            span([class('error'), id('error_day')], DayError)]),
+       div([label([for('year')], 'Year:'),
+            input([type('text'), id('year'), name('year'), value(Year)]),
+            span([class('error'), id('error_year')], YearError)]),
+       div([class="button"], button([type('submit')], 'Send your birthday'))]),
+     p(RequestString),
+     script(src('/scripts/validate_forms.js']).
+```
+
+You would also need to add Javascript file to the http_handler predicates.
+
+```prolog
+:- http_handler('/',  form_handler, [prefix]).
+:- http_handler('/styles/basic.css', http_reply_from_files('.', [indexes(['./styles/basic.css'])]), [prefix]).
+:- http_handler('/scripts/validate_forms.js', http_reply_from_files('.', [indexes(['./scripts/validate_forms.js'])]), [prefix]).
+```
+
+While my Javascript code will prevent innocent typos getting transmitted, it won't catch malicious tampering of the input data which can easily be done by editing the URL when GET is used. So it's wise to follow a belt and braces approach of having both the client and server validate the user's input.
+
 
 ## Unit 3
+
+> “If you want to master something, teach it.” ― Richard Feynman
 
 This unit introduces an SQL database which SWI-Prolog communicates with via the [ODBC Interface](http://www.swi-prolog.org/pldoc/doc_for?object=section(%27packages/odbc.html%27)).
 
