@@ -156,7 +156,7 @@ I've redone Huffman's example of creating a simple form which asks for a person'
 
 If you point your browser to http://localhost:3030, it should bring up a blank form. If you fill in values that validate, the browser takes you to a welcome page. But if it's not happy with the values, the form remains the homepage with red error messages indicating which fields are missing or wrong. 
 
-Typically, POST is the prefered method, making it easier for the server to know if this is a fresh form because then the method would be GET. But since I'm using GET for both new and failed form submissions (GET is easier to understand and debug since the data is visible in the URL and HTTP header), I've added an additional test to the first form_handler predicate aimed at rendering the initial, blank form.
+Typically, POST is the preferred method, making it easier for the server to know if this is a fresh form because then the method would be GET. But since I'm using GET for both new and failed form submissions (GET is easier to understand and debug since the data is visible in the URL and HTTP header), I've added an additional test to the first form_handler predicate aimed at rendering the initial, blank form.
 
 ```prolog
 form_handler(Request) :-
@@ -239,7 +239,7 @@ render_form(Month, MonthError, Day, DayError, Year, YearError, RequestString) :-
      script('/scripts/validate_form.js')]).
 ```
 
-You would also need to add Javascript file to the http_handler predicates.
+You would also need to add the Javascript file to the http_handler predicates (for some reason not having root as a static file seems to break the automatic loading of other files).
 
 ```prolog
 :- http_handler('/',  form_handler, [prefix]).
