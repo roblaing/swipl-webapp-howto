@@ -17,26 +17,12 @@ user:file_search_path(folders, library('images/styles/scripts')).
 :- http_handler(root(user/User), my_handler_code(User), []).
 
 my_handler_code(User, Request) :-
-  member(request_uri(URI), Request),
-  phrase(html({|html(User, URI)||
-    <!DOCTYPE html>
-    <html lang="en">
-    <head>
-      <meta charset="utf-8">
-      <title>User</title>
-      <link rel="stylesheet" href="/styles/basic.css">
-    </head>
-    <body>
-      <h1><span>User</span>&#39;s Home Page</h1>
-      <ol>
-        <li><a href="/">Home</a></li>
-        <li><a href="/about">About</a></li>
-        <li><a href="URI">URI</a></li>
-      </ol>
-      <p><img src="/images/swipl.png" alt="SWI Prolog Logo"/></p>
-    </body>
-    </html>
-    |}), TokenizedHtml),
-  format('Content-type: text/html~n~n'),
-  print_html(TokenizedHtml).
+  term_string(Request, String),
+  reply_html_page(
+     [title("~w's Home Page"-[User]),
+      link([rel('stylesheet'), href('/styles/basic.css')])],
+     [h1("~w's Home Page"-[User]),
+      ol([li(a([href('/')], 'Home')),
+          li(a([href('/about')], 'About'))]),
+      p(String)]).
 

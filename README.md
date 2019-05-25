@@ -17,7 +17,7 @@ I'm redoing it on a Linux localhost with SWI-Prolog talking to PostgreSQL via it
 My main objective is to provide some simple examples for my own reference and education, and I like Linux, Postgres, and SWI Prolog obviously.
 If you prefer, say Windows and MySQL, hopefully it will only take you a bit of googling to adapt these examples.
 
-As this tutorial developed, it took a couple of digressions into providing tips to Prolog novices, which experts should simply skip.
+As this tutorial developed, it took a couple of digressions into providing tips to Prolog novices, which experienced Prolog programmers can simply skip.
 
 ## Unit 1
 
@@ -76,7 +76,7 @@ Whatever predicate you put as http_handler's second (ie :Closure) argument in tu
 
 Closures will reappear in Unit 3 when I use maplist to iterate through a list returned from a database. Because predicates such as [maplist(:Goal, ?List1, ?List2)](http://www.swi-prolog.org/pldoc/doc_for?object=maplist/3) and [call(:Goal)](http://www.swi-prolog.org/pldoc/doc_for?object=call/1) assume the *vanished* argument will be at the end &mdash; and in the case of maplist will be preceeded by other missing arguments which will be used to fill in values read by iterating over one or more input lists &mdash; the order of arguments in Prolog predicates is not arbitrary. Personally, the only way I got to grasp this was through practice.
 
-### Static Files
+### Static Pages
 
 Nearly every website wants to respond with a file called index.html if a browser is pointed at its root directory. SWI Prolog achieves this with one
 line of code.
@@ -103,10 +103,9 @@ user:file_search_path(folders, library('images/styles/scripts')).
 :- http_handler(files(.), http_reply_from_files(folders, []), [prefix]).
 ```
 
-### Generating HTML programmatically
+### Dynamic Pages.
 
-I've included one _dynamic_ handler in the initial example which reads a directory name as a variable and responds programatically
-with SWI Prolog's html generating system [html_write](http://www.swi-prolog.org/pldoc/man?section=htmlwrite).
+I've included one handler in the initial example which reads a directory name as a variable to show how to create permalinks later.
 
 ```prolog
 :- http_handler(root(user/User), my_handler_code(User), []).
@@ -114,27 +113,35 @@ with SWI Prolog's html generating system [html_write](http://www.swi-prolog.org/
 
 You need a recent version of SWI Prolog (8.1.5 at time of writing) for the "directory as variable" technique to work. The older version installed by my Linux distribution gave an error, so I had to upgrade by compiling from source code to get this to succeed.
 
-If everything is working, pointing your browser to <http://localhost:3030/user/Joe%20Blog> should bring up Joe Blog's Home Page.
+A key point here is that while *Request* doesn't appear within http_handler, it does appear as the final argument where it is coded. *Request* can be preceeded by any number of arguments. If it has no other arguments, by Prolog convention for functor/0 it is written in http_handler without brackets. 
 
-SWI Prolog has a [definite clause grammar (DCG) for html](http://www.swi-prolog.org/pldoc/doc_for?object=html//1) which allows you to write your web pages in a prologish way &mdash; converting HTML &lt;element attribute="value"...&gt;Content&lt;/element&gt; tags to *element([attribute(Value), Content, ...])* clauses &mdash; or to stick to HMTL using \\['HTML here'], or [quasiquoting](http://www.swi-prolog.org/pldoc/man?section=quasiquotations). A more comprehensive tutorial on these choices is available thanks to [Anne Ogborne](http://www.pathwayslms.com/swipltuts/html/index.html).
-
-My own bias is toward separation of concerns by keeping HTML as HTML, but SWI Prolog's main developer Jan Wielemaker provided a strong counter-argument in a [discussion](https://swi-prolog.discourse.group/t/yet-another-web-applications-tutorial/566/13) I started from which this tutorial grew:
-
-> Handling statements from other languages as plain strings and manipulating them using simple string operations is one of the most well understood routes to security issues. It is very much common practice as it seems so easy. Still, don’t The main design guideline for the web services and most other interaction with other languages through strings is to avoid this and assemble expressions in the target language from data structures using code that fully supports the target language syntax and thus properly escapes special characters.
-
-Since this tutorial is more about Prolog than HTML, I'll set my bias aside and use the prolog-style rather than quasiquoting.
+Irrespective of the programming language you use for web development, accessing what's in the HTTP message remains fundamental, so I've used [term_string(?Term, ?String)](http://www.swi-prolog.org/pldoc/doc_for?object=term_string/2) to make *Request* viewable in the example webpage. We'll be doing this again in the coming units to see how form data, cookies etc are communicated to the web application by the browser.
 
 ```prolog
 my_handler_code(User, Request) :-
-   member(request_uri(URI), Request),
-   reply_html_page(
+  term_string(Request, String),
+  reply_html_page(
      [title("~w's Home Page"-[User]),
-      link([rel='stylesheet', href='/styles/basic.css'])],
+      link([rel('stylesheet'), href('/styles/basic.css')])],
      [h1("~w's Home Page"-[User]),
-      p('Hello ~w!'-[User]),
-      p('uri ~w'-[URI])]).
+      ol([li(a([href('/')], 'Home')),
+          li(a([href('/about')], 'About'))]),
+      p(String)]).
 ```
 
+
+If everything is working, pointing your browser to <http://localhost:3030/user/Joe%20Blog> should bring up Joe Blog's Home Page.
+
+#### Generating HTML programmatically
+
+SWI Prolog offers many ways of generating HTML programmatically. I recommend Anne Ogborne's [tutorial](http://www.pathwayslms.com/swipltuts/html/index.html) for a more comprehensive overview.
+
+Its [definite clause grammar (DCG) for html](http://www.swi-prolog.org/pldoc/doc_for?object=html//1) allows you to write your web pages in a prologish way &mdash; converting HTML &lt;element attribute="value"...&gt;Content&lt;/element&gt; tags to *element([attribute(Value), Content, ...])* clauses &mdash; or to stick to HMTL using \\['HTML here'], or [quasiquoting](http://www.swi-prolog.org/pldoc/man?section=quasiquotations). 
+My own bias is toward separation of concerns by keeping HTML as HTML, but SWI Prolog's main developer Jan Wielemaker provided a strong counter-argument in a [discussion](https://swi-prolog.discourse.group/t/yet-another-web-applications-tutorial/566/13) I started from which this tutorial grew:
+
+> Handling statements from other languages as plain strings and manipulating them using simple string operations is one of the most well understood routes to security issues. It is very much common practice as it seems so easy. Still, don’t. The main design guideline for the web services and most other interaction with other languages through strings is to avoid this and assemble expressions in the target language from data structures using code that fully supports the target language syntax and thus properly escapes special characters.
+
+Since this tutorial is more about Prolog than HTML, I'll set my bias aside and use the prolog-style in [reply_html_page(:Head, :Body)](http://www.swi-prolog.org/pldoc/doc_for?object=reply_html_page/2) rather than quasiquoting.
 
 ## Unit 2
 
