@@ -116,7 +116,7 @@ You need a recent version of SWI Prolog (8.1.5 at time of writing) for the "dire
 
 If everything is working, pointing your browser to <http://localhost:3030/user/Joe%20Blog> should bring up Joe Blog's Home Page.
 
-SWI Prolog has a [definite clause grammar (DCG) for html](http://www.swi-prolog.org/pldoc/doc_for?object=html//1) which allows you to write your web pages in a prologish way &mdash; converting HTML &lt;element attribute="value"...&gt;Content&lt;/&gt; tags to *element([attribute(Value), Content, ...])* clauses &mdash; or to stick to HMTL using \\['HTML here'], or [quasiquoting](http://www.swi-prolog.org/pldoc/man?section=quasiquotations). A more comprehensive tutorial on these choices is available thanks to [Anne Ogborne](http://www.pathwayslms.com/swipltuts/html/index.html).
+SWI Prolog has a [definite clause grammar (DCG) for html](http://www.swi-prolog.org/pldoc/doc_for?object=html//1) which allows you to write your web pages in a prologish way &mdash; converting HTML &lt;element attribute="value"...&gt;Content&lt;/element&gt; tags to *element([attribute(Value), Content, ...])* clauses &mdash; or to stick to HMTL using \\['HTML here'], or [quasiquoting](http://www.swi-prolog.org/pldoc/man?section=quasiquotations). A more comprehensive tutorial on these choices is available thanks to [Anne Ogborne](http://www.pathwayslms.com/swipltuts/html/index.html).
 
 My own bias is toward separation of concerns by keeping HTML as HTML, but SWI Prolog's main developer Jan Wielemaker provided a strong counter-argument in a [discussion](https://swi-prolog.discourse.group/t/yet-another-web-applications-tutorial/566/13) I started from which this tutorial grew:
 
