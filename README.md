@@ -160,22 +160,19 @@ Typically, POST is the preferred method, making it easier for the server to know
 
 ```prolog
 form_handler(Request) :-
-  term_string(Request, String),
   memberchk(method(get), Request),
-  \+memberchk(search(_), Request), !,
+  \+memberchk(search(_), Request),
+  term_string(Request, String),
   render_form('', '', '', '', '', '', String).  
 ```
 
 If you fill in some nonsense values and click the form's submit button, the URL should show something like ```http://localhost:3030/?month=Movember&day=50&year=1776``` and a new entry appears in the Request list looking something like ```search([month='Movember',day='50',year='1776'])```.
 
-Another thing that tends to be somewhat alien in Prolog for those of us weaned on the C-family is that instead of dealing with different cases in one function, in Prolog each case tends to have its own predicate. In the above *form_handler(Request)* predicate, if the method is POST or data has been sent via GET because search(Anything) is in the Request list, it will skip rendering a blank form and move on to the next *form_handler(Request)* predicate. 
-
-The ! (called [cut](http://www.learnprolognow.org/lpnpage.php?pagetype=html&pageid=lpn-htmlse44) in Prolog jargon) after testing for GET and that there is no search query in the predicate above saves me from checking ```(memberchk(method(post)) ; memberchk(search(_)))``` in the predicate below. A common pitfall in this style of programming is more than one predicate may think it is the correct one for the given case, so it takes careful thought and testing. 
-
-Putting the patterns on left side of the :- is generally safest, and if I wasn't making this example method agnostic, I'd rewrite the first case as ```form_handler(get, Request)``` and the second as ```form_handler(put, Request)``` and then change to ```:- http_handler('/', form_handler(Method), [method(Method), prefix]).``` to eliminate any ambiguity.
+When this gets submitted to server.pl, the conditions won't satisfy the first *form_handler(Request)* because there is now a search(Something) in the Request or you have changed the example to use POST as described below, so gets responded to by the second *form_handler(Request)* predicate.
 
 ```prolog
 form_handler(Request) :-
+  (memberchk(method(post), Request) ; memberchk(search(_), Request)),
   term_string(Request, String),
   http_parameters(Request,
     [month(Month, [default('')]),
@@ -192,7 +189,19 @@ form_handler(Request) :-
   render_form(Month, MonthError, Day, DayError, Year, YearError, String)).
 ```
 
-Note the above uses ```if -> then ; else``` to offend Prolog-purists
+#### Getting the right predicate to handle the right case
+
+The pattern above is another alien thing in Prolog for those of us weaned on the C-family is that instead of dealing with different cases in one function, in Prolog each case tends to have its own predicate. In the above *form_handler(Request)* predicate, if the method is POST or data has been sent via GET because search(Anything) is in the Request list, it will skip rendering a blank form and move on to the next *form_handler(Request)* predicate.
+
+I've put explicit tests as the first two lines of each of the above predicates to get the right predicate to handle the right case. Checking patterns on left side of the :- is generally safest, and if I wasn't making this example method agnostic, I'd rewrite the first case as ```form_handler(get, Request)``` and the second as ```form_handler(put, Request)``` and then change to ```:- http_handler('/', form_handler(Method), [method(Method), prefix]).``` to eliminate any ambiguity.
+
+An alternative way to have written the above would be to put an exclamation mark after the checks in the first predicate (called [cut](http://www.learnprolognow.org/lpnpage.php?pagetype=html&pageid=lpn-htmlse44) in Prolog jargon) and then leave out the checks in the second, making it the default case.
+
+A common pitfall in this style of programming is more than one predicate may think it is the correct one for the given case, so it takes careful thought and testing. 
+
+Note I reverted to the ```if -> then ; else``` pattern in the second predicate to handle if the form needed to be sent back with errors or if the success page should be rendered. I've included a more Prolog purist alternative below. 
+
+#### Using http_parameters built in tests
 
 I've moved into a predicate called validate_form things which could be done more succinctly by options provided by http_parameters. If these tests fail, http_parameters throws a _400 Bad Request_ error, which could be caught with [catch(:Goal, +Catcher, :Recover)](http://www.swi-prolog.org/pldoc/doc_for?object=catch/3) using something like this:
 

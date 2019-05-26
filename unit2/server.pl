@@ -13,13 +13,14 @@
 
 % Fresh form with all blank fields
 form_handler(Request) :-
-  term_string(Request, String),
   memberchk(method(get), Request),
-  \+memberchk(search(_), Request), !,
+  \+memberchk(search(_), Request),
+  term_string(Request, String),
   render_form('', '', '', '', '', '', String).  
 
 % Submitted form that needs validity test
 form_handler(Request) :-
+  (memberchk(method(post), Request) ; memberchk(search(_), Request)),
   term_string(Request, String),
   http_parameters(Request,
     [month(Month, [default('')]),
