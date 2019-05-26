@@ -113,7 +113,7 @@ I've included one handler in the initial example which reads a directory name as
 
 You need a recent version of SWI Prolog (8.1.5 at time of writing) for the "directory as variable" technique to work. The older version installed by my Linux distribution gave an error, so I had to upgrade by compiling from source code to get this to succeed.
 
-A key point here is that while *Request* doesn't appear within http_handler, it does appear as the final argument where it is coded. *Request* can be preceeded by any number of arguments. If it has no other arguments, by Prolog convention for functor/0 it is written in http_handler without brackets. 
+A key point here is that while *Request* doesn't appear within *my_handler_code* where it is called by http_handler, it does appear as the final argument where *my_handler_code* is coded below. *Request* can be preceeded by any number of arguments. If it has no other arguments, by Prolog convention for functor/0 it is written in http_handler without brackets. 
 
 Irrespective of the programming language you use for web development, accessing what's in the HTTP header remains fundamental, so I've used [term_string(?Term, ?String)](http://www.swi-prolog.org/pldoc/doc_for?object=term_string/2) to make *Request* viewable in the example webpage. We'll be doing this again in the coming units to see how form data, cookies etc are communicated to the web application by the browser.
 
@@ -362,6 +362,7 @@ arts_html(Html) :-
   atomics_to_string(HtmlList, '', Html).
 ```
 
+The way I've written the code in this unit dates back to before I decided to do HTML generating the prologish way, so I'll return to update it later.
 
 ## Unit 4
 
