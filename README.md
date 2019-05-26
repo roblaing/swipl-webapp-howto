@@ -191,7 +191,7 @@ form_handler(Request) :-
 
 #### Predicates with the same name and arity handling different cases
 
-The pattern above is another alien thing in Prolog for those of us weaned on the C-family in that instead of dealing with different cases in one function, in Prolog each case tends to have its own predicate. In the first *form_handler(Request)* predicate, if the method is POST or data has been sent via GET because search(Anything) is in the Request list, it will skip rendering a blank form and move on to the second *form_handler(Request)* predicate.
+The pattern above is another alien thing in Prolog for those of us weaned on the C-family in that instead of dealing with different cases in one function, in Prolog each case tends to have its own predicate. In the first *form_handler(Request)* predicate, if the method is POST or data has been sent via GET because search(Anything) is in the Request list, it will skip rendering a blank form and move on to the second *form_handler(Request)* predicate which either asks for corrections to the form or renders the success page.
 
 I've put explicit tests at the top of both predicates to ensure the right predicate handles the right case. Checking patterns on the left side of the :- is generally safest, and if I wasn't making this example method agnostic, I'd rewrite the first case as ```form_handler(get, Request)``` and the second as ```form_handler(put, Request)``` and then change to ```:- http_handler('/', form_handler(Method), [method(Method), prefix]).``` to eliminate any ambiguity.
 
@@ -215,9 +215,12 @@ catch(http_parameters(Request,
 success_handler).  
 ```
 
-If a value does not pass http_paramaters' test, it get thrown away, leaving the variable allocated to it *unground*. This is why I took the more elaborate route of keeping bad input values to use for error messages and return to the browser for editing.
+A snag with the above is that if a value does not pass http_paramaters' test, it get thrown away, leaving the variable allocated to it *unground*. This is why I took the more elaborate route of keeping bad input values to use for error messages and return to the browser for editing.
 
-Switching between GET and POST simply involves editing one line in server.pl:
+### Switching from GET to POST
+
+A nice thing about http_parameters is that switching between GET and POST simply involves editing one line in server.pl:
+
 
 ```prolog
     [form([name('birthday'), action=('/'), method('GET')],
@@ -228,6 +231,8 @@ to
 ```
 
 Note that if you edit anything in the server.pl file, you need to kill the process and restart it before it takes effect.
+
+### Validating in the browser
 
 Though I haven't used it in the example since this is about writing server code, a better way to catch user typos and provide feedback is with Javascript in the browser, and I've included how I would go about that with [/scripts/validate_form.js](https://github.com/roblaing/swipl-webapp-howto/blob/master/unit2/scripts/validate_form.js).
 
