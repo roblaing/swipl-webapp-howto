@@ -156,7 +156,7 @@ I've redone Huffman's example of creating a simple form which asks for a person'
 
 If you point your browser to http://localhost:3030, it should bring up a blank form. If you fill in values that validate, the browser takes you to a welcome page. But if it's not happy with the values, the form remains the homepage with red error messages indicating which fields are missing or wrong. 
 
-Typically, POST is the preferred method, making it easier for the server to know if this is a fresh form else the method would be GET. But since I'm striving to keep this example method agnostic (GET is easier to understand and debug since the data is visible in the URL and HTTP header), I've added an additional test to the first form_handler predicate aimed at rendering the initial, blank form.
+Typically, POST is the preferred method for submitted data, making it easier for the server to know if this is a fresh form because then the method is GET. But since I'm striving to keep this example method agnostic (GET is easier to understand and debug since the data is visible in the URL and HTTP header), I've added an additional test to the first form_handler predicate which renders the initial, blank form.
 
 ```prolog
 form_handler(Request) :-
@@ -168,7 +168,7 @@ form_handler(Request) :-
 
 If you fill in some nonsense values and click the form's submit button, the URL should show something like ```http://localhost:3030/?month=Movember&day=50&year=1776``` and a new entry appears in the Request list looking something like ```search([month='Movember',day='50',year='1776'])```.
 
-When this gets submitted to server.pl, the conditions won't satisfy the first *form_handler(Request)* because there is now a search(Something) in the Request or you have changed the example to use POST as described below, so gets responded to by the second *form_handler(Request)* predicate.
+When this gets submitted to server.pl, the conditions won't satisfy the first *form_handler(Request)* because there is now a search(Something) in the Request, or you have changed the example to use POST as described below, so gets passed on to the second *form_handler(Request)* predicate.
 
 ```prolog
 form_handler(Request) :-
@@ -191,7 +191,7 @@ form_handler(Request) :-
 
 #### Predicates with the same name and arity handling different cases
 
-The pattern above is another alien thing in Prolog for those of us weaned on the C-family in that instead of dealing with different cases in one function, in Prolog each case tends to have its own predicate. In the first *form_handler(Request)* predicate, if the method is POST or data has been sent via GET because search(Anything) is in the Request list, it will skip rendering a blank form and move on to the second *form_handler(Request)* predicate which either asks for corrections to the form or renders the success page.
+The pattern above is another alien Prolog thing for those of us weaned on the C-family in that instead of dealing with different cases in one function, in Prolog each case tends to have its own predicate. In the first *form_handler(Request)* predicate, if the method is POST or data has been sent via GET because search(Anything) is in the Request list, it will skip rendering a blank form and move on to the second *form_handler(Request)* predicate which either asks for corrections to the form or renders the success page.
 
 I've put explicit tests at the top of both predicates to ensure the right predicate handles the right case. Checking patterns on the left side of the :- is generally safest, and if I wasn't making this example method agnostic, I'd rewrite the first case as ```form_handler(get, Request)``` and the second as ```form_handler(put, Request)``` and then change to ```:- http_handler('/', form_handler(Method), [method(Method), prefix]).``` to eliminate any ambiguity.
 
@@ -386,50 +386,21 @@ The way I've written the code in this unit dates back to before I decided to do 
 
 ## Unit 4
 
-Work in progress...
+In this unit we step into the dangerous minefield of using cookies to authenticate users. Users will be stored in our blog database with the following table:
 
-This section deals with using cookies to authenticate users. Before stepping into this dangerous minefield, a quick digression into session basics.
-
-SWI Prolog has a library for [HTTP session management](http://www.swi-prolog.org/pldoc/man?section=httpsession) which I've used to create a simple example of a counter of how often a person has visited the page, but note this resets itself to zero every time you close the page, or leave it unattended for a few minutes.
-
-```prolog
-:- use_module(library(http/thread_httpd)).
-:- use_module(library(http/http_dispatch)).
-:- use_module(library(http/http_error)).
-:- use_module(library(http/html_write)).
-:- use_module(library(http/http_unix_daemon)).
-:- use_module(library(http/http_session)).
-
-:- initialization http_daemon.
-
-:- http_handler(root(.), front_handler, []).
-
-front_handler(Request) :-
-  term_string(Request, String),
-  (http_session_data(visits(Visits0)) -> Visits is Visits0 + 1, 
-                                         http_session_retractall(visits(_)) 
-                                       ; Visits = 0),
-  http_session_assert(visits(Visits)),
-  reply_html_page([title('Simple Session Example')],
-    [pre("You've been here ~w times."-[Visits]),
-     p(String)]).
+```sql
+CREATE TABLE IF NOT EXISTS users (
+    id     TEXT PRIMARY KEY,
+    name   TEXT UNIQUE NOT NULL,
+    email  TEXT
+);
 ```
 
-In the above little server.pl I also write out the somewhat mysterious Request list to show how SWI Prolog makes the HTTP message data sent by the browser available to the web application.
+An important thing to note is there is no field for password in this table because there's no reason for servers to ever see let alone store passwords for web applications, and certainly never in plain text &mdash; an elementary part of online security which a shocking number of big corporations fail to grasp.
 
-Note that the syntax used by http_session is one Prolog programmers will be familiar with to retract and assert terms in a clausal store. As can be seen by printing out the Request list, visits(Visits) is hidden with some encryption magic in a cookie called swipl_session.
+This is related to the id type being a string despite the general database rule of thumb that integers make more efficient keys.
 
-This is all I'm going to say about SWI Prolog's http_session library, because I'm going to use client-side Javascript to write a cookie storing a hash of the user's login and password which tells the server all it needs to know. 
-
-The way I've done it, a password is never sent to the server. If a user logs in on a different computer or the cookie has expired, the same login, password, and hash function will recreate the same cookie &mdash; so there's no reason for servers to ever see or store passwords at all, let alone in plain text, an elementary part of online security which a shocking number of big corporations fail to grasp.
-
-For a blog, users typically don't want to enter their login and password every time, so the cookie can be made persistant.
-
-As usual, I turned to Mozilla for help on Javascript's [Subtle​Crypto​.digest()](https://developer.mozilla.org/en-US/docs/Web/API/SubtleCrypto/digest), and [Document​.cookie](https://developer.mozilla.org/en-US/docs/Web/API/Document/cookie) to write my [script](https://github.com/roblaing/swipl-webapp-howto/blob/master/unit4/scripts/signup-form.js). 
-
-Though this hides your login and password from anyone who can legitimately or illegitimately see your ID on the server, if this hash was the same as the cookie they could still set it in their browser to masquerade as you. To avoid that, web applications should add some secret "salt" and rehash the hash read from the browser cookie before using it as the user's ID in a database.
-
-A way to do this in SWI Prolog is with the [SHA* Secure Hash Algorithms](http://www.swi-prolog.org/pldoc/man?section=sha) library.
+Creating the id introduces us to SWI Prolog's [SHA* Secure Hash Algorithms](http://www.swi-prolog.org/pldoc/man?section=sha) library. The hashing function we're using, sha256, produces a (with extremely rare exceptions) unique 256 character long string which we make different from the user_id read as a cookie from the user's browser by mixing it with some secret salt and rehashing it like so:
 
 ```prolog
 :- use_module(library(sha)).
@@ -440,7 +411,38 @@ create_hash(String, HexDigest) :-
   hash_atom(HMAC, HexDigest).
 ```
 
-To be continued...
+The string rehashed above was created by the browser from the user's login and password with Javascript's [Subtle​Crypto​.digest()](https://developer.mozilla.org/en-US/docs/Web/API/SubtleCrypto/digest) mixed with some different secret salt stored as a hidden field in the login and registration forms.
 
+Thereby we create an irreversible (but reproducible) list of unique gibberish to store as an id cookie on the user's browser for the server to read. The same combination of login, password, secret salt, and hash function in any browser will reproduce the same cookie, making it inexcusable to send passwords over the internet to servers.
+
+If we point the browser at http://localhost:3030/signup and select John Smith as the username and Password1 as the password, the following cookie appears in the Request list:
+
+```
+cookie([user_id=aca87862328161c8d5cc6b95d29c04401df3d4496001ba54748fed7719834a0c])
+```
+
+There's not much we can do about the owners of logins and passwords seeing the hash strings generated from them, but hopefully they don't give bad guys free access to their computers while logged into our website.
+
+Though this locks the password to the login without ever leaving the user's browser, there's still a security hazzard since anyone who can see that cookie besides the owner could set it as a cookie on their browser to masquerade as that person. So to safeguard things on the server side, we can't simply use the browser cookie as the id in the database, but need to rehash it as suggested above. Again, the same original cookie, secret salt, and hash function will recreate the same unique user id without the password ever leaving the browser.
+
+
+
+### Keeping user names unique
+
+Just about everything can be validated on the browser except checking the selected username has not already been used by someone else. My solution for this involves using Ajax. 
+
+
+
+
+Work in progress...
+
+;max-age=max-age-in-seconds
+;expires=date-in-GMTString-format
+
+You can delete a cookie by simply updating its expiration time to zero.
+
+JSON Web Tokens
+
+https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Date/toUTCString
 
 

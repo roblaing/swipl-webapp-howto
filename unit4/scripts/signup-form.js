@@ -20,7 +20,22 @@ function validateForm() {
     valid = false;
     document.getElementById('error_username').textContent = 'No Username';
   } else {
-    document.getElementById('error_username').textContent = ''
+    fetch('/check_name', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({"userName": document.forms.signup.elements.username.value})
+    })
+    .then(res => res.json())
+    .then(response =>
+      {if (response.nameOk === document.forms.signup.elements.username.value) { 
+        document.getElementById('error_username').textContent = ''    
+      } else {
+        valid = false;
+        document.getElementById('error_username').textContent = response.nameOk;
+      }})
+    .catch(error => document.getElementById('error_email').textContent = 'Caught Exception: ' + error.description);
   }
   if (document.forms.signup.elements.password.value.length < 4) {
     valid = false;
@@ -36,12 +51,14 @@ function validateForm() {
   }
   if (valid) {
     const text = document.forms.signup.elements.username.value +
+                 document.forms.signup.elements.salt.value +
                  document.forms.signup.elements.password.value;
     digestMessage(text).then(digestValue => {
-      document.cookie = 'user=' + hexString(digestValue);
+      document.cookie = 'user_id=' + hexString(digestValue);
     });
     document.forms.signup.elements.password.value = '';
     document.forms.signup.elements.verify.value = '';
+    document.forms.signup.elements.salt.value = '';
   }
   return valid;
 }
