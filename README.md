@@ -191,15 +191,15 @@ form_handler(Request) :-
 
 #### Predicates with the same name and arity handling different cases
 
-The pattern above is another alien thing in Prolog for those of us weaned on the C-family is that instead of dealing with different cases in one function, in Prolog each case tends to have its own predicate. In the first *form_handler(Request)* predicate, if the method is POST or data has been sent via GET because search(Anything) is in the Request list, it will skip rendering a blank form and move on to the second *form_handler(Request)* predicate.
+The pattern above is another alien thing in Prolog for those of us weaned on the C-family in that instead of dealing with different cases in one function, in Prolog each case tends to have its own predicate. In the first *form_handler(Request)* predicate, if the method is POST or data has been sent via GET because search(Anything) is in the Request list, it will skip rendering a blank form and move on to the second *form_handler(Request)* predicate.
 
-I've put explicit tests as the first two lines of both predicates to get the right predicate to handle the right case. Checking patterns on left side of the :- is generally safest, and if I wasn't making this example method agnostic, I'd rewrite the first case as ```form_handler(get, Request)``` and the second as ```form_handler(put, Request)``` and then change to ```:- http_handler('/', form_handler(Method), [method(Method), prefix]).``` to eliminate any ambiguity.
+I've put explicit tests at the top of both predicates to ensure the right predicate handles the right case. Checking patterns on the left side of the :- is generally safest, and if I wasn't making this example method agnostic, I'd rewrite the first case as ```form_handler(get, Request)``` and the second as ```form_handler(put, Request)``` and then change to ```:- http_handler('/', form_handler(Method), [method(Method), prefix]).``` to eliminate any ambiguity.
 
-An alternative way to have written the above would be to put an exclamation mark after the two checks in the first predicate (! is called [cut](http://www.learnprolognow.org/lpnpage.php?pagetype=html&pageid=lpn-htmlse44) in Prolog jargon) and then leave out the checks in the second to make it the default case.
+An alternative way to have written the above would be to put an exclamation mark after the checks in the first predicate (! is called [cut](http://www.learnprolognow.org/lpnpage.php?pagetype=html&pageid=lpn-htmlse44) in Prolog jargon) and then leave out the checks in the second to make it the default case.
 
 A common pitfall in this style of programming is more than one predicate may think it is the correct one for the given case, so it takes careful thought and testing. 
 
-But note I reverted to the ```if -> then ; else``` pattern in the second predicate to handle if the form needed to be sent back with errors or if the success page should be rendered. I've included a more Prolog purist alternative below. 
+But note I did fall back on the ```if -> then ; else``` pattern in the second predicate to handle if the form needed to be sent back with errors or if the success page should be rendered. A Prolog purist alternative follows. 
 
 #### Using http_parameters built in tests
 
