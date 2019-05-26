@@ -168,7 +168,11 @@ form_handler(Request) :-
 
 If you fill in some nonsense values and click the form's submit button, the URL should show something like ```http://localhost:3030/?month=Movember&day=50&year=1776``` and a new entry appears in the Request list looking something like ```search([month='Movember',day='50',year='1776'])```.
 
-The second form_handler predicate would be used if values have been returned to be checked (either by POST or GET), and it uses http_parameters to read the values of the returned data.
+Another thing that tends to be somewhat alien in Prolog for those of us weaned on the C-family is that instead of dealing with different cases in one function, in Prolog each case tends to have its own predicate. In the above *form_handler(Request)* predicate, if the method is POST or data has been sent via GET because search(Anything) is in the Request list, it will skip rendering a blank form and move on to the next *form_handler(Request)* predicate which I've written in ```if -> then ; else``` style to offend Prolog-purists. 
+
+The ! (called [cut](http://www.learnprolognow.org/lpnpage.php?pagetype=html&pageid=lpn-htmlse44) in Prolog jargon) after testing for GET and that there is no search query in the predicate above saves me from checking ```(memberchk(method(post)) ; memberchk(search(_)))``` in the predicate below. A common pitfall in this style of programming is more than one predicate may think it is the correct one for the given case, so it takes careful thought and testing. 
+
+Putting the patterns on left side of the :- is generally safest, and if I wasn't making this example method agnostic, I'd rewrite the first case as ```form_handler(get, Request)``` and the second as ```form_handler(put, Request)``` and then change to ```:- http_handler('/', form_handler(Method), [method(Method), prefix]).``` to eliminate any ambiguity.
 
 ```prolog
 form_handler(Request) :-
