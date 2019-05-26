@@ -156,7 +156,7 @@ I've redone Huffman's example of creating a simple form which asks for a person'
 
 If you point your browser to http://localhost:3030, it should bring up a blank form. If you fill in values that validate, the browser takes you to a welcome page. But if it's not happy with the values, the form remains the homepage with red error messages indicating which fields are missing or wrong. 
 
-Typically, POST is the preferred method, making it easier for the server to know if this is a fresh form because then the method would be GET. But since I'm using GET for both new and failed form submissions (GET is easier to understand and debug since the data is visible in the URL and HTTP header), I've added an additional test to the first form_handler predicate aimed at rendering the initial, blank form.
+Typically, POST is the preferred method, making it easier for the server to know if this is a fresh form else the method would be GET. But since I'm striving to keep this example method agnostic (GET is easier to understand and debug since the data is visible in the URL and HTTP header), I've added an additional test to the first form_handler predicate aimed at rendering the initial, blank form.
 
 ```prolog
 form_handler(Request) :-
@@ -168,7 +168,7 @@ form_handler(Request) :-
 
 If you fill in some nonsense values and click the form's submit button, the URL should show something like ```http://localhost:3030/?month=Movember&day=50&year=1776``` and a new entry appears in the Request list looking something like ```search([month='Movember',day='50',year='1776'])```.
 
-Another thing that tends to be somewhat alien in Prolog for those of us weaned on the C-family is that instead of dealing with different cases in one function, in Prolog each case tends to have its own predicate. In the above *form_handler(Request)* predicate, if the method is POST or data has been sent via GET because search(Anything) is in the Request list, it will skip rendering a blank form and move on to the next *form_handler(Request)* predicate which I've written in ```if -> then ; else``` style to offend Prolog-purists. 
+Another thing that tends to be somewhat alien in Prolog for those of us weaned on the C-family is that instead of dealing with different cases in one function, in Prolog each case tends to have its own predicate. In the above *form_handler(Request)* predicate, if the method is POST or data has been sent via GET because search(Anything) is in the Request list, it will skip rendering a blank form and move on to the next *form_handler(Request)* predicate. 
 
 The ! (called [cut](http://www.learnprolognow.org/lpnpage.php?pagetype=html&pageid=lpn-htmlse44) in Prolog jargon) after testing for GET and that there is no search query in the predicate above saves me from checking ```(memberchk(method(post)) ; memberchk(search(_)))``` in the predicate below. A common pitfall in this style of programming is more than one predicate may think it is the correct one for the given case, so it takes careful thought and testing. 
 
@@ -191,6 +191,8 @@ form_handler(Request) :-
   ;
   render_form(Month, MonthError, Day, DayError, Year, YearError, String)).
 ```
+
+Note the above uses ```if -> then ; else``` to offend Prolog-purists
 
 I've moved into a predicate called validate_form things which could be done more succinctly by options provided by http_parameters. If these tests fail, http_parameters throws a _400 Bad Request_ error, which could be caught with [catch(:Goal, +Catcher, :Recover)](http://www.swi-prolog.org/pldoc/doc_for?object=catch/3) using something like this:
 
