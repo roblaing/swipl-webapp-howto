@@ -189,7 +189,7 @@ form_handler(Request) :-
   render_form(Month, MonthError, Day, DayError, Year, YearError, String)).
 ```
 
-#### Getting the right predicate to handle the right case
+#### Predicates with the same name and arity handling different cases
 
 The pattern above is another alien thing in Prolog for those of us weaned on the C-family is that instead of dealing with different cases in one function, in Prolog each case tends to have its own predicate. In the first *form_handler(Request)* predicate, if the method is POST or data has been sent via GET because search(Anything) is in the Request list, it will skip rendering a blank form and move on to the second *form_handler(Request)* predicate.
 
