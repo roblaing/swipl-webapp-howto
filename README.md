@@ -386,6 +386,8 @@ The way I've written the code in this unit dates back to before I decided to do 
 
 ## Unit 4
 
+> If you cannot explain something in simple terms, you don't understand it yourself. ― [Richard Feynman](https://twitter.com/ProfFeynman)
+
 Work in progress...
 
 In this unit we step into the dangerous minefield of using cookies to authenticate users. Users will be stored in our blog database with the following table:
@@ -398,7 +400,7 @@ CREATE TABLE IF NOT EXISTS users (
 );
 ```
 
-An important thing to note is there is no field for password in this table because there's no reason for servers to ever see let alone store passwords for web applications, and certainly never in plain text &mdash; an elementary part of online security which a shocking number of big corporations fail to grasp.
+An important thing to note is there is no field for password in this table because passwords should never be seen let alone stored by web servers &mdash; an elementary part of online security which a shocking number of big corporations fail to grasp.
 
 This is related to the id type being a string despite the general database rule of thumb that integers make more efficient keys.
 
@@ -444,7 +446,7 @@ logged_in(Request, User) :-
 ```
 To safeguard things server-side, we can't simply use the browser cookie as our id in the database, but need to rehash it as suggested above. For our John Smith with Password1 example, the previous hash gets turned into a completely different unique id of 
 ```21b07bc6c590b4b826d8786b837c859e740d9d1a1e9cbfdfcc3c05c299f5f62d``` 
-for the database without the password ever leaving the browser to be accessible by bad guys en route or whoever can read stuff in our database legitimately or illegitimately. And the database id can't be used to hijack user accounts.
+for the database without the password ever leaving the browser to be accessible by bad guys en route. Whoever can read stuff in our database legitimately or illegitimately can't use the id to hijack the user's account.
 
 The above predicate will return true with the User's name if a browser cookie has been set by a valid login and password combination, or false in which case the web application can redirect to the login_handler like so:
 
