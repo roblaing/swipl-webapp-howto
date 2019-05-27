@@ -26,8 +26,21 @@ logged_in(Request, User) :-
   odbc_disconnect(Connection).
 
 welcome_or_login(Request) :-
-  logged_in(Request, Name) -> render_welcome(Name) 
-                            ; login_handler(get, Request).
+  term_string(Request, String),
+  (logged_in(Request, Name) -> render_welcome(Name, String) 
+                            ; login_handler(get, '', Request)).
+                            
+login_handler(get, Error, Request) :-
+  term_string(Request, String),
+  render_login_form(Error, String).
+
+login_handler(post, Request) :-
+  term_string(Request, String),
+  (logged_in(Request, Name) -> render_welcome(Name, String) 
+  ; delete(Request, request_uri('/login'), Request1), 
+    delete(Request1, path('/login'), Request2),
+    append([request_uri(/),path(/)], Request2, Request3),
+    login_handler(get, "Sorry, your username or password is wrong", Request3)).
 
 signup_handler(get, Request) :-
   term_string(Request, String),
@@ -41,17 +54,35 @@ signup_handler(post, Request) :-
   insert_user(Id, Name, Email), 
   render_welcome(Name).
      
-render_welcome(Username) :-
+render_welcome(Username, RequestString) :-
   reply_html_page(
     [title('Welcome ~w'-[Username]),
      link([rel('stylesheet'), href('/styles/basic.css')])],
-    [h1('Welcome ~w'-[Username])]).
+    [h1('Welcome ~w'-[Username]),
+     p(RequestString)]).
+    
+render_login_form(LoginError, RequestString) :-
+  reply_html_page(
+    [title('Login'),
+     link([rel('stylesheet'), href('/styles/basic.css')])],
+    [form([name('login'), action=('/login'), method('POST'), onsubmit('return validateLoginForm()')],
+      [h2('Login'),
+       div([label([for('username')], 'Username:'),
+            input([type('text'), id('username'), name('username')])]),
+       div([label([for('password')], 'Password:'),
+            input([type('password'), id('password'), name('password')])]),
+       div([class('error'), id('login_error')], LoginError),
+       input([type('hidden'), id('salt'), name('salt'), 
+         value('Some big secret that nobody should be able to read, but unfortunately anybody can')]),
+       div([class="button"], button([type('submit')], 'Login'))]),
+     p(RequestString),
+   \['<script src="/scripts/signup-form.js"></script>']]).
   
 render_signup_form(Username, UsernameError, Email, EmailError, RequestString) :-
   reply_html_page(
     [title('Signup'),
      link([rel('stylesheet'), href('/styles/basic.css')])],
-    [form([name('signup'), action=('/signup'), method('POST'), onsubmit('return validateForm()')],
+    [form([name('signup'), action=('/signup'), method('POST'), onsubmit('return validateSignupForm()')],
       [h2('Signup'),
        div([label([for('username')], 'Username:'),
             input([type('text'), id('username'), name('username'), value(Username)]),

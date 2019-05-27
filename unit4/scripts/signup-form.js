@@ -14,7 +14,7 @@ function digestMessage(message) {
   return window.crypto.subtle.digest('SHA-256', data);
 }
 
-function validateForm() {
+function validateSignupForm() {
   var valid = true;
   if (document.forms.signup.elements.username.value.length === 0) {
     valid = false;
@@ -61,5 +61,28 @@ function validateForm() {
     document.forms.signup.elements.salt.value = '';
   }
   return valid;
+}
+
+function validateLoginForm() {
+  var valid = true;
+  if (document.forms.login.elements.username.value.length === 0) {
+    valid = false;
+    document.getElementById('login_error').textContent = 'No Username';
+  }
+  if (document.forms.login.elements.password.value.length === 0) {
+    valid = false;
+    document.getElementById('login_error').textContent = 'No Password';
+  }
+  if (valid) {
+    const text = document.forms.login.elements.username.value +
+                 document.forms.login.elements.salt.value +
+                 document.forms.login.elements.password.value;
+    digestMessage(text).then(digestValue => {
+      document.cookie = 'user_id=' + hexString(digestValue);
+    });
+    document.forms.login.elements.password.value = '';
+    document.forms.login.elements.salt.value = '';
+  }
+  return valid;  
 }
 

@@ -429,7 +429,7 @@ There's not much we can do about the owners of logins and passwords seeing the h
 
 ### Cookies in SWI Prolog
 
-While SWI Prolog does have an [HTTP Session management](http://www.swi-prolog.org/pldoc/man?section=httpsession) library which sets a cookie swipl_session='Some unique ID' used by predicates akin to Prolog's standard clausal store manipulators assert and retract for the server to remember temporary things about a specific user, that's not really what I want here.
+SWI Prolog has an [HTTP Session management](http://www.swi-prolog.org/pldoc/man?section=httpsession) library which sets a cookie swipl_session='Some unique ID' which is used by predicates akin to Prolog's standard clausal store manipulators assert and retract for the server to remember temporary things about a specific user. But that's not really the right tool for the job here.
 
 Luckily, checking if there are cookies in the Request, and if so reading the value of a specific key if it exists simply requires two clauses at the top of the handler:
 
@@ -446,13 +446,17 @@ To safeguard things server-side, we can't simply use the browser cookie as our i
 ```21b07bc6c590b4b826d8786b837c859e740d9d1a1e9cbfdfcc3c05c299f5f62d``` 
 for the database without the password ever leaving the browser to be accessible by bad guys en route or whoever can read stuff in our database legitimately or illegitimately. And the database id can't be used to hijack user accounts.
 
-The above predicate will return true with the User's name if logged in, or false in which case the web application can redirect to the login_handler like so:
+The above predicate will return true with the User's name if a browser cookie has been set by a valid login and password combination, or false in which case the web application can redirect to the login_handler like so:
 
 ```prolog
 welcome_or_login(Request) :-
   logged_in(Request, Name) -> render_welcome(Name) 
                             ; login_handler(get, Request).
 ```
+
+
+request_uri(/),path(/)
+request_uri('/login'),path('/login')
 
 ### Keeping user names unique
 
