@@ -4,6 +4,7 @@
 :- use_module(library(http/html_write)).
 :- use_module(library(http/http_unix_daemon)).
 :- use_module(library(http/http_files)).
+:- use_module(library(sha)).
 
 :- initialization http_daemon.
 
@@ -18,8 +19,10 @@
 
 signup_handler(get, Request) :-
   %term_string(Request, String),
-  member(cookie(Cookies), Request), !,
-  term_string(Cookies, String),
+  member(cookie(Cookies), Request),
+  member(user_id=UserId, Cookies), !,
+  create_hash(UserId, String),
+  % term_string(Cookies, String),
   render_signup_form('', '', '', '', '', '', '', '', String).
 
 signup_handler(get, Request) :-
@@ -73,4 +76,9 @@ check_name(Request) :-
   http_read_json_dict(Request, _{userName:NameIn}),
   (name_in_database(NameIn) -> NameOut = "Sorry, that user name is already taken" ; NameOut = NameIn),
   reply_json_dict(_{nameOk:NameOut}).
+
+create_hash(String, HexDigest) :-
+  Salt = "Some very long randomly generated string",
+  hmac_sha(Salt, String, HMAC, [algorithm(sha256)]),
+  hash_atom(HMAC, HexDigest).
 

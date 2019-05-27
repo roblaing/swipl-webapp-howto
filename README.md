@@ -425,7 +425,19 @@ cookie([user_id=aca87862328161c8d5cc6b95d29c04401df3d4496001ba54748fed7719834a0c
 
 There's not much we can do about the owners of logins and passwords seeing the hash strings generated from them, but hopefully they don't give bad guys free access to their computers while logged into our website. Preventing someone with a packet sniffer seeing this cookie en route from the browser to the server would involve switching from http to https as described for SWI Prolog in this [tutorial](https://github.com/triska/letswicrypt). I personally haven't made this transition yet, but plan to in the near future.
 
-Using client-side Javascript code locks the password and login together to the server's satisfaction without the password ever leaving the user's browser, but there's still a security hazzard in that anyone who can see that cookie besides the owner could set it as a cookie on their browser to masquerade as the user. To safeguard things server-side, we can't simply use the browser cookie as the id in the database, but need to rehash it as suggested above. 
+### Cookies in SWI Prolog
+
+While SWI Prolog does have an [HTTP Session management](http://www.swi-prolog.org/pldoc/man?section=httpsession) library which sets a cookie swipl_session='Some unique ID' used by predicates akin to Prolog's clausal store manipulators assert and retract to hold temporary data on a specific user, that's not really what I want here.
+
+Luckily, checking if there are cookies in the Request, and if so reading the specific one if it exists simply involves the following checks at the top of the handler:
+
+```prolog
+my_handler(Request) :-
+  member(cookie(Cookies), Request),
+  member(user_id=UserId, Cookies), ...
+```
+To safeguard things server-side, we can't simply use the browser cookie as our id in the database, but need to rehash it as suggested above. This creates a completely different id of ```21b07bc6c590b4b826d8786b837c859e740d9d1a1e9cbfdfcc3c05c299f5f62d``` in the database linking whoever logs into our website as *John Smith* with *Password1* without the password ever leaving the browser to be accessible by bad guys en route or whoever can read stuff in our database legitimately or legitimately.
+
 
 
 ### Keeping user names unique
