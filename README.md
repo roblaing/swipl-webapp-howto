@@ -386,6 +386,8 @@ The way I've written the code in this unit dates back to before I decided to do 
 
 ## Unit 4
 
+Work in progress...
+
 In this unit we step into the dangerous minefield of using cookies to authenticate users. Users will be stored in our blog database with the following table:
 
 ```sql
@@ -400,7 +402,7 @@ An important thing to note is there is no field for password in this table becau
 
 This is related to the id type being a string despite the general database rule of thumb that integers make more efficient keys.
 
-Creating the id introduces us to SWI Prolog's [SHA* Secure Hash Algorithms](http://www.swi-prolog.org/pldoc/man?section=sha) library. The hashing function we're using, sha256, produces a (with extremely rare exceptions) unique 256 character long string which we make different from the user_id read as a cookie from the user's browser by mixing it with some secret salt and rehashing it like so:
+Creating the id introduces us to SWI Prolog's [SHA* Secure Hash Algorithms](http://www.swi-prolog.org/pldoc/man?section=sha) library. The hashing function we're using, sha256, produces a (with extremely rare exceptions) unique 256 character string which we make different from the user_id read as a cookie from the user's browser by mixing it with some secret salt and rehashing it like so:
 
 ```prolog
 :- use_module(library(sha)).
@@ -415,16 +417,15 @@ The string rehashed above was created by the browser from the user's login and p
 
 Thereby we create an irreversible (but reproducible) list of unique gibberish to store as an id cookie on the user's browser for the server to read. The same combination of login, password, secret salt, and hash function in any browser will reproduce the same cookie, making it inexcusable to send passwords over the internet to servers.
 
-If we point the browser at http://localhost:3030/signup and select John Smith as the username and Password1 as the password, the following cookie appears in the Request list:
+If we point the browser at http://localhost:3030/signup and select John Smith as the username and Password1 as the password, the server sees the following cookie appear in the Request list:
 
 ```
 cookie([user_id=aca87862328161c8d5cc6b95d29c04401df3d4496001ba54748fed7719834a0c])
 ```
 
-There's not much we can do about the owners of logins and passwords seeing the hash strings generated from them, but hopefully they don't give bad guys free access to their computers while logged into our website.
+There's not much we can do about the owners of logins and passwords seeing the hash strings generated from them, but hopefully they don't give bad guys free access to their computers while logged into our website. Preventing someone with a packet sniffer seeing this cookie en route from the browser to the server would involve switching from http to https as described for SWI Prolog in this [tutorial](https://github.com/triska/letswicrypt). I personally haven't made this transition yet, but plan to in the near future.
 
-Though this locks the password to the login without ever leaving the user's browser, there's still a security hazzard since anyone who can see that cookie besides the owner could set it as a cookie on their browser to masquerade as that person. So to safeguard things on the server side, we can't simply use the browser cookie as the id in the database, but need to rehash it as suggested above. Again, the same original cookie, secret salt, and hash function will recreate the same unique user id without the password ever leaving the browser.
-
+Using client-side Javascript code locks the password and login together to the server's satisfaction without the password ever leaving the user's browser, but there's still a security hazzard in that anyone who can see that cookie besides the owner could set it as a cookie on their browser to masquerade as the user. To safeguard things server-side, we can't simply use the browser cookie as the id in the database, but need to rehash it as suggested above. 
 
 
 ### Keeping user names unique
