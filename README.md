@@ -390,7 +390,7 @@ The way I've written the code in this unit dates back to before I decided to do 
 
 Work in progress...
 
-In this unit we step into the dangerous minefield of using cookies to authenticate users. Users will be stored in our blog database with the following table:
+In this unit we step into the dangerous minefield of using cookies to authenticate users. Users will be stored in our blog database in the following table:
 
 ```sql
 CREATE TABLE IF NOT EXISTS users (
@@ -400,7 +400,7 @@ CREATE TABLE IF NOT EXISTS users (
 );
 ```
 
-An important thing to note is there is no field for password in this table because passwords should never be seen let alone stored by web servers &mdash; an elementary part of online security which a shocking number of big corporations fail to grasp.
+Note there is no field for password in this table because passwords should never be seen let alone stored in plain text by web servers &mdash; an elementary part of online security which a shocking number of big corporations fail to grasp.
 
 This is related to the id type being a string despite the general database rule of thumb that integers make more efficient keys.
 
@@ -419,7 +419,7 @@ The string rehashed above was created by the browser from the user's login and p
 
 Thereby we create an irreversible (but reproducible) list of unique gibberish to store as an id cookie on the user's browser for the server to read. 
 
-If we point the browser at http://localhost:3030/signup and select John Smith as the username and Password1 as the password, the server sees the following cookie appear in the Request list:
+If we point the browser at http://localhost:3030/signup and select *John Smith* as the username and *Password1* as the password, the server sees the following cookie appear in the Request list:
 
 ```
 cookie([user_id=aca87862328161c8d5cc6b95d29c04401df3d4496001ba54748fed7719834a0c])
