@@ -386,7 +386,7 @@ The way I've written the code in this unit dates back to before I decided to do 
 
 ## Unit 4
 
-> Everything is easy when you don't know what you're talking about. &mdash; Quote I heard somewhere but can't remember where.
+> Everything is easy when you don't know what you're talking about. &mdash; Quote I heard somewhere but can't remember where, which came to be very relevant writing this unit.
 
 Work in progress...
 
