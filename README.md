@@ -386,7 +386,7 @@ The way I've written the code in this unit dates back to before I decided to do 
 
 ## Unit 4
 
-> If you cannot explain something in simple terms, you don't understand it yourself. ― [Richard Feynman](https://twitter.com/ProfFeynman)
+> Everything is easy when you don't know what you're talking about. &mdash; Quote I heard somewhere but can't remember where.
 
 Work in progress...
 
