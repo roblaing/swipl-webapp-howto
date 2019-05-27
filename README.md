@@ -415,7 +415,7 @@ create_hash(String, HexDigest) :-
 
 The string rehashed above was created by the browser from the user's login and password with Javascript's [Subtle​Crypto​.digest()](https://developer.mozilla.org/en-US/docs/Web/API/SubtleCrypto/digest) mixed with some different secret salt stored as a hidden field in the login and registration forms.
 
-Thereby we create an irreversible (but reproducible) list of unique gibberish to store as an id cookie on the user's browser for the server to read. The same combination of login, password, secret salt, and hash function in any browser will reproduce the same cookie, making it inexcusable to send passwords over the internet to servers.
+Thereby we create an irreversible (but reproducible) list of unique gibberish to store as an id cookie on the user's browser for the server to read. 
 
 If we point the browser at http://localhost:3030/signup and select John Smith as the username and Password1 as the password, the server sees the following cookie appear in the Request list:
 
@@ -423,22 +423,36 @@ If we point the browser at http://localhost:3030/signup and select John Smith as
 cookie([user_id=aca87862328161c8d5cc6b95d29c04401df3d4496001ba54748fed7719834a0c])
 ```
 
+The same combination of login, password, secret salt, and hash function in any browser will reproduce the same cookie, making it inexcusable to send passwords over the internet to servers.
+
 There's not much we can do about the owners of logins and passwords seeing the hash strings generated from them, but hopefully they don't give bad guys free access to their computers while logged into our website. Preventing someone with a packet sniffer seeing this cookie en route from the browser to the server would involve switching from http to https as described for SWI Prolog in this [tutorial](https://github.com/triska/letswicrypt). I personally haven't made this transition yet, but plan to in the near future.
 
 ### Cookies in SWI Prolog
 
-While SWI Prolog does have an [HTTP Session management](http://www.swi-prolog.org/pldoc/man?section=httpsession) library which sets a cookie swipl_session='Some unique ID' used by predicates akin to Prolog's clausal store manipulators assert and retract to hold temporary data on a specific user, that's not really what I want here.
+While SWI Prolog does have an [HTTP Session management](http://www.swi-prolog.org/pldoc/man?section=httpsession) library which sets a cookie swipl_session='Some unique ID' used by predicates akin to Prolog's standard clausal store manipulators assert and retract for the server to remember temporary things about a specific user, that's not really what I want here.
 
-Luckily, checking if there are cookies in the Request, and if so reading the specific one if it exists simply involves the following checks at the top of the handler:
+Luckily, checking if there are cookies in the Request, and if so reading the value of a specific key if it exists simply requires two clauses at the top of the handler:
 
 ```prolog
-my_handler(Request) :-
+logged_in(Request, User) :-
   member(cookie(Cookies), Request),
-  member(user_id=UserId, Cookies), ...
+  member(user_id=UserId, Cookies),
+  create_hash(UserId, Id),
+  odbc_connect('blog', Connection, []),
+  odbc_query(Connection, "SELECT name FROM users WHERE id = '~w'"-[Id], row(User)),  
+  odbc_disconnect(Connection).
 ```
-To safeguard things server-side, we can't simply use the browser cookie as our id in the database, but need to rehash it as suggested above. This creates a completely different id of ```21b07bc6c590b4b826d8786b837c859e740d9d1a1e9cbfdfcc3c05c299f5f62d``` in the database linking whoever logs into our website as *John Smith* with *Password1* without the password ever leaving the browser to be accessible by bad guys en route or whoever can read stuff in our database legitimately or legitimately.
+To safeguard things server-side, we can't simply use the browser cookie as our id in the database, but need to rehash it as suggested above. This creates a completely different id of 
+```21b07bc6c590b4b826d8786b837c859e740d9d1a1e9cbfdfcc3c05c299f5f62d``` 
+for the database to link whoever logs into our website as *John Smith* with *Password1* without the password ever leaving the browser to be accessible by bad guys en route or whoever can read stuff in our database legitimately or illegitimately. And the database id can't be used to hijack user accounts.
 
+The above predicate will return true with the User's name if logged in, or false in which case the web application can redirect to the login_handler like so:
 
+```prolog
+welcome_or_login(Request) :-
+  logged_in(Request, Name) -> render_welcome(Name) 
+                            ; login_handler(get, Request).
+```
 
 ### Keeping user names unique
 
