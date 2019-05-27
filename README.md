@@ -442,9 +442,9 @@ logged_in(Request, User) :-
   odbc_query(Connection, "SELECT name FROM users WHERE id = '~w'"-[Id], row(User)),  
   odbc_disconnect(Connection).
 ```
-To safeguard things server-side, we can't simply use the browser cookie as our id in the database, but need to rehash it as suggested above. This creates a completely different id of 
+To safeguard things server-side, we can't simply use the browser cookie as our id in the database, but need to rehash it as suggested above. For our John Smith with Password1 example, the previous hash gets turned into a completely different unique id of 
 ```21b07bc6c590b4b826d8786b837c859e740d9d1a1e9cbfdfcc3c05c299f5f62d``` 
-for the database to link whoever logs into our website as *John Smith* with *Password1* without the password ever leaving the browser to be accessible by bad guys en route or whoever can read stuff in our database legitimately or illegitimately. And the database id can't be used to hijack user accounts.
+for the database without the password ever leaving the browser to be accessible by bad guys en route or whoever can read stuff in our database legitimately or illegitimately. And the database id can't be used to hijack user accounts.
 
 The above predicate will return true with the User's name if logged in, or false in which case the web application can redirect to the login_handler like so:
 
