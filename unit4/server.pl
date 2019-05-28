@@ -15,7 +15,7 @@
 :- http_handler(root(logout), http_reply_from_files('.', [indexes(['signup-form.html'])]), [prefix]).
 :- http_handler(root(check_name), check_name, []).
 :- http_handler('/styles/basic.css', http_reply_from_files('.', [indexes(['./styles/basic.css'])]), [prefix]).
-:- http_handler('/scripts/signup-form.js', http_reply_from_files('.', [indexes(['./scripts/signup-form.js'])]), [prefix]).
+:- http_handler('/scripts/signup_form.js', http_reply_from_files('.', [indexes(['./scripts/signup_form.js'])]), [prefix]).
 
 logged_in(Request, User) :-
   member(cookie(Cookies), Request),
@@ -77,7 +77,7 @@ render_login_form(Request) :-
          value('Some big secret that nobody should be able to read, but unfortunately anybody can')]),
        div([class="button"], button([type('submit')], 'Login'))]),
      p(RequestString),
-   \['<script src="/scripts/signup-form.js"></script>']]).
+     script([src('/scripts/signup_form.js')],'')]).
   
 render_signup_form(Username, UsernameError, Email, EmailError, RequestString) :-
   reply_html_page(
@@ -101,7 +101,7 @@ render_signup_form(Username, UsernameError, Email, EmailError, RequestString) :-
          value('Some big secret that nobody should be able to read, but unfortunately anybody can')]),
        div([class="button"], button([type('submit')], 'Subscribe'))]),
      p(RequestString),
-     \['<script src="/scripts/signup-form.js"></script>']]). % script('/scripts/signup-form.js') seems to be broken by hyphen in url
+     script([src('/scripts/signup_form.js')],'')]).
 
 sql_escape_single_quotes(StringIn, StringOut) :-
   split_string(StringIn, "'", "", List),

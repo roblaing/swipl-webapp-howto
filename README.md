@@ -103,6 +103,8 @@ user:file_search_path(folders, library('images/styles/scripts')).
 :- http_handler(files(.), http_reply_from_files(folders, []), [prefix]).
 ```
 
+A nice thing about static files is you can add to your html, css and Javascript files and then test changes by simply refreshing your browser. Any changes you make to server.pl will require you to kill and restart the daemon to take effect.
+
 ### Dynamic Pages.
 
 I've included one handler in the initial example which reads a directory name as a variable to show how to create permalinks later.
@@ -258,7 +260,7 @@ render_form(Month, MonthError, Day, DayError, Year, YearError, RequestString) :-
             span([class('error'), id('error_year')], YearError)]),
        div([class="button"], button([type('submit')], 'Send your birthday'))]),
      p(RequestString),
-     script('/scripts/validate_form.js')]).
+     script([src('/scripts/validate_form.js')],'')]).
 ```
 
 You would also need to add the Javascript file to the http_handler predicates (for some reason not having root as a static file seems to break the automatic loading of other files).
@@ -454,13 +456,15 @@ The above predicate will return true with the User's name if a browser cookie ha
 
 ```prolog
 welcome_or_login(Request) :-
-  logged_in(Request, Name) -> render_welcome(Name) 
-                            ; login_handler(get, Request).
+  ( logged_in(Request, Name) -> 
+    term_string(Request, String),
+    render_welcome(Name, String)
+  ; 
+    http_redirect(see_other, root(login), Request)).
 ```
 
+I originally wrote the above to call the login_handler instead of redirecting, but then found the home page kept the /login path, and testing password errors (when the login page keeps you there) got buggy... so found http_redirect a big help.
 
-request_uri(/),path(/)
-request_uri('/login'),path('/login')
 
 ### Keeping user names unique
 
