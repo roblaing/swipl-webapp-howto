@@ -144,7 +144,7 @@ Its [definite clause grammar (DCG) for html](http://www.swi-prolog.org/pldoc/doc
 
 *element([attribute1(Value1),...], Content)* clauses, 
 
-where Content could also be a list, or to stick to HMTL using \\['HTML here'], or [quasiquoting](http://www.swi-prolog.org/pldoc/man?section=quasiquotations). 
+where Content could also be a list, and if there are no attributes the sole argument could be one string as in ```h1("~w's Home Page"-[User])``` above. It also lets you stick to HMTL using \\['HTML here'], or [quasiquoting](http://www.swi-prolog.org/pldoc/man?section=quasiquotations). 
 
 My own bias is toward separation of concerns by keeping HTML as HTML, but SWI Prolog's main developer Jan Wielemaker provided a strong counter-argument in a [discussion](https://swi-prolog.discourse.group/t/yet-another-web-applications-tutorial/566/13) I started from which this tutorial grew:
 
