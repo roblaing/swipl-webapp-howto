@@ -189,6 +189,8 @@ form_handler(Request) :-
   render_form(Month, MonthError, Day, DayError, Year, YearError, String)).
 ```
 
+I need to update the above to use [http_redirect(+How, +To, +Request)](http://www.swi-prolog.org/pldoc/doc_for?object=http_redirect/3) which I only got to grips with in Unit 4.
+
 #### Predicates with the same name and arity handling different cases
 
 The pattern above is another alien Prolog thing for those of us weaned on the C-family in that instead of dealing with different cases in one function, in Prolog each case tends to have its own predicate. In the first *form_handler(Request)* predicate, if the method is POST or data has been sent via GET because search(Anything) is in the Request list, it will skip rendering a blank form and move on to the second *form_handler(Request)* predicate which either asks for corrections to the form or renders the success page.

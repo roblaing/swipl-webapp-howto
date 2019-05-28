@@ -26,21 +26,19 @@ logged_in(Request, User) :-
   odbc_disconnect(Connection).
 
 welcome_or_login(Request) :-
-  term_string(Request, String),
-  (logged_in(Request, Name) -> render_welcome(Name, String) 
-                            ; login_handler(get, '', Request)).
+  ( logged_in(Request, Name) -> 
+    term_string(Request, String),
+    render_welcome(Name, String)
+  ; 
+    http_redirect(see_other, root(login), Request)).
                             
-login_handler(get, Error, Request) :-
-  term_string(Request, String),
-  render_login_form(Error, String).
+login_handler(get, Request) :-
+  (logged_in(Request, _Name) -> http_redirect(see_other, root(.), Request)
+                              ; render_login_form(Request)).
 
 login_handler(post, Request) :-
-  term_string(Request, String),
-  (logged_in(Request, Name) -> render_welcome(Name, String) 
-  ; delete(Request, request_uri('/login'), Request1), 
-    delete(Request1, path('/login'), Request2),
-    append([request_uri(/),path(/)], Request2, Request3),
-    login_handler(get, "Sorry, your username or password is wrong", Request3)).
+  (logged_in(Request, _Name) -> http_redirect(see_other, root(.), Request)
+                              ; http_redirect(see_other, root(login), Request)).
 
 signup_handler(get, Request) :-
   term_string(Request, String),
@@ -61,7 +59,10 @@ render_welcome(Username, RequestString) :-
     [h1('Welcome ~w'-[Username]),
      p(RequestString)]).
     
-render_login_form(LoginError, RequestString) :-
+render_login_form(Request) :-
+  term_string(Request, RequestString),
+  ((member(cookie(Cookies), Request), member(user_id=_UserId, Cookies)) -> 
+    LoginError = 'Sorry, that is not a valid login and password' ; LoginError = '' ),
   reply_html_page(
     [title('Login'),
      link([rel('stylesheet'), href('/styles/basic.css')])],
