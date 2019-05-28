@@ -138,13 +138,13 @@ If everything is working, pointing your browser to <http://localhost:3030/user/J
 
 SWI Prolog offers many ways of generating HTML programmatically. I recommend Anne Ogborne's [tutorial](http://www.pathwayslms.com/swipltuts/html/index.html) for a more comprehensive overview.
 
-Its [definite clause grammar (DCG) for html](http://www.swi-prolog.org/pldoc/doc_for?object=html//1) allows you to write your web pages in a prologish way &mdash; converting HTML 
+Its [definite clause grammar (DCG) for html](http://www.swi-prolog.org/pldoc/doc_for?object=html//1) allows you to write your web pages in a prologish way, converting HTML 
 
-&lt;element attribute1="value1"...&gt;Content&lt;/element&gt; tags to 
+*&lt;element attribute1="value1"...&gt;Content&lt;/element&gt;* tags to 
 
-element([attribute1(Value1),...], Content) clauses 
+*element([attribute1(Value1),...], Content)* clauses, 
 
-or to stick to HMTL using \\['HTML here'], or [quasiquoting](http://www.swi-prolog.org/pldoc/man?section=quasiquotations). 
+where Content could also be a list, or to stick to HMTL using \\['HTML here'], or [quasiquoting](http://www.swi-prolog.org/pldoc/man?section=quasiquotations). 
 
 My own bias is toward separation of concerns by keeping HTML as HTML, but SWI Prolog's main developer Jan Wielemaker provided a strong counter-argument in a [discussion](https://swi-prolog.discourse.group/t/yet-another-web-applications-tutorial/566/13) I started from which this tutorial grew:
 
