@@ -450,7 +450,7 @@ To safeguard things server-side, we can't simply use the browser cookie as our i
 ```21b07bc6c590b4b826d8786b837c859e740d9d1a1e9cbfdfcc3c05c299f5f62d``` 
 for the database without the password ever leaving the browser to be accessible by bad guys en route. Whoever can read stuff in our database legitimately or illegitimately can't use the id to hijack the user's account.
 
-The above predicate will return true with the User's name if a browser cookie has been set by a valid login and password combination, or false in which case the web application can redirect to the login_handler like so:
+The above predicate will return true with the User's name if a browser cookie has been set by a valid login and password combination, or false in which case the web application can redirect to /login like so:
 
 ```prolog
 welcome_or_login(Request) :-
@@ -465,9 +465,9 @@ I originally wrote the above to call the login_handler instead of redirecting, b
 
 ### Web page logic
 
-This little exercise involves guiding users to the correct page. Initially the home page will redirect to /login is the user is not logged, and the loggin page needs a link to a signup page for new users who haven't yet registered. The home page has a link to /logout which deletes the cookie, done entirely as a static file, and then redirects to /login.
+This little exercise involves guiding users to the correct page. Initially the home page will redirect to /login if the user is not logged in, and the login page needs a link to a /signup page for new users who haven't yet registered. The home page has a link to /logout which deletes the cookie, done entirely as a [static file](https://github.com/roblaing/swipl-webapp-howto/blob/master/unit4/logout.html), and then redirects to /login.
 
-For the sake of learning, I've prevented users from logging in as someone else before logging out, or registering for new accounts while logged into an existing account. That's probably not really necessary, but it did affirm my view that a logical programming language is a good choice for web development because making these rules was fairly straitforward.
+For the sake of learning, I've prevented users from logging in as someone else before logging out, or registering for new accounts while logged into an existing account. That's probably not really necessary, but it did affirm my view that a logical programming language is a good choice for web development because making these rules came very naturally.
 
 ## Unit 5
 
