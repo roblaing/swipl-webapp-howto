@@ -138,7 +138,13 @@ If everything is working, pointing your browser to <http://localhost:3030/user/J
 
 SWI Prolog offers many ways of generating HTML programmatically. I recommend Anne Ogborne's [tutorial](http://www.pathwayslms.com/swipltuts/html/index.html) for a more comprehensive overview.
 
-Its [definite clause grammar (DCG) for html](http://www.swi-prolog.org/pldoc/doc_for?object=html//1) allows you to write your web pages in a prologish way &mdash; converting HTML &lt;element attribute1="value1"...&gt;Content&lt;/element&gt; tags to *element([attribute1(Value1),...], Content)* clauses &mdash; or to stick to HMTL using \\['HTML here'], or [quasiquoting](http://www.swi-prolog.org/pldoc/man?section=quasiquotations). 
+Its [definite clause grammar (DCG) for html](http://www.swi-prolog.org/pldoc/doc_for?object=html//1) allows you to write your web pages in a prologish way &mdash; converting HTML 
+
+&lt;element attribute1="value1"...&gt;Content&lt;/element&gt; tags to 
+
+element([attribute1(Value1),...], Content) clauses 
+
+or to stick to HMTL using \\['HTML here'], or [quasiquoting](http://www.swi-prolog.org/pldoc/man?section=quasiquotations). 
 
 My own bias is toward separation of concerns by keeping HTML as HTML, but SWI Prolog's main developer Jan Wielemaker provided a strong counter-argument in a [discussion](https://swi-prolog.discourse.group/t/yet-another-web-applications-tutorial/566/13) I started from which this tutorial grew:
 
@@ -467,7 +473,7 @@ I originally wrote the above to call the login_handler instead of redirecting, b
 
 This little exercise involves guiding users to the correct page. Initially the home page will redirect to /login if the user is not logged in, and the login page needs a link to a /signup page for new users who haven't yet registered. The home page has a link to /logout which deletes the cookie, done entirely as a [static file](https://github.com/roblaing/swipl-webapp-howto/blob/master/unit4/logout.html), and then redirects to /login.
 
-For the sake of learning, I've prevented users from logging in as someone else before logging out, or registering for new accounts while logged into an existing account. That's probably not really necessary, but it did affirm my view that a logical programming language is a good choice for web development because making these rules came very naturally.
+For the sake of learning, I've prevented users from logging on as someone else before logging out, or registering for new accounts while logged into an existing account. That's probably not really necessary, but it did affirm my view that a logical programming language is a good choice for web development because making these rules came very naturally.
 
 ## Unit 5
 
