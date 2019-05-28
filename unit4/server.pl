@@ -11,19 +11,10 @@
 
 :- http_handler(root(.), welcome_or_login, []).
 :- http_handler(root(login), login_handler(Method), [method(Method)]).
+:- http_handler(root(logout), http_reply_from_files('.', [indexes(['./logout.html'])]), [prefix]).
 :- http_handler(root(signup), signup_handler(Method), [method(Method)]).
-:- http_handler(root(logout), http_reply_from_files('.', [indexes(['signup-form.html'])]), [prefix]).
-:- http_handler(root(check_name), check_name, []).
 :- http_handler('/styles/basic.css', http_reply_from_files('.', [indexes(['./styles/basic.css'])]), [prefix]).
 :- http_handler('/scripts/signup_form.js', http_reply_from_files('.', [indexes(['./scripts/signup_form.js'])]), [prefix]).
-
-logged_in(Request, User) :-
-  member(cookie(Cookies), Request),
-  member(user_id=UserId, Cookies),
-  create_hash(UserId, Id),
-  odbc_connect('blog', Connection, []),
-  odbc_query(Connection, "SELECT name FROM users WHERE id = '~w'"-[Id], row(User)),  
-  odbc_disconnect(Connection).
 
 welcome_or_login(Request) :-
   ( logged_in(Request, Name) -> 
@@ -41,22 +32,27 @@ login_handler(post, Request) :-
                               ; http_redirect(see_other, root(login), Request)).
 
 signup_handler(get, Request) :-
-  term_string(Request, String),
-  render_signup_form('', '', '', '', String).
+  (logged_in(Request, _Name) -> http_redirect(see_other, root(.), Request)
+  ; term_string(Request, String),
+    render_signup_form('', '', '', '', String)).
   
 signup_handler(post, Request) :-
   http_parameters(Request, [username(Name, []), email(Email, [])]),
-  member(cookie(Cookies), Request),
-  member(user_id=UserId, Cookies),
-  create_hash(UserId, Id),
-  insert_user(Id, Name, Email), 
-  render_welcome(Name).
+  (name_in_db(Name) -> term_string(Request, String),
+    render_signup_form(Name, 'Sorry, that user name is already taken', Email, '', String)
+  ;
+   member(cookie(Cookies), Request),
+   member(user_id=UserId, Cookies),
+   create_hash(UserId, Id),
+   insert_user(Id, Name, Email),
+   http_redirect(see_other, root(.), Request)).
      
 render_welcome(Username, RequestString) :-
   reply_html_page(
     [title('Welcome ~w'-[Username]),
      link([rel('stylesheet'), href('/styles/basic.css')])],
-    [h1('Welcome ~w'-[Username]),
+    [div([class('login-area')],[Username, ' ', a([class('login-link'), href('/logout')],'Logout')]),
+     h1('Welcome ~w'-[Username]),
      p(RequestString)]).
     
 render_login_form(Request) :-
@@ -66,7 +62,8 @@ render_login_form(Request) :-
   reply_html_page(
     [title('Login'),
      link([rel('stylesheet'), href('/styles/basic.css')])],
-    [form([name('login'), action=('/login'), method('POST'), onsubmit('return validateLoginForm()')],
+    [div([class('login-area')],[a([class('login-link'), href('/signup')],'Signup')]),
+     form([name('login'), action=('/login'), method('POST'), onsubmit('return validateLoginForm()')],
       [h2('Login'),
        div([label([for('username')], 'Username:'),
             input([type('text'), id('username'), name('username')])]),
@@ -83,7 +80,8 @@ render_signup_form(Username, UsernameError, Email, EmailError, RequestString) :-
   reply_html_page(
     [title('Signup'),
      link([rel('stylesheet'), href('/styles/basic.css')])],
-    [form([name('signup'), action=('/signup'), method('POST'), onsubmit('return validateSignupForm()')],
+    [div([class('login-area')],[a([class('login-link'), href('/login')],'Login')]),
+     form([name('signup'), action=('/signup'), method('POST'), onsubmit('return validateSignupForm()')],
       [h2('Signup'),
        div([label([for('username')], 'Username:'),
             input([type('text'), id('username'), name('username'), value(Username)]),
@@ -114,21 +112,22 @@ insert_user(Id, Name, Email) :-
   odbc_query(Connection, "INSERT INTO users (id, name, email) VALUES ('~w', '~w', '~w')"-[Id, EName, EEmail]),
   odbc_disconnect(Connection). 
 
-name_in_database(Username) :-
+name_in_db(Name) :-
   odbc_connect('blog', Connection, []),
-  odbc_query(Connection, "SELECT name FROM users WHERE name = '~w'"-[Username], row(_)),  
+  odbc_query(Connection, "SELECT name FROM users WHERE name = '~w'"-[Name], row(Name)),  
   odbc_disconnect(Connection).
-
-check_name(Request) :-
-  member(method(post), Request), !,
-  http_read_json_dict(Request, _{userName:NameIn}),
-  (name_in_database(NameIn) -> NameOut = "Sorry, that user name is already taken" ; NameOut = NameIn),
-  reply_json_dict(_{nameOk:NameOut}).
 
 create_hash(String, HexDigest) :-
   Salt = "Some very long randomly generated string",
   hmac_sha(Salt, String, HMAC, [algorithm(sha256)]),
   hash_atom(HMAC, HexDigest).
 
+logged_in(Request, User) :-
+  member(cookie(Cookies), Request),
+  member(user_id=UserId, Cookies),
+  create_hash(UserId, Id),
+  odbc_connect('blog', Connection, []),
+  odbc_query(Connection, "SELECT name FROM users WHERE id = '~w'"-[Id], row(User)),  
+  odbc_disconnect(Connection).
 
 

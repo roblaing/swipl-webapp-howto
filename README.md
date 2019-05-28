@@ -268,7 +268,7 @@ You would also need to add the Javascript file to the http_handler predicates (f
 ```prolog
 :- http_handler('/',  form_handler, [prefix]).
 :- http_handler('/styles/basic.css', http_reply_from_files('.', [indexes(['./styles/basic.css'])]), [prefix]).
-:- http_handler('/scripts/validate_forms.js', http_reply_from_files('.', [indexes(['./scripts/validate_forms.js'])]), [prefix]).
+:- http_handler('/scripts/validate_form.js', http_reply_from_files('.', [indexes(['./scripts/validate_form.js'])]), [prefix]).
 ```
 
 While my Javascript code will prevent innocent typos getting transmitted, it won't catch malicious tampering of the input data which can easily be done by editing the URL when GET is used. So it's wise to follow a belt and braces approach of having both the client and server validate the user's input.
@@ -392,8 +392,6 @@ The way I've written the code in this unit dates back to before I decided to do 
 
 > Everything is easy when you don't know what you're talking about. &mdash; Quote I heard somewhere but can't remember where, which came to be very relevant writing this unit.
 
-Work in progress...
-
 In this unit we step into the dangerous minefield of using cookies to authenticate users. Users will be stored in our blog database in the following table:
 
 ```sql
@@ -465,23 +463,13 @@ welcome_or_login(Request) :-
 
 I originally wrote the above to call the login_handler instead of redirecting, but then found the home page kept the /login path, and testing password errors (when the login page keeps you there) got buggy... so found http_redirect a big help.
 
+### Web page logic
 
-### Keeping user names unique
+This little exercise involves guiding users to the correct page. Initially the home page will redirect to /login is the user is not logged, and the loggin page needs a link to a signup page for new users who haven't yet registered. The home page has a link to /logout which deletes the cookie, done entirely as a static file, and then redirects to /login.
 
-Just about everything can be validated on the browser except checking the selected username has not already been used by someone else. My solution for this involves using Ajax. 
+For the sake of learning, I've prevented users from logging in as someone else before logging out, or registering for new accounts while logged into an existing account. That's probably not really necessary, but it did affirm my view that a logical programming language is a good choice for web development because making these rules was fairly straitforward.
 
-
-
+## Unit 5
 
 Work in progress...
-
-;max-age=max-age-in-seconds
-;expires=date-in-GMTString-format
-
-You can delete a cookie by simply updating its expiration time to zero.
-
-JSON Web Tokens
-
-https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Date/toUTCString
-
 
