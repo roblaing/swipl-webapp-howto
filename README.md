@@ -213,7 +213,7 @@ A common pitfall in this style of programming is more than one predicate may thi
 
 You don't have to use a separate predicate for each case, and I relapsed to the C-style ```if -> then ; else``` pattern frowned on by Prolog purists in the second predicate to handle whether the form needs to be sent back with errors or to redirect to a success page.
 
-The *->* is Prolog syntactic sugar for *, !,*. Exclamation marks trip me up, especically if there are several in a predicate, so I go for the sweeter version.
+The ```->``` is Prolog syntactic sugar for ```, !, ```... Exclamation marks trip me up, especically if there are several in a predicate, so I go for the sweeter version.
 
 #### Using http_parameters built in tests
 
