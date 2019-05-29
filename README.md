@@ -201,19 +201,19 @@ I need to update the above to use [http_redirect(+How, +To, +Request)](http://ww
 
 #### Predicates with the same name and arity handling different cases
 
-The pattern above is another alien Prolog thing for those of us weaned on the C-family in that instead of dealing with different cases in one function, in Prolog each case tends to have its own predicate. In the first *form_handler(Request)* predicate, if the method is POST or data has been sent via GET because search(Anything) is in the Request list, it will skip rendering a blank form and move on to the second *form_handler(Request)* predicate which looks at the submitted data and then either asks for corrections or redirects to the success page.
+This style of *pattern-action* is another alien Prolog thing for those of us weaned on the C-family in that instead of dealing with different cases in one function, in Prolog each case tends to have its own predicate. In the first *form_handler(Request)* predicate, if the method is POST or data has been sent via GET because search(Anything) is in the Request list, it will skip rendering a blank form and move on to the second *form_handler(Request)* predicate which looks at the submitted data and then either asks for corrections or redirects to the success page.
 
 I've put explicit tests at the top of both predicates to ensure the right predicate handles the right case. Checking patterns on the left side of the :- is generally safest, and if I wasn't making this example method agnostic, I'd rewrite the first case as ```form_handler(get, Request)``` and the second as ```form_handler(put, Request)``` and then change to ```:- http_handler('/', form_handler(Method), [method(Method), prefix]).``` to eliminate any ambiguity.
 
 A potential problem in the way I've done it is that if one of the other [HTTP methods](https://developer.mozilla.org/en-US/docs/Web/HTTP/Methods) is received &mdash; they include PUT, DELETE, HEAD, PATCH... &mdash; none of the above form_handler predicates will respond, leading to a confusing answer of *false*. Since whoever sends an HTTP method besides GET and POST is not using a browser, and is probably a hacker up to no good, responding with a server error message doesn't bother me too much here.
 
-An alternative way to have written the above would be to put an exclamation mark after the checks in the first predicate (! is called [cut](http://www.learnprolognow.org/lpnpage.php?pagetype=html&pageid=lpn-htmlse44) in Prolog jargon) and then leave out the checks in the second to make it the default case to respond to all other methods.
-
 A common pitfall in this style of programming is more than one predicate may think it is the correct one for the given case &mdash; or worse yet, none respond leading to the old joke "How many Prolog programmers does it take to change a lightbulb? *false*" &mdash; so it takes careful thought and testing.
 
-You don't have to use a separate predicate for each case, and I relapsed to the C-style ```if -> then ; else``` pattern frowned on by Prolog purists in the second predicate to handle whether the form needs to be sent back with errors or to redirect to a success page.
+An alternative way to have written the above would be to put an exclamation mark after the checks in the first predicate (! is called [cut](http://www.learnprolognow.org/lpnpage.php?pagetype=html&pageid=lpn-htmlse44) in Prolog jargon) and then leave out the checks in the second to make it the default case to respond to all other methods.
 
-The ```->``` is Prolog syntactic sugar for ```, !, ```... Exclamation marks trip me up, especically if there are several in a predicate, so I go for the sweeter version.
+You don't have to use a separate predicate for each case, and I relapsed to the C-style ```if -> then ; else``` pattern frowned on by Prolog purists (because it's often a sign of programmers too lazy to think through all cases carefully) in the second predicate to handle whether the form needs to be sent back with errors or to redirect to a success page.
+
+The ```->``` is Prolog syntactic sugar for ```, !, ```... Exclamation marks trip me up, especically if there are several in a predicate, so I go for the sweeter version. If your predicate starts looking like ```if -> then ; if -> then ;...``` you probably wan't to think about your patterns and actions more carefully.
 
 #### Using http_parameters built in tests
 
@@ -229,7 +229,7 @@ catch(http_parameters(Request,
 success_handler).  
 ```
 
-A snag with the above is that if a value does not pass http_paramaters' test, it get thrown away, leaving the variable allocated to it *unground*. This is why I took the more elaborate route of keeping bad input values to use for error messages and return to the browser for editing.
+A snag with the above is that if a value does not pass http_paramaters' test, it gets thrown away, leaving the variable allocated to it *unground*. This is why I took the more elaborate route of keeping bad input values to use for error messages and return to the browser for editing.
 
 ### Switching from GET to POST
 
