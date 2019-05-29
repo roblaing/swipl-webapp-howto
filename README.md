@@ -168,7 +168,7 @@ Typically, POST is the preferred method for submitted data, making it easier for
 
 ```prolog
 form_handler(Request) :-
-  memberchk(method(get), Request),
+  memberchk(method(get), Request), 
   \+memberchk(search(_), Request),
   term_string(Request, String),
   render_form('', '', '', '', '', '', String).  
@@ -205,11 +205,15 @@ The pattern above is another alien Prolog thing for those of us weaned on the C-
 
 I've put explicit tests at the top of both predicates to ensure the right predicate handles the right case. Checking patterns on the left side of the :- is generally safest, and if I wasn't making this example method agnostic, I'd rewrite the first case as ```form_handler(get, Request)``` and the second as ```form_handler(put, Request)``` and then change to ```:- http_handler('/', form_handler(Method), [method(Method), prefix]).``` to eliminate any ambiguity.
 
-An alternative way to have written the above would be to put an exclamation mark after the checks in the first predicate (! is called [cut](http://www.learnprolognow.org/lpnpage.php?pagetype=html&pageid=lpn-htmlse44) in Prolog jargon) and then leave out the checks in the second to make it the default case.
+A potential problem in the way I've done it is that if one of the other [HTTP methods](https://developer.mozilla.org/en-US/docs/Web/HTTP/Methods) is received &mdash; they include PUT, DELETE, HEAD, PATCH... &mdash; none of the form_handler(Method, Request) predicates will respond, leading to a confusing answer of *false*. Since whoever sends an HTTP method besides GET and POST is not using a browser, and is probably a hacker up to no good, responding with a server error message doesn't bother me too much here.
 
-A common pitfall in this style of programming is more than one predicate may think it is the correct one for the given case, so it takes careful thought and testing. 
+An alternative way to have written the above would be to put an exclamation mark after the checks in the first predicate (! is called [cut](http://www.learnprolognow.org/lpnpage.php?pagetype=html&pageid=lpn-htmlse44) in Prolog jargon) and then leave out the checks in the second to make it the default case to respond to all other methods.
 
-But note I did fall back on the ```if -> then ; else``` pattern in the second predicate to handle if the form needed to be sent back with errors or if the success page should be rendered. A Prolog purist alternative follows. 
+A common pitfall in this style of programming is more than one predicate may think it is the correct one for the given case, so it takes careful thought and testing.
+
+You don't have to use a separate predicate for each case, and I relapsed to the C-style ```if -> then ; else``` pattern frowned on by Prolog purists in the second predicate to handle whether the form needs to be sent back with errors or to redirect to a success page.
+
+The *->* is Prolog syntactic sugar for *, !,*. Exclamation marks trip me up, especically if there are several in a predicate, so I go for the sweeter version.
 
 #### Using http_parameters built in tests
 
