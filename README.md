@@ -142,7 +142,7 @@ Its [definite clause grammar (DCG) for html](http://www.swi-prolog.org/pldoc/doc
 
 *&lt;element attribute1="value1"...&gt;Content&lt;/element&gt;* tags to 
 
-*element([attribute1(Value1),...], Content)* clauses, 
+*element([attribute1('value1'),...], Content)* clauses, 
 
 where Content could also be a list, and if there are no attributes the sole argument could be one string as in ```h1("~w's Home Page"-[User])``` above. It also lets you stick to HMTL using \\['HTML here'], or [quasiquoting](http://www.swi-prolog.org/pldoc/man?section=quasiquotations). 
 
