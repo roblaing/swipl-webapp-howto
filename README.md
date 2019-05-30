@@ -213,7 +213,7 @@ An alternative way to have written the above would be to put an exclamation mark
 
 You don't have to use a separate predicate for each case, and I relapsed to the C-style ```if -> then ; else``` pattern frowned on by Prolog purists (because it's often a sign of programmers too lazy to think through all cases carefully) in the second predicate to handle whether the form needs to be sent back with errors or to redirect to a success page.
 
-The ```->``` is Prolog syntactic sugar for ```, !, ```... Exclamation marks trip me up, especically if there are several in a predicate, so I go for the sweeter version. If your predicate starts looking like ```if -> then ; if -> then ;...``` you probably wan't to think about your patterns and actions more carefully.
+The ```->``` is Prolog syntactic sugar for ```, !, ```... Exclamation marks trip me up, especically if there are several in a predicate, so I go for the sweeter version. If your predicate starts looking like ```if -> then ; else if -> then ;...``` you probably wan't to think about your patterns and actions more carefully.
 
 #### Using http_parameters built in tests
 
