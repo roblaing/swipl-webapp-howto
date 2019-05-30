@@ -158,7 +158,7 @@ This unit covers the basics of web forms, which SWI Prolog makes fairly easy wit
 
 The original Udacity course I'm using as a template devoted a fair amount of time going through check boxes, radio buttons, drop down menus and HTML's many other form elements. I personally can't remember all this stuff and just look it up when needed, so again recommend [Mozilla's tutorial](https://developer.mozilla.org/en-US/docs/Learn/HTML/Forms/Your_first_HTML_form) for anyone wanting a refresher.
 
-It's generally good webform design practice to give users hints what they did wrong and allow them to edit their previous attempt instead of forcing them to start afresh, and to bring up a page saying the system is happy once the form has been filled in correctly. 
+It's generally good webform design practice to give users hints what they did wrong and allow them to edit their previous attempt instead of forcing them to start afresh, and redirect to a page saying the system is happy once the form has been filled in correctly. 
 
 I've redone Huffman's example of creating a simple form which asks for a person's birthdate in US-style of month, day and year. To avoid a long digression into datetime programming, I've limited the example to some very rudimentary and inflexible checks on the validity of the input.
 
@@ -207,7 +207,7 @@ I've put explicit tests at the top of both predicates to ensure the right predic
 
 A potential problem in the way I've done it is that if one of the other [HTTP methods](https://developer.mozilla.org/en-US/docs/Web/HTTP/Methods) is received &mdash; they include PUT, DELETE, HEAD, PATCH... &mdash; none of the above form_handler predicates will respond, leading to a confusing answer of *false*. Since whoever sends an HTTP method besides GET and POST is not using a browser, and is probably a hacker up to no good, responding with a server error message doesn't bother me too much here.
 
-A common pitfall in this style of programming is more than one predicate may think it is the correct one for the given case &mdash; or worse yet, none respond leading to the old joke "How many Prolog programmers does it take to change a lightbulb? *false*" &mdash; so it takes careful thought and testing.
+A common pitfall in this style of programming is more than one predicate may think it is the correct one for the given case &mdash; or worse yet, none accept the case, as would happen in this example with method(put), leading to the old joke "How many Prolog programmers does it take to change a lightbulb? *false*" &mdash; meaning it requires careful thought and testing.
 
 An alternative way to have written the above would be to put an exclamation mark after the checks in the first predicate (! is called [cut](http://www.learnprolognow.org/lpnpage.php?pagetype=html&pageid=lpn-htmlse44) in Prolog jargon) and then leave out the checks in the second to make it the default case to respond to all other methods, thereby avoiding the dreaded *false* while breaking the Zen of Python's tenth commandment "Errors should never pass silently".
 
