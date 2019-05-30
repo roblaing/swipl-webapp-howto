@@ -209,7 +209,7 @@ A potential problem in the way I've done it is that if one of the other [HTTP me
 
 A common pitfall in this style of programming is more than one predicate may think it is the correct one for the given case &mdash; or worse yet, none accept the case, as would happen in this example with method(put), leading to the old joke "How many Prolog programmers does it take to change a lightbulb? *false*" &mdash; meaning it requires careful thought and testing.
 
-An alternative way to have written the above would be to put an exclamation mark in all checks before the last predicate (! is called [cut](http://www.learnprolognow.org/lpnpage.php?pagetype=html&pageid=lpn-htmlse44) in Prolog jargon) and then leave out any checks in the last predicate to make it the default, thereby avoiding the dreaded *false* while breaking the Zen of Python's tenth commandment "Errors should never pass silently".
+An alternative way to have written the above would be to put an exclamation mark after all checks before the last predicate (! is called [cut](http://www.learnprolognow.org/lpnpage.php?pagetype=html&pageid=lpn-htmlse44) in Prolog jargon) and then leave out any checks in the last predicate to make it the default, thereby avoiding the dreaded *false* while breaking the Zen of Python's tenth commandment "Errors should never pass silently".
 
 You don't have to use a separate predicate for each case, and I relapsed to the C-style ```if -> then ; else``` pattern frowned on by Prolog purists (because it's often a sign of programmers too lazy to think through all cases carefully) in the second predicate to handle whether the form needs to be sent back with errors or to redirect to a success page.
 
@@ -445,7 +445,7 @@ There's not much we can do about the owners of logins and passwords seeing the h
 
 SWI Prolog has an [HTTP Session management](http://www.swi-prolog.org/pldoc/man?section=httpsession) library which sets a cookie swipl_session='Some unique ID' which is used by predicates akin to Prolog's standard clausal store manipulators assert and retract for the server to remember temporary things about a specific user. But that's not really the right tool for the job here.
 
-Luckily, checking if there are cookies in the Request, and if so reading the value of a specific key if it exists simply requires two clauses at the top of the handler:
+Luckily, checking if there are cookies in the Request, and if so reading the value of a specific key if it exists simply requires two clauses at the top of the *logged_in* predicate:
 
 ```prolog
 logged_in(Request, User) :-
@@ -458,7 +458,7 @@ logged_in(Request, User) :-
 ```
 To safeguard things server-side, we can't simply use the browser cookie as our id in the database, but need to rehash it as suggested above. For our John Smith with Password1 example, the previous hash gets turned into a completely different unique id of 
 ```21b07bc6c590b4b826d8786b837c859e740d9d1a1e9cbfdfcc3c05c299f5f62d``` 
-for the database without the password ever leaving the browser to be accessible by bad guys en route. Whoever can read stuff in our database legitimately or illegitimately can't use the id to hijack the user's account.
+for the database without the password ever leaving the browser to be accessible by bad guys en route. And whoever can read stuff in our database legitimately or illegitimately can't use the id to hijack the user's account.
 
 The above predicate will return true with the User's name if a browser cookie has been set by a valid login and password combination, or false in which case the web application can redirect to /login like so:
 
