@@ -66,7 +66,7 @@ There are no output arguments (- prefixes) in http_handler, making it effectivel
 
 Something that tripped me up learning Prolog was that you need to think in terms of input and output arguments within relations &mdash; to borrow spreadsheet or database jargon, think of relations as rows and arguments as columns with known data (inputs) or as columns which need to be calculated (outputs)  &mdash; which is somewhat alien to most of us brought up on programming languages with functions which substitute themselves into a return value.
 
-If your query is so specific it only returns one row, it is *det* in Prolog jargon. If your result produces several rows, it is [nondet](http://www.swi-prolog.org/pldoc/man?section=unitbox), and you'll want to iterate through these multiple answers. Much of web development boils down to list processing, so iteration will come up a lot in this tutorial. Getting to grips with the many ways of iterating tends to be quite a hurdle for anyone learning Prolog, which I've covered in a separate [tutorial](https://swish.swi-prolog.org/p/yeQhnQSk.swinb).
+If your query is so specific it only returns one row, it is *det* in Prolog jargon. If your result produces several rows, it is [nondet](http://www.swi-prolog.org/pldoc/man?section=unitbox), and you'll either want to iterate through these multiple answers, or figure out the bug in your *pattern-action* predicates covered in Unit 2. Much of web development boils down to list processing, so iteration will come up a lot in this tutorial. Getting to grips with the many ways of iterating tends to be quite a hurdle for anyone learning Prolog, which I've covered in a separate [tutorial](https://swish.swi-prolog.org/p/yeQhnQSk.swinb).
 
 ##### What is :Closure?
 
@@ -86,7 +86,7 @@ line of code.
 ```
 
 Borrowing [The Zen of Python](https://www.python.org/dev/peps/pep-0020/) rule 2 &mdash; explicit is better than implicit &mdash; 
-I've expanded that because it took me a while to figure out how to write handlers for html files other than index.html. I've also changed ```'index.html'``` to ```'./index.html'``` so as to make it clear if you wanted to keep your html files in a subdirectory called, say html, you could.
+I've expanded that because it took me a while to figure out how to write handlers for html files other than index.html. I've also changed ```'index.html'``` to ```'./index.html'``` so as to make it clear that if you wanted to keep your html files in a subdirectory called, say html, you could.
 
 ```prolog
 :- http_handler(root(.),     http_reply_from_files('.', [indexes(['./index.html'])]), [prefix]).
