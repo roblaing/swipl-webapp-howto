@@ -11,8 +11,8 @@
 http:location(files, root(files), []).
 user:file_search_path(folders, library('images/styles/scripts')).
 
-:- http_handler(root(.),     http_reply_from_files('.', [indexes(['index.html'])]), [prefix]).
-:- http_handler(root(about), http_reply_from_files('.', [indexes(['about.html'])]), [prefix]).
+:- http_handler(root(.),     http_reply_from_files('.', [indexes(['./index.html'])]), [prefix]).
+:- http_handler(root(about), http_reply_from_files('.', [indexes(['./about.html'])]), [prefix]).
 :- http_handler(files(.),    http_reply_from_files(folders, []), [prefix]).
 :- http_handler(root(user/User), my_handler_code(User), []).
 

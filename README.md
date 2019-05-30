@@ -86,11 +86,11 @@ line of code.
 ```
 
 Borrowing [The Zen of Python](https://www.python.org/dev/peps/pep-0020/) rule 2 &mdash; explicit is better than implicit &mdash; 
-I've expanded that because it took me a while to figure out how to write handlers for html files other than index.html.
+I've expanded that because it took me a while to figure out how to write handlers for html files other than index.html. I've also changed ```'index.html'``` to ```'./index.html'``` so as to make it clear if you wanted to keep your html files in a subdirectory called, say html, you could.
 
 ```prolog
-:- http_handler(root(.),     http_reply_from_files('.', [indexes(['index.html'])]), [prefix]).
-:- http_handler(root(about), http_reply_from_files('.', [indexes(['about.html'])]), [prefix]).
+:- http_handler(root(.),     http_reply_from_files('.', [indexes(['./index.html'])]), [prefix]).
+:- http_handler(root(about), http_reply_from_files('.', [indexes(['./about.html'])]), [prefix]).
 ```
 
 Besides html files, the server also needs to handle associated MIME types, and SWI Prolog achieves that (in the directory structure explained
