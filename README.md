@@ -371,6 +371,8 @@ db_insert(Title, Art) :-
 
 Though I wouldn't bet my life on it, running input text through sql_escape_single_quotes before inserting it into the database should hopefully secure the site against SQL injection attacks.
 
+Another hitch I ran into redoing this on a new server was ```ERROR: ODBC: State 08001: [unixODBC]FATAL:  Ident authentication failed for user...```, which required the pg_hba.conf file to be changed to *trust* from *ident*, and the postgres daemon restarted.
+
 The prolog predicate to fetch all the ASCII art in the database, ordered by newness, looks like this:
 
 ```prolog
@@ -482,4 +484,16 @@ For the sake of learning, I've prevented users from logging on as someone else b
 ## Unit 5
 
 Work in progress...
+
+Here we go into SWI Prolog's [HTTP client libraries](http://www.swi-prolog.org/pldoc/man?section=http-clients) to get data programmatically from other servers to use in our code.
+
+```prolog
+consult(library(http/http_open)).
+
+http_open('http://www.google.com/search?q=prolog', In, []),
+   copy_stream_data(In, user_output),
+   close(In).
+```
+
+
 
