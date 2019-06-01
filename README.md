@@ -288,12 +288,14 @@ While my Javascript code will prevent innocent typos getting transmitted, it won
 
 > “If you want to master something, teach it.” ― Richard Feynman
 
-This unit introduces an SQL database which SWI-Prolog communicates with via the [ODBC Interface](http://www.swi-prolog.org/pldoc/doc_for?object=section(%27packages/odbc.html%27)).
+This unit introduces an SQL database which SWI-Prolog communicates with via the [ODBC Interface](http://www.swi-prolog.org/pldoc/doc_for?object=section(%27packages/odbc.html%27)) &mdash; an awful, Microsoft developed "standard" which appears to be the only way SWI Prolog currently talks to SQL databases, creating a serious problem which urgently needs to be fixed. 
+
+Trying this code on a new Postrgesql 11 server resulted in ```ERROR: ODBC: State 08001: [unixODBC]FATAL:  Ident authentication failed for user...```, which on a local instance could be resolved by editing the pg_hba.conf file to *trust* from *ident* and restarting it. That works as a bandaid within a virtual machine, but no serious cloud provider is going to sacrifice proper database security in a larger system, severely limiting SWI Prolog's prospects in this market as things stand. 
+
+I hope to replace these instructions with those for a proper, Unix socket based system soon, but meanwhile...
 
 For Postgres (which I use) you need to have the [PostgreSQL ODBC driver](https://odbc.postgresql.org/) installed besides an ~/.odbc.ini file.
 Details are at <http://www.unixodbc.org/odbcinst.html> where it explains how to set this up for alternatives to Postgres. The below example could be one of many stanzas in the ~/.odbc.ini file for various databases, each referenced by SWI Prolog by whatever identifier you put in the heading between square brackets. 
-
-A hitch I ran into redoing this on a new server with Postrgesql 11 was ```ERROR: ODBC: State 08001: [unixODBC]FATAL:  Ident authentication failed for user...```, which required the pg_hba.conf file to be changed to *trust* from *ident*, and then the postgres daemon restarted as explained [here](https://confluence.atlassian.com/bitbucketserverkb/fatal-ident-authentication-failed-for-user-unable-to-connect-to-postgresql-779171564.html).
 
 So in this example, SWI Prolog would get the username, password, database name etc from the example ~/.odbc.ini file below if told ```odbc_connect('blog', Connection, []),```...
 
@@ -351,7 +353,7 @@ db_insert(Title, Art) :-
   odbc_disconnect(Connection).
 ```
 
-The above predicate was a second attempt to circument a snag the original course circumvented by using Google's GQL database which had me cursing SWI Prolog until I realised it was actually SQL's fault: you can't use single quotes within SQL text unless they are escaped with another single quote. The test ASCII art I used, obtained from <https://www.asciiart.eu/>, was this:
+The above predicate was a second attempt to circument a snag the original course avoided by using Google's GQL database which had me cursing SWI Prolog until I realised it was actually SQL's fault: you can't use single quotes within SQL text unless they are escaped with another single quote. The test ASCII art I used, obtained from <https://www.asciiart.eu/>, was this:
 
 ```
 Little Linux penguin by Joan G. Stark
@@ -366,7 +368,7 @@ Little Linux penguin by Joan G. Stark
 jgs\__/'---'\__/
 ```
 
-Tis little Linux penguin caused server.pl to keep barfing ```odbc: state 42601: error: unterminated quoted string at or near...``` I wrote a helper predicate to check the input text for single quotes, and if so double them.
+This little Linux penguin caused server.pl to keep barfing ```odbc: state 42601: error: unterminated quoted string at or near...``` I wrote a helper predicate to check the input text for single quotes, and if so double them.
 
 Before discovering odbc_prepare, I solved this problem like so with a helper predicate to replace single quotes with double quotes:
 
