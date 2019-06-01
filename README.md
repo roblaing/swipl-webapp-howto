@@ -293,7 +293,7 @@ This unit introduces an SQL database which SWI-Prolog communicates with via the 
 For Postgres (which I use) you need to have the [PostgreSQL ODBC driver](https://odbc.postgresql.org/) installed besides an ~/.odbc.ini file.
 Details are at <http://www.unixodbc.org/odbcinst.html> where it explains how to set this up for alternatives to Postgres. The below example could be one of many stanzas in the ~/.odbc.ini file for various databases, each referenced by SWI Prolog by whatever identifier you put in the heading between square brackets. 
 
-A hitch I ran into redoing this on a new server with Postrgesql 11 was ```ERROR: ODBC: State 08001: [unixODBC]FATAL:  Ident authentication failed for user...```, which required the pg_hba.conf file to be changed to *trust* from *ident*, and then the postgres daemon restarted.
+A hitch I ran into redoing this on a new server with Postrgesql 11 was ```ERROR: ODBC: State 08001: [unixODBC]FATAL:  Ident authentication failed for user...```, which required the pg_hba.conf file to be changed to *trust* from *ident*, and then the postgres daemon restarted as explained [here](https://confluence.atlassian.com/bitbucketserverkb/fatal-ident-authentication-failed-for-user-unable-to-connect-to-postgresql-779171564.html).
 
 So in this example, SWI Prolog would get the username, password, database name etc from the example ~/.odbc.ini file below if told ```odbc_connect('blog', Connection, []),```...
 
@@ -341,7 +341,17 @@ CREATE TABLE IF NOT EXISTS arts (
 );
 ```
 
-A snag the original course circumvented by using Google's GQL database had me cursing SWI Prolog until I realised it was actually SQL's fault: you can't use single quotes within SQL text unless they are escaped with another single quote. The test ASCII art I used, obtained from <https://www.asciiart.eu/>, was this:
+To insert the ASCII art into the database, I've used the following predicate:
+
+```prolog
+db_insert(Title, Art) :-
+  odbc_connect('blog', Connection, []),
+  odbc_prepare(Connection, 'INSERT INTO arts (title, art) VALUES (?, ?)', [default, default], Statement),
+  odbc_execute(Statement, [Title, Art]),
+  odbc_disconnect(Connection).
+```
+
+The above predicate was a second attempt to circument a snag the original course circumvented by using Google's GQL database which had me cursing SWI Prolog until I realised it was actually SQL's fault: you can't use single quotes within SQL text unless they are escaped with another single quote. The test ASCII art I used, obtained from <https://www.asciiart.eu/>, was this:
 
 ```
 Little Linux penguin by Joan G. Stark
@@ -356,7 +366,9 @@ Little Linux penguin by Joan G. Stark
 jgs\__/'---'\__/
 ```
 
-This little Linux penguin caused server.pl to keep barfing ```odbc: state 42601: error: unterminated quoted string at or near...``` until I eventually figured out I needed a helper predicate to check the input text for single quotes, and if so double them.
+Tis little Linux penguin caused server.pl to keep barfing ```odbc: state 42601: error: unterminated quoted string at or near...``` I wrote a helper predicate to check the input text for single quotes, and if so double them.
+
+Before discovering odbc_prepare, I solved this problem like so with a helper predicate to replace single quotes with double quotes:
 
 ```prolog
 sql_escape_single_quotes(StringIn, StringOut) :-
@@ -371,7 +383,7 @@ db_insert(Title, Art) :-
   odbc_disconnect(Connection).
 ```
 
-Though I wouldn't bet my life on it, running input text through sql_escape_single_quotes before inserting it into the database should hopefully secure the site against SQL injection attacks.
+Even though I ended up deleting sql_escape_single_quotes, it's still a handy pattern for replacing stuff in strings in Prolog which will come in handy later. 
 
 The prolog predicate to fetch all the ASCII art in the database, ordered by newness, looks like this:
 
