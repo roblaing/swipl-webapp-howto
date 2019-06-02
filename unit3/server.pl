@@ -16,6 +16,7 @@ db_insert(Title, Art) :-
   odbc_connect('blog', Connection, []),
   odbc_prepare(Connection, 'INSERT INTO arts (title, art) VALUES (?, ?)', [default, default], Statement),
   odbc_execute(Statement, [Title, Art]),
+  odbc_free_statement(Statement),
   odbc_disconnect(Connection).
 
 db_select(ArtList) :-

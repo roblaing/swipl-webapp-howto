@@ -288,11 +288,17 @@ While my Javascript code will prevent innocent typos getting transmitted, it won
 
 > “If you want to master something, teach it.” ― Richard Feynman
 
-This unit introduces an SQL database which SWI-Prolog communicates with via the [ODBC Interface](http://www.swi-prolog.org/pldoc/doc_for?object=section(%27packages/odbc.html%27)) &mdash; an awful, Microsoft developed "standard" which appears to be the only way SWI Prolog currently talks to SQL databases, creating a serious problem which urgently needs to be fixed. 
+Use TCP port 5432
 
-Trying this code on a new Postrgesql 11 server resulted in ```ERROR: ODBC: State 08001: [unixODBC]FATAL:  Ident authentication failed for user...```, which on a local instance could be resolved by editing the pg_hba.conf file to *trust* from *ident* and restarting it. That works as a bandaid within a virtual machine, but no serious cloud provider is going to sacrifice proper database security in a larger system, severely limiting SWI Prolog's prospects in this market as things stand. 
+http://www.swi-prolog.org/pldoc/man?section=socket
 
-I hope to replace these instructions with those for a proper, Unix socket based system soon, but meanwhile...
+https://www.postgresql.org/docs/10/runtime-config-connection.html
+
+This unit introduces an SQL database which SWI-Prolog communicates with via the [ODBC Interface](http://www.swi-prolog.org/pldoc/doc_for?object=section(%27packages/odbc.html%27)) &mdash; an attempt by Microsoft in 1992 to create a standard interface between programming languages and databases which I recently discovered hasn't aged well.
+
+Trying this code on a new Postrgesql 11 server resulted in ```ERROR: ODBC: State 08001: [unixODBC]FATAL:  Ident authentication failed for user...```, which on a local instance could be resolved by editing access permissions in pg_hba.conf file to *trust* from *ident* and restarting the database daemon. That works as a bandaid within your own machine, but no serious cloud provider is going to sacrifice proper database security in a shared server.
+
+I hope to replace these instructions with something better than ODBC soon, but meanwhile...
 
 For Postgres (which I use) you need to have the [PostgreSQL ODBC driver](https://odbc.postgresql.org/) installed besides an ~/.odbc.ini file.
 Details are at <http://www.unixodbc.org/odbcinst.html> where it explains how to set this up for alternatives to Postgres. The below example could be one of many stanzas in the ~/.odbc.ini file for various databases, each referenced by SWI Prolog by whatever identifier you put in the heading between square brackets. 
@@ -350,6 +356,7 @@ db_insert(Title, Art) :-
   odbc_connect('blog', Connection, []),
   odbc_prepare(Connection, 'INSERT INTO arts (title, art) VALUES (?, ?)', [default, default], Statement),
   odbc_execute(Statement, [Title, Art]),
+  odbc_free_statement(Statement),
   odbc_disconnect(Connection).
 ```
 
