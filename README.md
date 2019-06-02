@@ -286,7 +286,7 @@ While my Javascript code will prevent innocent typos getting transmitted, it won
 
 ## Unit 3
 
-> “If you want to master something, teach it.” ― Richard Feynman
+> “Torture the data, and it will confess to anything.” ― Ronald Coase
 
 This unit introduces an SQL database which SWI-Prolog communicates with via the [ODBC Interface](http://www.swi-prolog.org/pldoc/doc_for?object=section(%27packages/odbc.html%27)) &mdash; an attempt by Microsoft in 1992 to create a standard interface between programming languages and databases which I recently discovered hasn't aged well.
 
@@ -497,6 +497,8 @@ This little exercise involves guiding users to the correct page. Initially the h
 For the sake of learning, I've prevented users from logging on as someone else before logging out, or registering for new accounts while logged into an existing account. That's probably not really necessary, but it did affirm my view that a logical programming language is a good choice for web development because making these rules came very naturally.
 
 ## Unit 5
+
+> “If you want to master something, teach it.” ― Richard Feynman
 
 Work in progress...
 
