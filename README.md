@@ -369,7 +369,7 @@ Little Linux penguin by Joan G. Stark
 jgs\__/'---'\__/
 ```
 
-This little Linux penguin caused server.pl to keep barfing ```odbc: state 42601: error: unterminated quoted string at or near...``` I wrote a helper predicate to check the input text for single quotes, and if so double them.
+This little Linux penguin caused server.pl to keep barfing ```odbc: state 42601: error: unterminated quoted string at or near...``` until I figured out you need to check the input text for single quotes, and if so escape them with another single quote.
 
 Before discovering odbc_prepare, I solved this problem like so with a helper predicate to replace single quotes with double quotes:
 
