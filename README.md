@@ -288,12 +288,6 @@ While my Javascript code will prevent innocent typos getting transmitted, it won
 
 > “If you want to master something, teach it.” ― Richard Feynman
 
-Use TCP port 5432
-
-http://www.swi-prolog.org/pldoc/man?section=socket
-
-https://www.postgresql.org/docs/10/runtime-config-connection.html
-
 This unit introduces an SQL database which SWI-Prolog communicates with via the [ODBC Interface](http://www.swi-prolog.org/pldoc/doc_for?object=section(%27packages/odbc.html%27)) &mdash; an attempt by Microsoft in 1992 to create a standard interface between programming languages and databases which I recently discovered hasn't aged well.
 
 Trying this code on a new Postrgesql 11 server resulted in ```ERROR: ODBC: State 08001: [unixODBC]FATAL:  Ident authentication failed for user...```, which on a local instance could be resolved by editing access permissions in pg_hba.conf file to *trust* from *ident* and restarting the database daemon. That works as a bandaid within your own machine, but no serious cloud provider is going to sacrifice proper database security in a shared server.
