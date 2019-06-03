@@ -49,6 +49,23 @@ kill $(cat http.pid)
 ```
 and accessed by pointing your browser to <http://localhost:3030/>.
 
+I recently went through the process of placing a SWI Prolog powered site on the internet with its own www.mydomain.com address using [Digital Ocean](http://www.digitalocean.com/?refcode=a32a25b52821) where I picked Centos 7 for my virtual machine and there was a gotcha &mdash; whatever port number you pick will work locally, but nginx, Apache, or whatever reverse proxy won't be able to serve it without the following magic incantation as root user:
+
+```semanage port -a -t http_port_t  -p tcp 3030```
+
+Once the port permissions are right, for nginx, all that's needed is creating an /etc/nginx/conf.d/mydomain.conf file along these lines:
+
+```
+server {
+  server_name www.mydomain.com mydomain.com;
+  access_log /var/log/nginx/mydomain.access.log main;
+  error_log /var/log/nginx/mydomain.error.log notice;
+  location / {
+    proxy_pass http://localhost:3030/;
+  }
+}
+```
+
 ### Handlers
 
 At the heart of the various web frameworks I've encountered over the years (Zope, Ruby on Rails, Django...) is parsing the directory structure
@@ -386,7 +403,7 @@ db_insert(Title, Art) :-
   odbc_disconnect(Connection).
 ```
 
-Even though I ended up deleting sql_escape_single_quotes, it's still a handy pattern for replacing stuff in strings in Prolog which will come in handy later. 
+Even though I ended up deleting sql_escape_single_quotes, it's still a handy template for predicates needed for replacing stuff in strings which will come in handy later. 
 
 The prolog predicate to fetch all the ASCII art in the database, ordered by newness, looks like this:
 
@@ -456,7 +473,9 @@ cookie([user_id=aca87862328161c8d5cc6b95d29c04401df3d4496001ba54748fed7719834a0c
 
 The same combination of login, password, secret salt, and hash function in any browser will reproduce the same cookie, making it inexcusable to send passwords over the internet to servers.
 
-There's not much we can do about the owners of logins and passwords seeing the hash strings generated from them, but hopefully they don't give bad guys free access to their computers while logged into our website. Preventing someone with a packet sniffer seeing this cookie en route from the browser to the server would involve switching from http to https as described for SWI Prolog in this [tutorial](https://github.com/triska/letswicrypt). I personally haven't made this transition yet, but plan to in the near future.
+There's not much we can do about the owners of logins and passwords seeing the hash strings generated from them, but hopefully they don't give bad guys free access to their computers while logged into our website. Preventing someone with a packet sniffer seeing this cookie en route from the browser to the server would involve switching from http to https as described for SWI Prolog in this [tutorial](https://github.com/triska/letswicrypt). 
+
+I recently did this for a SWI Prolog powered site behind nginx, following the steps at [Digital Ocean](http://www.digitalocean.com/?refcode=a32a25b52821) and found it pleasantly easy. Nothing needs to be done in the server.pl script, assuming it's using nginx or Apache as a "receptionist".
 
 ### Cookies in SWI Prolog
 
