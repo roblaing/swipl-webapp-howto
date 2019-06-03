@@ -49,7 +49,7 @@ kill $(cat http.pid)
 ```
 and accessed by pointing your browser to <http://localhost:3030/>.
 
-I recently went through the process of placing a SWI Prolog powered site on the internet with its own www.mydomain.com address using [Digital Ocean](http://www.digitalocean.com/?refcode=a32a25b52821) where I picked Centos 7 for my virtual machine and there was a gotcha &mdash; whatever port number you pick will work locally, but nginx, Apache, or whatever reverse proxy won't be able to serve it without the following magic incantation as root user:
+I recently went through the process of placing a SWI Prolog powered site on the internet with its own domain name using [Digital Ocean](http://www.digitalocean.com/?refcode=a32a25b52821) where I picked Centos 7 for my virtual machine and there was a gotcha &mdash; whatever port number you pick will work locally, but nginx, Apache, or whatever reverse proxy won't be able to serve it without the following magic incantation as root user:
 
 ```semanage port -a -t http_port_t  -p tcp 3030```
 
