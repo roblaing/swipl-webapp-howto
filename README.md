@@ -305,11 +305,17 @@ While my Javascript code will prevent innocent typos getting transmitted, it won
 
 > “Torture the data, and it will confess to anything.” ― Ronald Coase
 
-This unit introduces an SQL database which SWI-Prolog communicates with via the [ODBC Interface](http://www.swi-prolog.org/pldoc/doc_for?object=section(%27packages/odbc.html%27)) &mdash; an attempt by Microsoft in 1992 to create a standard interface between programming languages and databases which I recently discovered hasn't aged well.
+This unit introduces an SQL database which SWI-Prolog communicates with via the [ODBC Interface](http://www.swi-prolog.org/pldoc/doc_for?object=section(%27packages/odbc.html%27)).
 
-Trying this code on a new Postrgesql 11 server resulted in ```ERROR: ODBC: State 08001: [unixODBC]FATAL:  Ident authentication failed for user...```, which on a local instance could be resolved by editing access permissions in pg_hba.conf file to *trust* from *ident* and restarting the database daemon. That works as a bandaid within your own machine, but no serious cloud provider is going to sacrifice proper database security in a shared server.
+To avoid a slipup I ran into &mdash; trying this code on a new Postrgesql 11 server resulted in ```ERROR: ODBC: State 08001: [unixODBC]FATAL:  Ident authentication failed for user...``` &mdash; which caused me to malign ODBC and SWI Prolog in an earlier version of this document before I learnt you need to either install and start an ident daemon on your machine, or edit pg_hba.conf (found at 
+/var/lib/pgsql/11/data/pg_hba.conf in Centos 7):
 
-I hope to replace these instructions with something better than ODBC soon, but meanwhile...
+```
+# IPv4 local connections:
+host    all             all             127.0.0.1/32            ident
+```
+
+by changing *ident* to *trust*. Keeping the default ident and installing oidentd is the safer solution.
 
 For Postgres (which I use) you need to have the [PostgreSQL ODBC driver](https://odbc.postgresql.org/) installed besides an ~/.odbc.ini file.
 Details are at <http://www.unixodbc.org/odbcinst.html> where it explains how to set this up for alternatives to Postgres. The below example could be one of many stanzas in the ~/.odbc.ini file for various databases, each referenced by SWI Prolog by whatever identifier you put in the heading between square brackets. 
@@ -387,6 +393,8 @@ jgs\__/'---'\__/
 ```
 
 This little Linux penguin caused server.pl to keep barfing ```odbc: state 42601: error: unterminated quoted string at or near...``` until I figured out you need to check the input text for single quotes, and if so escape them with another single quote.
+
+A better way do it was using odbc_prepare and odbc_execute as in this [example](https://github.com/SWI-Prolog/packages-odbc/blob/master/demo/wordnet.pl).
 
 Before discovering odbc_prepare, I solved this problem like so with a helper predicate to replace single quotes with double quotes:
 
