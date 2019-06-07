@@ -1,4 +1,4 @@
-## Unit 1 Handlers and generating HTML
+# Unit 1 Handlers and generating HTML
 
 *By Robert “Joe Blog” Laing*
 

@@ -1,4 +1,4 @@
-## Unit 3 Linking to a database
+# Unit 3 Linking to a database
 
 *By Robert “Joe Blog” Laing*
 

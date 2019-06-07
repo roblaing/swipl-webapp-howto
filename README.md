@@ -17,7 +17,9 @@ I'm redoing it on a Linux localhost with SWI-Prolog talking to PostgreSQL via it
 My main objective is to provide some simple examples for my own reference and education, and I like Linux, Postgres, and SWI Prolog obviously.
 If you prefer, say Windows and MySQL, hopefully it will only take you a bit of googling to adapt these examples.
 
-Each unit's subdirectory has a SWI Prolog file called *server.pl* along with a README.md file for that tutorial. Until recently, everything was on this page, but I decided to "chapterize" as my tutorial started turning into a book. I've addopted a common subdirectory structure where html files are in the root directory with server.pl (though there's nothing stopping you from putting them in their own subdirectory), jpg, png etc go in images, css files in styles and javascript in scripts.
+Each unit's subdirectory has a SWI Prolog file called *server.pl* along with a README.md file for that tutorial. Until recently, everything was on this page, but I decided to "chapterize" as my tutorial started turning into a book. 
+
+I've addopted a common subdirectory structure in each unit where html files are in the root directory with server.pl (though there's nothing stopping you from putting them in their own subdirectory), jpg, png etc go in images, css files in styles and javascript in scripts.
 
 ```
 unit1
@@ -75,49 +77,18 @@ This unit covers the basics of web forms, which SWI Prolog makes fairly easy wit
 
 This unit covers hooking SWI Prolog to an SQL database. I like Postgresql, but thanks to the [ODBC Interface](http://www.swi-prolog.org/pldoc/doc_for?object=section(%27packages/odbc.html%27)), you can pick just about any database you like.
 
-## Unit 4 User authentication
+## Unit 4 [User authentication](https://github.com/roblaing/swipl-webapp-howto/tree/master/unit4)
 
 In this unit we create a system whereby a user identifies themselves to the server without a password ever leaving the browser. Part of this involves SWI Prolog's [SHA* Secure Hash Algorithms](http://www.swi-prolog.org/pldoc/man?section=sha) library.
 
+## Unit 5 Web services
 
-## Unit 5
+This is still work in progress. I'm busy learning [http_open(+URL, -Stream, +Options)](http://www.swi-prolog.org/pldoc/man?predicate=http_open/3), battling with facebook's graph API in the process which I haven't used for years and got barred from for not having a privacy policy on my hobby website...
 
-> “If you want to master something, teach it.” ― Richard Feynman
-
-```prolog
-setup_call_cleanup(
-        http_open(URL, In, []),
-        process(In),
-        close(In)).
-```
-
-
-Work in progress...
-
-Here we go into SWI Prolog's [HTTP client libraries](http://www.swi-prolog.org/pldoc/man?section=http-clients) to get data programmatically from other servers to use in our code.
-
-[http_open(+URL, -Stream, +Options)](http://www.swi-prolog.org/pldoc/man?predicate=http_open/3)
-
-Options
+Once done, it will give examples on how to read JSON, XML etc data obtained from other websites.
 
 
 
 
-```prolog
-consult(library(http/http_open)).
 
-  http_open('http://www.google.com/search?q=prolog', In, []),
-  copy_stream_data(In, user_output),
-  close(In).
-```
 
-https://openweathermap.org/guide
-
-:- use_module(library(uri)).
-
-[uri_encoded(+Component, +Value, -Encoded)](http://www.swi-prolog.org/pldoc/doc_for?object=uri_encoded/3)
-
-uri_components(HREF0, Components),
-uri_data(search, Components, Query),
-uri_query_components(Query, Parts),
-        
