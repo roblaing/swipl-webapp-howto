@@ -68,11 +68,10 @@ The above predicate will return true with the User's name if a browser cookie ha
 
 ```prolog
 welcome_or_login(Request) :-
-  ( logged_in(Request, Name) -> 
-    term_string(Request, String),
-    render_welcome(Name, String)
-  ; 
-    http_redirect(see_other, root(login), Request)).
+  (  logged_in(Request, Name) 
+  -> term_string(Request, String), render_welcome(Name, String)
+  ;  http_redirect(see_other, root(login), Request)
+  ).
 ```
 
 I originally wrote the above to call the login_handler instead of redirecting, but then found the home page kept the /login path, and testing password errors (when the login page keeps you there) got buggy... so found http_redirect a big help.
