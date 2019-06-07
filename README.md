@@ -391,7 +391,7 @@ db_setup_call_cleanup(Title, Art) :-
     db_setup(Dict),
     % run your program here
     db_insert(Dict, Title, Art),
-    db_cleanup(Dict).
+    db_cleanup(Dict)
   ).
 
 db_setup(Dict) :-

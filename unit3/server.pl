@@ -12,18 +12,36 @@
 :- http_handler('/', front_handler, [methods([get, post])]).
 :- http_handler('/styles/basic.css', http_reply_from_files('.', [indexes(['./styles/basic.css'])]), [prefix]).
 
-db_insert(Title, Art) :-
+
+db_setup_call_cleanup(Title, Art) :-
+  setup_call_cleanup(
+    db_setup(Dict),
+    % run your program here
+    db_insert(Dict, Title, Art),
+    db_cleanup(Dict)
+  ).
+
+db_setup(Dict) :-
   odbc_connect('blog', Connection, []),
   odbc_prepare(Connection, 'INSERT INTO arts (title, art) VALUES (?, ?)', [default, default], Statement),
-  odbc_execute(Statement, [Title, Art]),
-  odbc_free_statement(Statement),
-  odbc_disconnect(Connection).
+  % add more odbc_prepare(...) predicates, remembering to also add them to the dictionary.
+  Dict = sql{connection:Connection, title_art: Statement}.
+  
+db_insert(Dict, Title, Art) :-
+    odbc_execute(Dict.title_art, [Title, Art]).
+
+db_cleanup(Dict) :-
+  odbc_free_statement(Dict.title_art),
+  % remember to free whatever other SQL statements you add to db_setup here.
+  odbc_disconnect(Dict.connection).  
 
 db_select(ArtList) :-
-  odbc_connect('blog', Connection, []),
-  odbc_query(Connection, "SELECT title, art FROM arts ORDER BY created DESC", 
-    ArtList, [findall(row(Title, Art), row(Title, Art))]),  
-  odbc_disconnect(Connection).
+  setup_call_cleanup(
+    odbc_connect('blog', Connection, []),
+    odbc_query(Connection, "SELECT title, art FROM arts ORDER BY created DESC", 
+      ArtList, [findall(row(Title, Art), row(Title, Art))]),  
+    odbc_disconnect(Connection)
+  ).
 
 front_handler(Request) :-
   member(method(get), Request), !,
@@ -32,8 +50,10 @@ front_handler(Request) :-
 front_handler(Request) :-
   member(method(post), Request), !,
   http_parameters(Request, [title(Title, [default('')]), art(Art, [default('')])]),
-  ((string_length(Title, 0) ; string_length(Art, 0)) -> render_page(Title, Art, 'You need a title and art') 
-                                                      ; db_insert(Title, Art), render_page('','','')).
+  ((string_length(Title, 0) ; string_length(Art, 0)) 
+   -> render_page(Title, Art, 'You need a title and art') 
+   ; db_setup_call_cleanup(Title, Art), render_page('','','')
+  ).
 
 render_page(Title, Art, Error) :-
   arts_html(ArtsHtml),
