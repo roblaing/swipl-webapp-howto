@@ -109,7 +109,7 @@ db_setup(Dict) :-
   odbc_connect('blog', Connection, []),
   odbc_prepare(Connection, 'INSERT INTO arts (title, art) VALUES (?, ?)', [default, default], Statement),
   % add more odbc_prepare(...) predicates, remembering to also add them to the dictionary.
-  Dict = sql{connection:Connection, title_art: Statement}.
+  Dict = sql{connection: Connection, title_art: Statement}.
   
 db_insert(Dict, Title, Art) :-
     odbc_execute(Dict.title_art, [Title, Art]).
