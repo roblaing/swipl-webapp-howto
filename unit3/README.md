@@ -68,7 +68,7 @@ CREATE TABLE IF NOT EXISTS arts (
 );
 ```
 
-Though overkill for this simple example, a good habit to get into with SWI Prolog is whenever you open and close a *stream* &mdash; be it a file, internet request, or database in this case &mdash; use [setup_call_cleanup(:Setup, :Goal, :Cleanup)](http://www.swi-prolog.org/pldoc/doc_for?object=setup_call_cleanup/3). This ensures good housekeeping if something goes wrong or the process gets interrupted.
+A good habit to get into with SWI Prolog is whenever you open and close a *stream* &mdash; be it a file, internet request, or database in this case &mdash; use [setup_call_cleanup(:Setup, :Goal, :Cleanup)](http://www.swi-prolog.org/pldoc/doc_for?object=setup_call_cleanup/3). This ensures good housekeeping if something goes wrong or the process gets interrupted.
 
 The way I obtain the list of ASCII art from the database makes a nice, simple illustration of this technique:
 
@@ -89,6 +89,8 @@ Inserting stuff into the database initially led me into a trap &mdash; not escap
 This is also a good place to introduce an expansion SWI Prolog has made to traditional prolog by introducing [dictionaries](http://www.swi-prolog.org/pldoc/man?section=bidicts) created using curly braces ```_{key1:value1, key2:value2, ...}``` and accessed using dots &mdash; a notation Python and Javascript programmers will find familiar.
 
 For those who don't like to pollute their Prolog code with foreign syntax, prologish alternatives such as ```get_dict(?Key, +Dict, -Value)``` are available.
+
+I find dictionaries a great addition to Prolog in that they circumvent the problem in traditional Prolog of a proliferation of *context arguments* to pass on to predicates since the original designers were opposed to lexical or any other kind of scoping.
 
 Whereas in this example there is only one SQL statement to prepare, I've found they tend to proliferate when one graduates from tutorials to proper web application development, and therefore it's handy to be able to bung all these variables into one container.
 
