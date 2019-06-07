@@ -49,7 +49,7 @@ form_handler(Request) :-
 
 I need to update the above to use [http_redirect(+How, +To, +Request)](http://www.swi-prolog.org/pldoc/doc_for?object=http_redirect/3) which I only got to grips with in Unit 4.
 
-#### Predicates with the same name and arity handling different cases
+## Predicates with the same name and arity handling different cases
 
 This style of *pattern-action* is another alien Prolog thing for those of us weaned on the C-family in that instead of dealing with different cases in one function, in Prolog each case tends to have its own predicate. In the first *form_handler(Request)* predicate, if the method is POST or data has been sent via GET because search(Anything) is in the Request list, it will skip rendering a blank form and move on to the second *form_handler(Request)* predicate which looks at the submitted data and then either asks for corrections or redirects to the success page.
 
@@ -65,7 +65,7 @@ You don't have to use a separate predicate for each case, and I relapsed to the 
 
 The ```->``` is Prolog syntactic sugar for ```, !, ```... Exclamation marks trip me up, especically if there are several in a predicate, so I go for the sweeter version. If your predicate starts looking like ```if -> then ; else if -> then ;...``` you probably wan't to think about your patterns and actions more carefully by splitting them into separate predicates.
 
-#### Using http_parameters built in tests
+## Using http_parameters built in tests
 
 I've moved into a predicate called validate_form things which could be done more succinctly by options provided by http_parameters. If these tests fail, http_parameters throws a _400 Bad Request_ error, which could be caught with [catch(:Goal, +Catcher, :Recover)](http://www.swi-prolog.org/pldoc/doc_for?object=catch/3) using something like this:
 
@@ -81,7 +81,7 @@ success_handler).
 
 A snag with the above is that if a value does not pass http_paramaters' test, it gets thrown away, leaving the variable allocated to it *unground*. This is why I took the more elaborate route of keeping bad input values to use for error messages and return to the browser for editing.
 
-### Switching from GET to POST
+## Switching from GET to POST
 
 A nice thing about http_parameters is that switching between GET and POST simply involves editing one line in server.pl:
 
@@ -96,7 +96,7 @@ to
 
 Note that if you edit anything in the server.pl file, you need to kill the process and restart it before it takes effect.
 
-### Validating in the browser
+## Validating in the browser
 
 Though I haven't used it in the example since this is about writing server code, a better way to catch user typos and provide feedback is with Javascript in the browser, and I've included how I would go about that with [/scripts/validate_form.js](https://github.com/roblaing/swipl-webapp-howto/blob/master/unit2/scripts/validate_form.js).
 
