@@ -68,22 +68,29 @@ CREATE TABLE IF NOT EXISTS arts (
 );
 ```
 
-To insert the ASCII art into the database, I've used the following predicate:
-
-```prolog
-db_insert(Title, Art) :-
-  odbc_connect('blog', Connection, []),
-  odbc_prepare(Connection, 'INSERT INTO arts (title, art) VALUES (?, ?)', [default, default], Statement),
-  odbc_execute(Statement, [Title, Art]),
-  odbc_free_statement(Statement),
-  odbc_disconnect(Connection).
-```
-
 Though overkill for this simple example, a good habit to get into with SWI Prolog is whenever you open and close a *stream* &mdash; be it a file, internet request, or database in this case &mdash; use [setup_call_cleanup(:Setup, :Goal, :Cleanup)](http://www.swi-prolog.org/pldoc/doc_for?object=setup_call_cleanup/3). This ensures good housekeeping if something goes wrong or the process gets interrupted.
 
-Whereas in this example there is only one SQL statement to prepare, I've found they tend to proliferate when one graduates from tutorials to proper web application development, and therefore it's handy to get into the good habit of using SWI Prolog's [Dicts](http://www.swi-prolog.org/pldoc/man?section=bidicts) to create a single container for the *Connection* and who knows how many prepared SQL statements for various predicates to execute before finally freeing all these statements and closing the database.
+The way I obtain the list of ASCII art from the database makes a nice, simple illustration of this technique:
 
-SWI Prolog dictionaries are created using curly braces ```_{key1:value1, key2:value2, ...}``` and accessed using dots &mdash; a notation Python and Javascript programmers will find familiar &mdash; or in a more prologish style of ```get_dict(?Key, +Dict, -Value)```.
+```prolog
+db_select(ArtList) :-
+  setup_call_cleanup(
+    odbc_connect('blog', Connection, []),
+    odbc_query(Connection, "SELECT title, art FROM arts ORDER BY created DESC", 
+      ArtList, [findall(row(Title, Art), row(Title, Art))]),  
+    odbc_disconnect(Connection)
+  ).
+```
+
+Inserting stuff into the database initially led me into a trap &mdash; not escaping single quotes within strings is the cause of a notorious problem known as SQL injection attacks &mdash; so I'll start with how I ended up doing it and then digress into my initial, bad attempts.
+
+## SWI Prolog dictionaries
+
+This is also a good place to introduce an expansion SWI Prolog has made to traditional prolog by introducing [dictionaries](http://www.swi-prolog.org/pldoc/man?section=bidicts) created using curly braces ```_{key1:value1, key2:value2, ...}``` and accessed using dots &mdash; a notation Python and Javascript programmers will find familiar.
+
+For those who don't like to pollute their Prolog code with foreign syntax, prologish alternatives such as ```get_dict(?Key, +Dict, -Value)``` are available.
+
+Whereas in this example there is only one SQL statement to prepare, I've found they tend to proliferate when one graduates from tutorials to proper web application development, and therefore it's handy to be able to bung all these variables into one container.
 
 My suggested way of doing things is along these lines:
 

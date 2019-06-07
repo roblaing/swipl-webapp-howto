@@ -77,6 +77,8 @@ This unit covers the basics of web forms, which SWI Prolog makes fairly easy wit
 
 This unit covers hooking SWI Prolog to an SQL database. I like Postgresql, but thanks to the [ODBC Interface](http://www.swi-prolog.org/pldoc/doc_for?object=section(%27packages/odbc.html%27)), you can pick just about any database you like.
 
+This also introduces SWI Prolog's [Dicts](http://www.swi-prolog.org/pldoc/man?section=bidicts) which are a handy way to circumvent the prolog problem of having to pass too many arguments between predicates.
+
 ## Unit 4 [User authentication](https://github.com/roblaing/swipl-webapp-howto/tree/master/unit4)
 
 In this unit we create a system whereby a user identifies themselves to the server without a password ever leaving the browser. Part of this involves SWI Prolog's [SHA* Secure Hash Algorithms](http://www.swi-prolog.org/pldoc/man?section=sha) library.
