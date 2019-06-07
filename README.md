@@ -377,11 +377,11 @@ db_insert(Title, Art) :-
   odbc_disconnect(Connection).
 ```
 
-Though overkill for this simple example, a good habit to get into with SWI Prolog is whenever you open and close a *stream* &mdash; be it a file, internet request, or database in this case &mdash; use [setup_call_cleanup(:Setup, :Goal, :Cleanup)](http://www.swi-prolog.org/pldoc/doc_for?object=setup_call_cleanup/3). This ensures good housekeeping if something goes wrong or the process gets interupted.
+Though overkill for this simple example, a good habit to get into with SWI Prolog is whenever you open and close a *stream* &mdash; be it a file, internet request, or database in this case &mdash; use [setup_call_cleanup(:Setup, :Goal, :Cleanup)](http://www.swi-prolog.org/pldoc/doc_for?object=setup_call_cleanup/3). This ensures good housekeeping if something goes wrong or the process gets interrupted.
 
-Whereas in this example there is only one SQL statement to prepare, I've found they tend to proliferate when one graduates from tutorials to proper web application development, and therefore it's handy to get into the good habit of using SWI Prolog's [Dicts](http://www.swi-prolog.org/pldoc/man?section=bidicts) to create a single container for the *Connection* and who knows how many prepared SQL Statements for various predicates to execute before finally freeing all these statements and closing the database.
+Whereas in this example there is only one SQL statement to prepare, I've found they tend to proliferate when one graduates from tutorials to proper web application development, and therefore it's handy to get into the good habit of using SWI Prolog's [Dicts](http://www.swi-prolog.org/pldoc/man?section=bidicts) to create a single container for the *Connection* and who knows how many prepared SQL statements for various predicates to execute before finally freeing all these statements and closing the database.
 
-SWI Prolog dictionaries are created using curly braces ```_{key1:value1, key2:value2, ...}``` and accessed using dots &mdash a notation Python and Javascript programmers will find familiar &mdash; or in a more prologish style of ```get_dict(?Key, +Dict, -Value)```.
+SWI Prolog dictionaries are created using curly braces ```_{key1:value1, key2:value2, ...}``` and accessed using dots &mdash; a notation Python and Javascript programmers will find familiar &mdash; or in a more prologish style of ```get_dict(?Key, +Dict, -Value)```.
 
 My suggested way of doing things is along these lines:
 
