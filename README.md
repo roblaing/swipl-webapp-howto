@@ -377,7 +377,37 @@ db_insert(Title, Art) :-
   odbc_disconnect(Connection).
 ```
 
-The above predicate was a second attempt to circument a snag the original course avoided by using Google's GQL database which had me cursing SWI Prolog until I realised it was actually SQL's fault: you can't use single quotes within SQL text unless they are escaped with another single quote. The test ASCII art I used, obtained from <https://www.asciiart.eu/>, was this:
+Though overkill for this simple example, a good habit to get into with SWI Prolog is whenever you open and close a *stream* &mdash; be it a file, internet request, or database in this case &mdash; use [setup_call_cleanup(:Setup, :Goal, :Cleanup)](http://www.swi-prolog.org/pldoc/doc_for?object=setup_call_cleanup/3). This ensures good housekeeping if something goes wrong or the process gets interupted.
+
+Whereas in this example there is only one SQL statement to prepare, I've found they tend to proliferate when one graduates from tutorials to proper web application development, and therefore it's handy to get into the good habit of using SWI Prolog's [Dicts](http://www.swi-prolog.org/pldoc/man?section=bidicts) to create a single container for the *Connection* and who knows how many prepared SQL Statements for various predicates to execute before finally freeing all these statements and closing the database.
+
+SWI Prolog dictionaries are created using curly braces ```_{key1:value1, key2:value2, ...}``` and accessed using dots &mdash a notation Python and Javascript programmers will find familiar &mdash; or in a more prologish style of ```get_dict(?Key, +Dict, -Value)```.
+
+My suggested way of doing things is along these lines:
+
+```prolog
+db_setup_call_cleanup(Title, Art) :-
+  setup_call_cleanup(
+    db_setup(Dict),
+    % run your program here
+    db_insert(Dict, Title, Art),
+    db_cleanup(Dict).
+  ).
+
+db_setup(Dict) :-
+  odbc_connect('blog', Connection, []),
+  odbc_prepare(Connection, 'INSERT INTO arts (title, art) VALUES (?, ?)', [default, default], Statement),
+  Dict = sql{connection:Connection, title_art: Statement}.
+  
+db_insert(Dict, Title, Art) :-
+    odbc_execute(Dict.title_art, [Title, Art]).
+
+db_cleanup(Dict) :-
+  odbc_free_statement(Dict.title_art),
+  odbc_disconnect(Dict.connection).  
+```
+
+Before learning the *correct* way to use SWI Prolog's ODBC predicates, I got tripped up by a trap the original course avoided by using Google's GQL database which had me cursing SWI Prolog until I realised it was actually SQL's fault: you can't use single quotes within SQL text unless they are escaped with another single quote. The test ASCII art I used, obtained from <https://www.asciiart.eu/>, was this:
 
 ```
 Little Linux penguin by Joan G. Stark
@@ -527,17 +557,40 @@ For the sake of learning, I've prevented users from logging on as someone else b
 
 > “If you want to master something, teach it.” ― Richard Feynman
 
+```prolog
+setup_call_cleanup(
+        http_open(URL, In, []),
+        process(In),
+        close(In)).
+```
+
+
 Work in progress...
 
 Here we go into SWI Prolog's [HTTP client libraries](http://www.swi-prolog.org/pldoc/man?section=http-clients) to get data programmatically from other servers to use in our code.
 
+[http_open(+URL, -Stream, +Options)](http://www.swi-prolog.org/pldoc/man?predicate=http_open/3)
+
+Options
+
+
+
+
 ```prolog
 consult(library(http/http_open)).
 
-http_open('http://www.google.com/search?q=prolog', In, []),
-   copy_stream_data(In, user_output),
-   close(In).
+  http_open('http://www.google.com/search?q=prolog', In, []),
+  copy_stream_data(In, user_output),
+  close(In).
 ```
 
+https://openweathermap.org/guide
 
+:- use_module(library(uri)).
 
+[uri_encoded(+Component, +Value, -Encoded)](http://www.swi-prolog.org/pldoc/doc_for?object=uri_encoded/3)
+
+uri_components(HREF0, Components),
+uri_data(search, Components, Query),
+uri_query_components(Query, Parts),
+        
