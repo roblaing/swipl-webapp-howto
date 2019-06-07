@@ -88,6 +88,8 @@ Inserting stuff into the database initially led me into a trap &mdash; not escap
 
 This is also a good place to introduce an expansion SWI Prolog has made to traditional prolog by introducing [dictionaries](http://www.swi-prolog.org/pldoc/man?section=bidicts) created using curly braces ```_{key1:value1, key2:value2, ...}``` and accessed using dots &mdash; a notation Python and Javascript programmers will find familiar.
 
+A [tutorial on using dicts](https://swish.swi-prolog.org/example/dict.swinb) is available on Swish.
+
 For those who don't like to pollute their Prolog code with foreign syntax, prologish alternatives such as ```get_dict(?Key, +Dict, -Value)``` are available.
 
 I find dictionaries a great addition to Prolog in that they circumvent the problem in traditional Prolog of a proliferation of *context arguments* to pass on to predicates since the original designers were opposed to lexical or any other kind of scoping.
