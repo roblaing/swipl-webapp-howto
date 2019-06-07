@@ -6,15 +6,8 @@
 
 This unit introduces an SQL database which SWI-Prolog communicates with via the [ODBC Interface](http://www.swi-prolog.org/pldoc/doc_for?object=section(%27packages/odbc.html%27)).
 
-To avoid a slipup I ran into &mdash; trying this code on a new Postrgesql 11 server resulted in ```ERROR: ODBC: State 08001: [unixODBC]FATAL:  Ident authentication failed for user...``` &mdash; which caused me to malign ODBC and SWI Prolog in an earlier version of this document before I learnt you need to either install and start an ident daemon on your machine, or edit pg_hba.conf (found at 
-/var/lib/pgsql/11/data/pg_hba.conf in Centos 7):
+ODBC was designed by Microsoft, so will get us Linux users cursing, but once setup seems to work pretty well.
 
-```
-# IPv4 local connections:
-host    all             all             127.0.0.1/32            ident
-```
-
-by changing *ident* to *trust*. Keeping the default ident and installing oidentd is the safer solution.
 
 For Postgres (which I use) you need to have the [PostgreSQL ODBC driver](https://odbc.postgresql.org/) installed besides an ~/.odbc.ini file.
 Details are at <http://www.unixodbc.org/odbcinst.html> where it explains how to set this up for alternatives to Postgres. The below example could be one of many stanzas in the ~/.odbc.ini file for various databases, each referenced by SWI Prolog by whatever identifier you put in the heading between square brackets. 
@@ -43,6 +36,16 @@ MaxVarcharSize      = 5000
 Pooling             = Yes
 ```
 The last two entries are things I've learnt through bitter experience. If MaxVarcharSize is left unset, ODBC defaults to 256 characters (the old Twitter rather than a blog site) and pooling needs to be set to yes if your site gets even slightly busy.
+
+Trying the code below on a new Postrgesql 11 server resulted in ```ERROR: ODBC: State 08001: [unixODBC]FATAL:  Ident authentication failed for user...``` &mdash; which caused me to malign ODBC and SWI Prolog in an earlier version of this document before I learnt you need to either install and start an ident daemon on your machine, or edit pg_hba.conf (found at 
+/var/lib/pgsql/11/data/pg_hba.conf in Centos 7):
+
+```
+# IPv4 local connections:
+host    all             all             127.0.0.1/32            ident
+```
+
+by changing *ident* to *trust*. Keeping the default ident and installing oidentd is the safer solution.
 
 Assuming you're using Postgres and it is all set up nicely, follow the instructions at [Creating a Database](https://www.postgresql.org/docs/current/manage-ag-createdb.html) to install a new database called whatever you want to use as *my_database_name* (I suggest blog, same as the identifier in the .odbc.ini file). If you already have a database, you can skip this step and use it to store the arts table coming up.
 
