@@ -397,6 +397,7 @@ db_setup_call_cleanup(Title, Art) :-
 db_setup(Dict) :-
   odbc_connect('blog', Connection, []),
   odbc_prepare(Connection, 'INSERT INTO arts (title, art) VALUES (?, ?)', [default, default], Statement),
+  % add more odbc_prepare(...) predicates, remembering to also add them to the dictionary.
   Dict = sql{connection:Connection, title_art: Statement}.
   
 db_insert(Dict, Title, Art) :-
@@ -404,6 +405,7 @@ db_insert(Dict, Title, Art) :-
 
 db_cleanup(Dict) :-
   odbc_free_statement(Dict.title_art),
+  % remember to free whatever other SQL statements you add to db_setup here.
   odbc_disconnect(Dict.connection).  
 ```
 
