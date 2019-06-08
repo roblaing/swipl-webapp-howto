@@ -90,9 +90,9 @@ This is also a good place to introduce an expansion SWI Prolog has made to tradi
 
 A [tutorial on using dicts](https://swish.swi-prolog.org/example/dict.swinb) is available on Swish.
 
-For those who don't like to pollute their Prolog code with foreign syntax, prologish alternatives such as ```get_dict(?Key, +Dict, -Value)``` are available. This could also be done by storing everything in a list ```[key1(value1), key2(value2), ...]``` and then retrieving a specific key-value with ```member(key(value), List)``` as in previous units to get things from the *Request* list, but since I hop between Prolog and Javascript a lot, I like the curly bracket and dot notation. Understanding SWI Prolog's dicts are also important for importing and exporting data as Json in Unit 5.
+For those who don't like to pollute their Prolog code with foreign syntax, prologish alternatives such as ```get_dict(?Key, +Dict, -Value)``` are available. 
 
-I find dictionaries a great addition to Prolog in that they circumvent the problem in traditional Prolog of a proliferation of *context arguments* to pass on to predicates since the original designers were opposed to lexical or any other kind of scoping.
+I find dictionaries a great addition to Prolog in that they circumvent the problem in traditional Prolog of a proliferation of *context arguments* to pass on to predicates since the original designers were opposed to lexical or any other kind of scoping. Creating an *environment collection* could also be done by storing everything in a list ```[key1(value1), key2(value2), ...]``` and then retrieving a specific key-value with ```member(key(value), List)``` as in previous units to get things from the *Request* list, but since I hop between Prolog and Javascript a lot, I like the curly bracket and dot notation. Understanding SWI Prolog's dicts are also important for importing and exporting data as Json in Unit 5.
 
 Whereas in this example there is only one SQL statement to prepare, I've found they tend to proliferate when one graduates from tutorials to proper web application development, and therefore it's handy to be able to bung all these variables into one container.
 
