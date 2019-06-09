@@ -2,8 +2,6 @@
 
 *By Robert “Joe Blog” Laing*
 
-> “Since brevity is the soul of wit / And tediousness the limbs and outward flourishes, I will be brief…” ― [William Shakespeare](https://literarydevices.net/brevity-is-the-soul-of-wit/)
-
 > “You think you know when you learn, are more sure when you can write, even more when you can teach, but certain when you can program.” ― [Alan Perlis](http://www.cs.yale.edu/homes/perlis-alan/quotes.html)
 
 These are notes I'm writing on how to use [SWI Prolog](http://www.swi-prolog.org/) to write web applications as I discover it to develop my strategy game playing website [newsgames.biz](http://www.newsgames.biz/).
