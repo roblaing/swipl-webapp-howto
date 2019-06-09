@@ -2,6 +2,8 @@
 
 *By Robert “Joe Blog” Laing*
 
+> “Since brevity is the soul of wit / And tediousness the limbs and outward flourishes, I will be brief…” ― [William Shakespeare](https://literarydevices.net/brevity-is-the-soul-of-wit/)
+
 > “You think you know when you learn, are more sure when you can write, even more when you can teach, but certain when you can program.” ― [Alan Perlis](http://www.cs.yale.edu/homes/perlis-alan/quotes.html)
 
 These are notes I'm writing on how to use [SWI Prolog](http://www.swi-prolog.org/) to write web applications as I discover it to develop my strategy game playing website [newsgames.biz](http://www.newsgames.biz/).
@@ -83,14 +85,7 @@ This also introduces SWI Prolog's [Dicts](http://www.swi-prolog.org/pldoc/man?se
 
 In this unit we create a system whereby a user identifies themselves to the server without a password ever leaving the browser. Part of this involves SWI Prolog's [SHA* Secure Hash Algorithms](http://www.swi-prolog.org/pldoc/man?section=sha) library.
 
-## Unit 5 Web services
+## Unit 5 [Web services](https://github.com/roblaing/swipl-webapp-howto/tree/master/unit5)
 
-This is still work in progress. I'm busy learning [http_open(+URL, -Stream, +Options)](http://www.swi-prolog.org/pldoc/man?predicate=http_open/3), battling with facebook's graph API in the process which I haven't used for years and got barred from for not having a privacy policy on my hobby website...
-
-Once done, it will give examples on how to read JSON, XML etc data obtained from other websites.
-
-
-
-
-
+This unit looks at getting data from an external source &mdash; I've used <https://openweathermap.org/> for this example &mdash; using [http_open(+URL, -Stream, +Options)](http://www.swi-prolog.org/pldoc/doc_for?object=http_open/3).
 

@@ -1,6 +1,8 @@
 # Unit 5 Web services
 
-Work in progress...
+*By Robert “Joe Blog” Laing*
+
+> Don't worry about people stealing your ideas. If your ideas are any good, you'll have to ram them down people's throats. &mdash; Howard H. Aiken
 
 This unit looks at getting data from an external source &mdash; I've used <https://openweathermap.org/> for this example &mdash; using [http_open(+URL, -Stream, +Options)](http://www.swi-prolog.org/pldoc/doc_for?object=http_open/3).
 
