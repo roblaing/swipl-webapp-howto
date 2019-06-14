@@ -6,14 +6,16 @@
 
 This unit looks at getting data from an external source &mdash; I've used <https://openweathermap.org/> for this example &mdash; using [http_open(+URL, -Stream, +Options)](http://www.swi-prolog.org/pldoc/doc_for?object=http_open/3).
 
-As is common with web-based service providers, OpenWeatherMap offers its data in either xml or Json format. Though [SWI Prolog supports xml parsing](http://www.swi-prolog.org/pldoc/doc_for?object=section(%27packages/sgml.html%27)), mercifully Json tends to be the default these days and SWI Prolog has combined this with its [dicts](http://www.swi-prolog.org/pldoc/man?section=bidicts), making Json the much easier choice. 
+## Json
+
+As is common with web-based service providers, OpenWeatherMap offers its data in either xml or Json format. Mercifully Json tends to be the default these days and SWI Prolog has combined this with its [dicts](http://www.swi-prolog.org/pldoc/man?section=bidicts), making Json the much easier choice. 
 
 In the example code, I've used the sample URL from OpenWeatherMap's [guide](https://openweathermap.org/guide), offering Moscow's weather forecast for the coming week. Getting your own access key and editing the URL to give a 16 day weather forecast for wherever you live is a free and simple process. Please respect OpenWeatherMap's request not to hit its servers more than once every ten minutes (so don't put this demo live on the web with a real user account).
 
 As with database queries, we want to put the three step process of opening a stream, processing the received data, then closing the stream within [setup_call_cleanup(:Setup, :Goal, :Cleanup)](http://www.swi-prolog.org/pldoc/doc_for?object=setup_call_cleanup/3).
 
 ```prolog
-get_data(URL, Dict) :-
+get_json(URL, Dict) :-
   setup_call_cleanup(
     http_open(URL, In, []),
     json_read_dict(In, Dict),
@@ -43,4 +45,46 @@ OpenWeatherMap does not include dates, but the list goes from today up to 16 day
 
 Including a date in the weather forecast table forced me to refresh my knowledge of time stamps and date formatting which I avoided in Unit 2.
 
+## XML
+
+I've included an example of how to use SWI Prolog's [SGML/XML parser](https://www.swi-prolog.org/pldoc/doc_for?object=section(%27packages/sgml.html%27)), but OpenWeatherMap doesn't offer a sample URL identical the above, so this shows today's weather in London instead.
+
+Extracting data from XML documents involves learning yet another query language, [XPath](https://en.wikipedia.org/wiki/XPath) which uses a notation akin to the Unix file system, which SWI Prolog supports via [library(xpath)](https://www.swi-prolog.org/pldoc/man?section=xpath).
+
+The sample XML document returned from OpenWeatherMap looks like this:
+
+```xml
+<current>
+  <city id="2643743" name="London">
+    <coord lon="-0.13" lat="51.51"/>
+    <country>GB</country>
+    <sun rise="2017-01-30T07:40:36" set="2017-01-30T16:47:56"/>
+  </city>
+  <temperature value="280.15" min="278.15" max="281.15" unit="kelvin"/>
+  <humidity value="81" unit="%"/>
+  <pressure value="1012" unit="hPa"/>
+  <wind>
+    <speed value="4.6" name="Gentle Breeze"/>
+    <gusts/>
+    <direction value="90" code="E" name="East"/>
+  </wind>
+  <clouds value="90" name="overcast clouds"/>
+  <visibility value="10000"/>
+  <precipitation mode="no"/>
+  <weather number="701" value="mist" icon="50d"/>
+  <lastupdate value="2017-01-30T15:50:00"/>
+</current>
+```
+
+Getting the xml data is nearly identical to getting the Json data, just substituting json_read_dict with load_xml which translates the XML document above into a Prologish list. 
+
+```prolog
+get_xml(URL, Xml) :-
+  setup_call_cleanup(
+    http_open(URL, In, []),
+    load_xml(In, Xml, []),
+    close(In)
+  ).
+```
+Using [xpath(+DOM, +Spec, ?Content)](https://www.swi-prolog.org/pldoc/doc_for?object=xpath/3), I managed to extract "London" with ```xpath(Xml, //city(@name), Name)```.
 
