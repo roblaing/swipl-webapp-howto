@@ -81,9 +81,10 @@ This also introduces SWI Prolog's [Dicts](http://www.swi-prolog.org/pldoc/man?se
 
 ## Unit 4 [User authentication](https://github.com/roblaing/swipl-webapp-howto/tree/master/unit4)
 
-In this unit we create a system whereby a user identifies themselves to the server without a password ever leaving the browser. Part of this involves SWI Prolog's [SHA* Secure Hash Algorithms](http://www.swi-prolog.org/pldoc/man?section=sha) library.
+In this unit we create a system whereby a user identifies themself to the server without a password ever leaving the browser. Part of this involves SWI Prolog's [SHA* Secure Hash Algorithms](http://www.swi-prolog.org/pldoc/man?section=sha) library.
 
 ## Unit 5 [Web services](https://github.com/roblaing/swipl-webapp-howto/tree/master/unit5)
 
-This unit looks at getting data from an external source &mdash; I've used <https://openweathermap.org/> for this example &mdash; using [http_open(+URL, -Stream, +Options)](http://www.swi-prolog.org/pldoc/doc_for?object=http_open/3).
+This unit looks at getting data from an external source &mdash; I've used <https://openweathermap.org/> for this example &mdash; using [http_open(+URL, -Stream, +Options)](http://www.swi-prolog.org/pldoc/doc_for?object=http_open/3) and introduces SWI Prolog's support for Json and XML.
+
 
