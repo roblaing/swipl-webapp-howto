@@ -9,9 +9,16 @@
 
 :- initialization http_daemon.
 
-:- http_handler('/', front_handler, [methods([get, post])]).
-:- http_handler('/styles/basic.css', http_reply_from_files('.', [indexes(['./styles/basic.css'])]), [prefix]).
+:- multifile http:location/3.
+:- dynamic   http:location/3.
+http:location(images, root(images), []).
+http:location(styles, root(styles), []).
+http:location(scripts, root(scripts), []).
 
+:- http_handler('/', front_handler, [methods([get, post])]).
+:- http_handler(images(.), http_reply_from_files('./images', []), [prefix]).
+:- http_handler(styles(.), http_reply_from_files('./styles', []), [prefix]).
+:- http_handler(scripts(.), http_reply_from_files('./scripts', []), [prefix]).
 
 db_setup_call_cleanup(Title, Art) :-
   setup_call_cleanup(
