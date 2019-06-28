@@ -87,4 +87,9 @@ In this unit we create a system whereby a user identifies themself to the server
 
 This unit looks at getting data from an external source &mdash; I've used <https://openweathermap.org/> for this example &mdash; using [http_open(+URL, -Stream, +Options)](http://www.swi-prolog.org/pldoc/doc_for?object=http_open/3) and introduces SWI Prolog's support for Json and XML.
 
+I also introduce [call_with_time_limit(+Time, :Goal)](https://www.swi-prolog.org/pldoc/doc_for?object=call_with_time_limit/2) to handle cases where the webapp we are requesting data from does not respons timeously.
+
+## Unit 6 Caching
+
+
 

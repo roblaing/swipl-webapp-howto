@@ -6,6 +6,23 @@
 
 This unit looks at getting data from an external source &mdash; I've used <https://openweathermap.org/> for this example &mdash; using [http_open(+URL, -Stream, +Options)](http://www.swi-prolog.org/pldoc/doc_for?object=http_open/3).
 
+## Handling timeouts with SWI Prolog
+
+When fetching data from other servers, we need to make a contingency plan for when the service provider is offline. Here I'm using SWI Prolog's predicate [call_with_time_limit(+Time, :Goal)](https://www.swi-prolog.org/pldoc/doc_for?object=call_with_time_limit/2) and an answer to a [StackOverflow](https://stackoverflow.com/questions/23900469/catch-3-and-call-with-time-limit-2-predicates-in-swi-prolog) question given by [Paulo Moura](https://logtalk.org/).
+
+```prolog
+(  catch(call_with_time_limit(Time, Goal), Error, true) 
+-> (  var(Error) 
+   -> % success actions
+   ;  % error actions
+   )
+;  % failure actions
+).
+```
+
+Incidently, one of the options to [http_handler(+Path, :Closure, +Options)](https://www.swi-prolog.org/pldoc/doc_for?object=http_handler/3) is time_limit(+Spec) which defaults to 300 seconds, or 5 minutes, before throwing an error.
+
+
 ## Json
 
 As is common with web-based service providers, OpenWeatherMap offers its data in either xml or Json format. Mercifully Json tends to be the default these days and SWI Prolog has combined this with its [dicts](http://www.swi-prolog.org/pldoc/man?section=bidicts), making Json the much easier choice. 
@@ -86,5 +103,8 @@ get_xml(URL, Xml) :-
     close(In)
   ).
 ```
+
 Using [xpath(+DOM, +Spec, ?Content)](https://www.swi-prolog.org/pldoc/doc_for?object=xpath/3), I managed to extract "London" with ```xpath(Xml, //city(@name), Name)```.
+
+
 
