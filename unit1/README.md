@@ -59,10 +59,13 @@ above) with a few lines of additional code.
 
 ```prolog
 :- multifile http:location/3.
+:- dynamic   http:location/3.
 http:location(files, root(files), []).
 user:file_search_path(folders, library('images/styles/scripts')).
 :- http_handler(files(.), http_reply_from_files(folders, []), [prefix]).
 ```
+
+An error I made initially was to only declare ```:- multifile http:location/3.```. Without also adding ```:- dynamic http:location/3.```, the _user/Name_ example below can't find the style sheet and images. 
 
 A nice thing about static files is you can add to your html, css and Javascript files and then test changes by simply refreshing your browser. Any changes you make to server.pl will require you to kill and restart the daemon to take effect.
 

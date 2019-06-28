@@ -8,6 +8,7 @@
 :- initialization http_daemon.
 
 :- multifile http:location/3.
+:- dynamic   http:location/3.
 http:location(files, root(files), []).
 user:file_search_path(folders, library('images/styles/scripts')).
 
