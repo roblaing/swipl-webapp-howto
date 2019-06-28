@@ -8,8 +8,16 @@
 
 :- initialization http_daemon.
 
+:- multifile http:location/3.
+:- dynamic   http:location/3.
+http:location(images, root(images), []).
+http:location(styles, root(styles), []).
+http:location(scripts, root(scripts), []).
+
 :- http_handler('/',  form_handler, [prefix]).
-:- http_handler('/styles/basic.css', http_reply_from_files('.', [indexes(['./styles/basic.css'])]), [prefix]).
+:- http_handler(images(.), http_reply_from_files('./images', []), [prefix]).
+:- http_handler(styles(.), http_reply_from_files('./styles', []), [prefix]).
+:- http_handler(scripts(.), http_reply_from_files('./scripts', []), [prefix]).
 
 % Fresh form with all blank fields
 form_handler(Request) :-
