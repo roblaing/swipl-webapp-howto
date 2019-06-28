@@ -14,12 +14,11 @@
 
 :- multifile http:location/3.
 :- dynamic   http:location/3.
-http:location(files, root(files), []).
-user:file_search_path(folders, library('images/styles/scripts')).
+http:location(images, root(images), []).
 
 :- http_handler(root(.), weatherapp_json, []).
 :- http_handler(root(xml), weatherapp_xml, []).
-:- http_handler(files(.),    http_reply_from_files(folders, []), [prefix]).
+:- http_handler(images(.), http_reply_from_files('./images', []), [prefix]).
 
 weatherapp_json(_Request) :-
   URL = 'https://samples.openweathermap.org/data/2.5/forecast/daily?id=524901&appid=b1b15e88fa797225412429c1c50c122a1',
