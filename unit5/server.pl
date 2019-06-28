@@ -2,6 +2,7 @@
 :- use_module(library(http/http_dispatch)).
 :- use_module(library(http/http_error)).
 :- use_module(library(http/html_write)).
+:- use_module(library(http/http_files)).
 :- use_module(library(http/http_unix_daemon)).
 :- use_module(library(http/http_open)).
 :- use_module(library(http/http_ssl_plugin)).
@@ -11,11 +12,14 @@
 
 :- initialization http_daemon.
 
+:- multifile http:location/3.
+:- dynamic   http:location/3.
+http:location(files, root(files), []).
+user:file_search_path(folders, library('images/styles/scripts')).
+
 :- http_handler(root(.), weatherapp_json, []).
 :- http_handler(root(xml), weatherapp_xml, []).
-:- http_handler('/images/01d.png', http_reply_from_files('.', [indexes(['./images/01d.png'])]), [prefix]).
-:- http_handler('/images/02d.png', http_reply_from_files('.', [indexes(['./images/02d.png'])]), [prefix]).
-% Need to figure out how to load all images using dynamic files
+:- http_handler(files(.),    http_reply_from_files(folders, []), [prefix]).
 
 weatherapp_json(_Request) :-
   URL = 'https://samples.openweathermap.org/data/2.5/forecast/daily?id=524901&appid=b1b15e88fa797225412429c1c50c122a1',
