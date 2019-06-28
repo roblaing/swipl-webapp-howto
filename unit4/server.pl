@@ -2,6 +2,7 @@
 :- use_module(library(http/http_dispatch)).
 :- use_module(library(http/http_error)).
 :- use_module(library(http/html_write)).
+:- use_module(library(http/http_files)).
 :- use_module(library(http/http_unix_daemon)).
 :- use_module(library(http/http_files)).
 :- use_module(library(http/http_parameters)).
@@ -9,12 +10,19 @@
 
 :- initialization http_daemon.
 
+:- multifile http:location/3.
+:- dynamic   http:location/3.
+http:location(images, root(images), []).
+http:location(styles, root(styles), []).
+http:location(scripts, root(scripts), []).
+
 :- http_handler(root(.), welcome_or_login, []).
 :- http_handler(root(login), login_handler(Method), [method(Method)]).
 :- http_handler(root(logout), http_reply_from_files('.', [indexes(['./logout.html'])]), [prefix]).
 :- http_handler(root(signup), signup_handler(Method), [method(Method)]).
-:- http_handler('/styles/basic.css', http_reply_from_files('.', [indexes(['./styles/basic.css'])]), [prefix]).
-:- http_handler('/scripts/signup_form.js', http_reply_from_files('.', [indexes(['./scripts/signup_form.js'])]), [prefix]).
+:- http_handler(images(.), http_reply_from_files('./images', []), [prefix]).
+:- http_handler(styles(.), http_reply_from_files('./styles', []), [prefix]).
+:- http_handler(scripts(.), http_reply_from_files('./scripts', []), [prefix]).
 
 welcome_or_login(Request) :-
   ( logged_in(Request, Name) -> 
