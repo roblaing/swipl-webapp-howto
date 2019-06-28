@@ -60,10 +60,16 @@ above) with a few lines of additional code.
 ```prolog
 :- multifile http:location/3.
 :- dynamic   http:location/3.
-http:location(files, root(files), []).
-user:file_search_path(folders, library('images/styles/scripts')).
-:- http_handler(files(.), http_reply_from_files(folders, []), [prefix]).
+http:location(images, root(images), []).
+http:location(styles, root(styles), []).
+http:location(scripts, root(scripts), []).
+
+:- http_handler(images(.), http_reply_from_files('./images', []), [prefix]).
+:- http_handler(styles(.), http_reply_from_files('./styles', []), [prefix]).
+:- http_handler(scripts(.), http_reply_from_files('./scripts', []), [prefix]).
 ```
+
+I have to confess to finding SWI Prolog's absolute path system bewildering, so changed this from an earlier version which used ```user:file_search_path(folders, library('images/styles/scripts')).``` which I abandoned because I couldn't get later units to work.
 
 An error I made initially was to only declare ```:- multifile http:location/3.```. Without also adding ```:- dynamic http:location/3.```, the _user/Name_ example below can't find the style sheet and images. 
 

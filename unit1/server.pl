@@ -9,12 +9,16 @@
 
 :- multifile http:location/3.
 :- dynamic   http:location/3.
-http:location(files, root(files), []).
-user:file_search_path(folders, library('images/styles/scripts')).
+http:location(images, root(images), []).
+http:location(styles, root(styles), []).
+http:location(scripts, root(scripts), []).
 
 :- http_handler(root(.),     http_reply_from_files('.', [indexes(['./index.html'])]), [prefix]).
 :- http_handler(root(about), http_reply_from_files('.', [indexes(['./about.html'])]), [prefix]).
-:- http_handler(files(.),    http_reply_from_files(folders, []), [prefix]).
+:- http_handler(images(.), http_reply_from_files('./images', []), [prefix]).
+:- http_handler(styles(.), http_reply_from_files('./styles', []), [prefix]).
+:- http_handler(scripts(.), http_reply_from_files('./scripts', []), [prefix]).
+
 :- http_handler(root(user/User), my_handler_code(User), []).
 
 my_handler_code(User, Request) :-
