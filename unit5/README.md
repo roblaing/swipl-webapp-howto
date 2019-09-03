@@ -35,12 +35,14 @@ As with database queries, we want to put the three step process of opening a str
 get_json(URL, Dict) :-
   setup_call_cleanup(
     http_open(URL, In, []),
-    json_read_dict(In, Dict),
+    json_read_dict(In, Dict, [default_tag(json)]),
     close(In)
   ).
 ```
 
-[json_read_dict(+Stream, -Dict)](http://www.swi-prolog.org/pldoc/doc_for?object=json_read_dict/2), which requires us to add ```:- use_module(library(http/json)).``` to the list at the top of server.pl, making the Json-formatted weather data accessible via the familiar (to Javascript and Python programmers) dot notation.
+[json_read_dict(+Stream, -Dict, +Options)](http://www.swi-prolog.org/pldoc/doc_for?object=json_read_dict/3), which requires us to add ```:- use_module(library(http/json)).``` to the list at the top of server.pl, making the Json-formatted weather data accessible via the familiar (to Javascript and Python programmers) dot notation.
+
+Including the ```[default_tag(json)]``` replaces the ```_{...}``` with ```json{...}``` which makes garbage collection more efficient.
 
 Translating the supplied data into an HTML table involves eyeballing the supplied Json text, staring directly into the [agglutinative](https://en.wikipedia.org/wiki/Agglutination) horror of object-orientation which leads to names like *Dict.city.name*.
 

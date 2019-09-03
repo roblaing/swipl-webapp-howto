@@ -41,7 +41,7 @@ weatherapp_json(_Request) :-
 get_json(URL, Dict) :-
   setup_call_cleanup(
     http_open(URL, In, []),
-    json_read_dict(In, Dict),
+    json_read_dict(In, Dict, [default_tag(json)]),
     close(In)
   ).
 
