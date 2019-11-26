@@ -37,6 +37,20 @@ Pooling             = Yes
 ```
 The last two entries are things I've learnt through bitter experience. If MaxVarcharSize is left unset, ODBC defaults to 256 characters (the old Twitter rather than a blog site) and pooling needs to be set to yes if your site gets even slightly busy.
 
+Another problem may be insufficient connections (especially if you parallalise your SWI Prolog code as I do, something I hope to write a future tutorial on, but so far there's just <https://swi-prolog.discourse.group/t/some-notes-on-writing-a-concurrent-programing-howto-comments-and-corrections-welcome/1431> and <https://swi-prolog.discourse.group/t/erlang-ping-pong-concurrent-programming-example-translated-into-swi-prolog/1510>).
+
+While there is a tag for this in ~/.odbc.ini file to set to, say, ```MaxConnections = 500```, it doesn't appear to do anyhing. Increasing connections appears to require editing the 
+
+```
+/etc/postgresql-10/postgresql.conf
+```
+
+file to, say:
+
+```
+max_connections = 500
+```
+
 Trying the code below on a new Postrgesql 11 server resulted in ```ERROR: ODBC: State 08001: [unixODBC]FATAL:  Ident authentication failed for user...``` &mdash; which caused me to malign ODBC and SWI Prolog in an earlier version of this document before I learnt you need to either install and start an ident daemon on your machine, or edit pg_hba.conf (found at 
 /var/lib/pgsql/11/data/pg_hba.conf in Centos 7):
 
