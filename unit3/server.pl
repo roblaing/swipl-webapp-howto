@@ -7,7 +7,7 @@
 :- use_module(library(http/http_parameters)).
 :- use_module(library(odbc)).
 
-:- initialization http_daemon.
+:- initialization(http_daemon, main).
 
 :- multifile http:location/3.
 :- dynamic   http:location/3.

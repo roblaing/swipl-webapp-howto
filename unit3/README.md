@@ -153,7 +153,7 @@ jgs\__/'---'\__/
 
 This little Linux penguin caused server.pl to keep barfing ```odbc: state 42601: error: unterminated quoted string at or near...``` until I figured out you need to check the input text for single quotes, and if so escape them with another single quote.
 
-A better way do it was using odbc_prepare and odbc_execute as in this [example](https://github.com/SWI-Prolog/packages-odbc/blob/master/demo/wordnet.pl).
+A better way to do it was using odbc_prepare and odbc_execute as above and in this [example](https://github.com/SWI-Prolog/packages-odbc/blob/master/demo/wordnet.pl).
 
 Before discovering odbc_prepare, I solved this problem like so with a helper predicate to replace single quotes with double quotes:
 
@@ -172,7 +172,7 @@ db_insert(Title, Art) :-
 
 Even though I ended up deleting sql_escape_single_quotes, it's still a handy template for predicates needed for replacing stuff in strings which will come in handy later. 
 
-A lot of web application development boils down to list processing, which is again one of Prolog's strong suits &mdash; though not easily used because it's very different to conventional programming languages. I've written a tutorial at <https://swish.swi-prolog.org/p/Iteration2.swinb> to get my own head around the basics of iterating through lists in Prolog, touching on its Definite Clause Grammar (DCG) notation used by SWI Prolog's html_write library. I'm far from a master at this stuff, but do know enough to get an idea of how powerful it can be.
+A lot of web application development boils down to list processing, which is again one of Prolog's strong suits &mdash; though not easy for novices unfamiliar with <em>functional</em> programming conventions. I've written a tutorial at <https://swish.swi-prolog.org/p/Iteration2.swinb> to get my own head around the basics of iterating through lists in Prolog, touching on its Definite Clause Grammar (DCG) notation used by SWI Prolog's html_write library. I'm far from a master at this stuff, but do know enough to get an idea of how powerful it can be.
 
 To generate HTML from the list of row(Title, Art) clauses returned from db_select I've written a helper predicate, art_html, used as the first argument in [maplist(:Goal, ?List1, ?List2)](http://www.swi-prolog.org/pldoc/doc_for?object=maplist/3).
 
@@ -187,6 +187,6 @@ arts_html(Html) :-
   atomics_to_string(HtmlList, '', Html).
 ```
 
-The way I've written the code in this unit dates back to before I decided to do HTML generating the prologish way, so I'll return to update it later.
+The way I've written the code in this unit dates back to before I decided to do HTML generating the Prologish way, so I'll return to update it later.
 
-
+Next &mdash; Unit 4: <a href ="https://github.com/roblaing/swipl-webapp-howto/tree/master/unit4">User authentication</a>.
