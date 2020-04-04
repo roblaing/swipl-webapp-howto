@@ -10,7 +10,7 @@
 :- use_module(library(sgml)).
 :- use_module(library(xpath)).
 
-:- initialization http_daemon.
+:- initialization(http_daemon, main).
 
 :- multifile http:location/3.
 :- dynamic   http:location/3.
