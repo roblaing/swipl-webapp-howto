@@ -121,3 +121,7 @@ My own bias is toward separation of concerns by keeping HTML as HTML, but SWI Pr
 > Handling statements from other languages as plain strings and manipulating them using simple string operations is one of the most well understood routes to security issues. It is very much common practice as it seems so easy. Still, don’t. The main design guideline for the web services and most other interaction with other languages through strings is to avoid this and assemble expressions in the target language from data structures using code that fully supports the target language syntax and thus properly escapes special characters.
 
 Since this tutorial is more about Prolog than HTML, I'll set my bias aside and use the prolog-style encouraged by [reply_html_page(:Head, :Body)](http://www.swi-prolog.org/pldoc/doc_for?object=reply_html_page/2) rather than quasiquoting.
+
+Next &mdash; Unit 2: <a href ="https://github.com/roblaing/swipl-webapp-howto/tree/master/unit2">HTML Forms with GET and POST</a>.
+
+
