@@ -82,3 +82,5 @@ This little exercise involves guiding users to the correct page. Initially the h
 
 For the sake of learning, I've prevented users from logging on as someone else before logging out, or registering for new accounts while logged into an existing account. That's probably not really necessary, but it did affirm my view that a logical programming language is a good choice for web development because making these rules came very naturally.
 
+Next &mdash; Unit 5: <a href ="https://github.com/roblaing/swipl-webapp-howto/tree/master/unit5">Web Applications</a>.
+
